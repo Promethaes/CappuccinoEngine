@@ -22,8 +22,8 @@ namespace Cappuccino {
 		void childUpdate(float dt, Camera& defaultCamera) override;
 
 	private:
-		Shader _lightingShader{ std::string(std::getenv("CappuccinoShotPath")) + "Assets/Shaders/lightingShader.vert", std::string(std::getenv("CappuccinoShotPath")) + "Assets/Shaders/lightingShader.frag" };
-		F16 _f16{ Mesh(std::string(std::getenv("CappuccinoShotPath")) + "Assets/Mesh/f16.obj"), lightingShader,nullptr,0 };
+		Shader _lightingShader{ std::string(std::getenv("CappuccinoPath")) + "Assets\\Shaders\\lightingShader.vert", std::string(std::getenv("CappuccinoPath")) + "Assets\\Shaders\\lightingShader.frag" };
+		F16 _f16{ Mesh(std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj"), _lightingShader,nullptr,0 };
 #ifdef CUBETEST
 		float rotate = 0;
 		std::vector<Cube> cubes;

@@ -1,79 +1,193 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <Fmod/fmod.h>
+#include <Fmod/fmod_common.h>
+#include <Fmod/fmod.hpp>
+#include <Fmod/fmod_errors.h>
 
-#include "Cappuccino/CappMacros.h"
+#include <iostream>
+#include <vector>
+#include <time.h>
+#include "Cappuccino/Camera.h"
+#include "Cappuccino/ShaderProgram.h"
+#include "Cappuccino/XinputManager.h"
+#include "Cappuccino/Scene Manager.h"
+#include "Cappuccino/Test Scene.h"
+#include "Cappuccino/f16.h"
 
 
-#pragma region PROGRAM SETTINGS
+#define _CRT_SECURE_NO_WARNINGS
+#define Scenes Cappuccino::Scene::scenes
+#define GameObjects Cappuccino::GameObject::gameObjects
+#define ESPRESSOSHOTPATH std::string(std::getenv("EspressoShotPath"))
 
-const GLuint  SCR_WIDTH		= 800*2;
-const GLuint  SCR_HEIGHT	= 600*2;
-const GLchar* SCR_NAME		= "Cappuccino Engine v1.0";
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-#pragma endregion
+void processInput(Cappuccino::Camera& defaultCamera, float dt, GLFWwindow* window);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
+//settings, might change from globals to something else
+float lastX = 400, lastY = 300;
+float yaw = -90.0f;
+float pitch = 0.0f;
+bool firstMouse = true;
+
+Cappuccino::Camera* defaultCamera = new Cappuccino::Camera();
+
+float dt = 0.0f;	// Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
 int main() {
+	srand(time(0));
 
-	#pragma region GLFW/GLAD SETUP
-
-	CAPP_PRINT("----------INITIALIZING GLFW----------");
-	//glfwInit();
-	if (!glfwInit()) {
-		CAPP_PRINT_ERROR("Error initializing GLFW!\nExiting...");
-		SYS_EXIT(-1);
-	}
-	CAPP_PRINT("Success! Setting GLFW Window Hints...");
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	//initialize glfw
+#pragma region InitialzeGLFW
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
-	
-	CAPP_PRINT("----------CREATING GLFW WINDOW----------");
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, SCR_NAME, NULL, NULL);
-
-	if(window == NULL) {
-		CAPP_PRINT_ERROR("Error creating GLFW window!\nExiting...");
+	GLFWwindow* window = glfwCreateWindow(800 * 2, 600 * 2, "Cappuccino Test", NULL, NULL);
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << "\n";
 		glfwTerminate();
-		SYS_EXIT(-2);
+		return -1;
 	}
-
-	CAPP_PRINT("Success! Setting window settings...");
 	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); });
 
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << "\n";
+		return -1;
+	}
+	//end initialization
+#pragma endregion
 	
-	CAPP_PRINT("----------INITIALIZING GLAD----------");
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		CAPP_PRINT_ERROR("Error initializing GLAD!\nExiting...");
-		glfwTerminate();
-		SYS_EXIT(-3);
+
+
+
+#pragma region InitializeFmod
+	///This code is NOT mine, it is from <https://www.fmod.com/resources/documentation-api?version=2.0&page=white-papers-getting-started.html>
+	FMOD_RESULT result;
+	FMOD::System* system = NULL;
+
+	result = FMOD::System_Create(&system);      // Create the main system object.
+	if (result != FMOD_OK)
+	{
+		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+		exit(-1);
 	}
 
-	CAPP_PRINT("Success! OpenGL function pointers loaded.");
+	result = system->init(512, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
+	if (result != FMOD_OK)
+	{
+		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+		exit(-1);
+	}
+#pragma endregion
 
-	#pragma endregion 
+	
+	///FMOD::Sound** sound = nullptr;
+	///FMOD::ChannelGroup** group1;
+	///std::string soundPath = ESPRESSOSHOTPATH + "Assets/Sound/testSound.mp3";
+	///auto soundHandle = system->createSound(soundPath.c_str(),FMOD_2D ,new FMOD_CREATESOUNDEXINFO(),sound);
+	///auto channelGHandle = system->createChannelGroup("group1", group1);
+	///FMOD::Channel** channel = nullptr;
+	///
+	///system->playSound(*sound, *group1, false, channel);
 
-	#pragma region RENDER LOOP
+	Cappuccino::Shader lightingShader(ESPRESSOSHOTPATH + "Assets/Shaders/lightingShader.vert", ESPRESSOSHOTPATH + "Assets/Shaders/lightingShader.frag");
 
-	CAPP_PRINT("\n----------STARTING RENDER LOOP...\n");
-	while (!glfwWindowShouldClose(window)) {
+	Sedna::XinputManager* manager = new Sedna::XinputManager();
+	Sedna::XinputController* controller = manager->getController(0);
 
-		// TODO: PROCESS INPUTS
+	bool f16Test = false;
+	bool sceneTest = true;
+
+	if (f16Test == true)
+		sceneTest = true;
+
+	//if (f16Test)
+	//	Cappuccino::F16 f16(Cappuccino::Mesh(ESPRESSOSHOTPATH + "Assets/Mesh/f16.obj"), lightingShader, manager, 0);
+
+	//run this scene
+	//if (sceneTest)
+		Cappuccino::TestScene* s = new Cappuccino::TestScene(true);
+
+
+	glEnable(GL_DEPTH_TEST);
+
+
+	//render loop
+	while (!glfwWindowShouldClose(window))
+	{
+
+		float currentFrame = glfwGetTime();
+		dt = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+		processInput(*defaultCamera, dt, window);
+		glClearColor(0.33f, 0.33f, 0.33f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+		//manager->update();
+
+		for (unsigned i = 0; i < Scenes.size(); i++) {
+			if (!Scenes[i]->isInit())
+				Scenes[i]->init();
+			if (Scenes[i]->isInit())
+				Scenes[i]->baseUpdate(dt, *defaultCamera);
+		}
+		for (auto x : GameObjects)
+			x->baseUpdate(dt);
+
+
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	#pragma	endregion
-
-	#pragma region PROGRAM TERMINATION
-
-	CAPP_PRINT("----------CLEANING UP AND EXITING...");
-
+	//end of program
 	glfwTerminate();
-	SYS_EXIT(0);
 
-	#pragma	endregion
+	return 0;
+}
+
+
+void processInput(Cappuccino::Camera& defaultCamera, float dt, GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+
+	defaultCamera.move(window, 2.5f * dt);
+}
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	defaultCamera->doMouseMovement(xoffset, yoffset);
+}
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+
+	glViewport(0, 0, width, height);
+
 }
