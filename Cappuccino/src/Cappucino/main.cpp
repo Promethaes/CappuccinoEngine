@@ -5,8 +5,8 @@
 
 #pragma region PROGRAM SETTINGS
 
-const GLuint  SCR_WIDTH		= 800;
-const GLuint  SCR_HEIGHT	= 600;
+const GLuint  SCR_WIDTH		= 800*2;
+const GLuint  SCR_HEIGHT	= 600*2;
 const GLchar* SCR_NAME		= "Cappuccino Engine v1.0";
 
 #pragma endregion

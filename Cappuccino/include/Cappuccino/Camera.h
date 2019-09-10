@@ -30,8 +30,8 @@ namespace Cappuccino {
 		void move(GLFWwindow* window,float movementSpeed);
 
 		//getters
-		glm::vec3& getPosition() { return cameraPos; }
-		glm::vec3& getFront() { return cameraFront; }
+		glm::vec3& getPosition() { return _cameraPos; }
+		glm::vec3& getFront() { return _cameraFront; }
 	private:
 		//updates the camera
 		void update();

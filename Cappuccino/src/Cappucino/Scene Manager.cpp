@@ -3,7 +3,7 @@
 namespace Cappuccino {
 	std::vector<Scene*> Scene::scenes = {};
 	Scene::Scene(bool firstScene){
-		active = firstScene;
+		_active = firstScene;
 		scenes.push_back(this);
 	}
 
@@ -14,7 +14,7 @@ namespace Cappuccino {
 				for (int j = 0; j < scenes.size(); j++) {
 					if (i == j)
 						continue;
-					scenes[j]->active = false;
+					scenes[j]->_active = false;
 				}
 				break;
 			}

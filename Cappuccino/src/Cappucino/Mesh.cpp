@@ -133,10 +133,10 @@ namespace Cappuccino {
 		std::vector<float> unPnormalData;
 		//load the file
 		std::ifstream input;
-		input.open(path);
+		input.open(_path);
 
 		if (!input.good()) {
-			std::cout << "Problem loading file: " << path << "\n";
+			std::cout << "Problem loading file: " << _path << "\n";
 			return false;
 		}
 		//import data

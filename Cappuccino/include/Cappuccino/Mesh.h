@@ -6,7 +6,7 @@
 namespace Cappuccino {
 	class Mesh {
 	public:
-		Mesh(const std::string& path) { this->path = path; }=default;
+		Mesh(const std::string& path) { this->_path = path; };
 
 		/*
 		Purpose: The filepath provided is what mesh will be loaded

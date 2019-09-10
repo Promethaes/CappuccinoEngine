@@ -44,7 +44,7 @@ namespace Cappuccino {
 		draw();
 	}
 
-	void Espresso::F16::draw()
+	void Cappuccino::F16::draw()
 	{
 		glUseProgram(shader.getId());
 

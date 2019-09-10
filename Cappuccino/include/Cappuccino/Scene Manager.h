@@ -7,7 +7,7 @@ namespace Cappuccino {
 	class Camera;
 	class Scene {
 	public:
-		Scene(bool firstScene) = default;
+		Scene(bool firstScene);
 		/*
 		Purp: This function will update the active scene
 		Reg.: dt: a float of the time between updates, defaultCamera: a pointer to the camera used
@@ -18,9 +18,9 @@ namespace Cappuccino {
 		virtual bool exit() = 0;
 		static std::vector<Scene*> scenes;
 
-		bool isActive() const { return active; }
-		bool isInit() const { return initialized; }
-		bool ShouldExit() const { return shouldExit; }
+		bool isActive() const { return _active; }
+		bool isInit() const { return _initialized; }
+		bool ShouldExit() const { return _shouldExit; }
 	protected:
 		bool _active = false;
 		bool _initialized = false;
