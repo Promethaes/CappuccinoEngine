@@ -22,7 +22,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define Scenes Cappuccino::Scene::scenes
 #define GameObjects Cappuccino::GameObject::gameObjects
-#define ESPRESSOSHOTPATH std::string(std::getenv("EspressoShotPath"))
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -104,7 +103,6 @@ int main() {
 	///
 	///system->playSound(*sound, *group1, false, channel);
 
-	Cappuccino::Shader lightingShader(ESPRESSOSHOTPATH + "Assets/Shaders/lightingShader.vert", ESPRESSOSHOTPATH + "Assets/Shaders/lightingShader.frag");
 
 	Sedna::XinputManager* manager = new Sedna::XinputManager();
 	Sedna::XinputController* controller = manager->getController(0);
