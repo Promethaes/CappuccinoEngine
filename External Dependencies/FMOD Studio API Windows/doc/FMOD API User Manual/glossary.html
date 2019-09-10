@@ -1,0 +1,102 @@
+<html>
+<head>
+<title>Glossary</title>
+<link rel="stylesheet" href="style/docs.css">
+<link rel="stylesheet" href="style/code_highlight.css">
+<script type="text/javascript" src="scripts/language-selector.js"></script></head>
+<body>
+<div class="docs-body">
+<div class="manual-toc">
+<p>FMOD API User Manual 2.00</p>
+<ul>
+<li><a href="welcome.html">Welcome to FMOD API</a></li>
+<li><a href="studio-guide.html">Studio API Guide</a></li>
+<li><a href="core-guide.html">Core API Guide</a></li>
+<li><a href="platforms.html">Platform Details</a></li>
+<li><a href="white-papers.html">White Papers</a></li>
+<li><a href="studio-api.html">Studio API Reference</a></li>
+<li><a href="core-api.html">Core API Reference</a></li>
+<li><a href="fsbank-api.html">FSBank API Reference</a></li>
+<li><a href="plugin-api.html">Plugin API Reference</a></li>
+<li class="manual-current-chapter manual-active-chapter"><a href="glossary.html">Glossary</a><ul>
+<li><a href="#callback-behavior">Callback Behavior</a></li>
+<li><a href="#documentation-conventions">Documentation Conventions</a><ul>
+<li><a href="#parameter-tokens">Parameter Tokens</a></li>
+</ul>
+</li>
+<li><a href="#distance-units">Distance Units</a></li>
+<li><a href="#handedness">Handedness</a></li>
+<li><a href="#streaming-issues">Streaming Issues</a></li>
+<li><a href="#studio-guids-and-paths">Studio GUIDs and Paths</a></li>
+<li><a href="#studio-strings-bank">Studio Strings Bank</a></li>
+<li><a href="#studio-update-thread">Studio Update Thread</a></li>
+<li><a href="#sync-points">Sync Points</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="manual-content api">
+<h1>10. Glossary</h1>
+<h2 id="callback-behavior"><a href="#callback-behavior">10.1 Callback Behavior</a></h2>
+<p>All calls to callbacks are issued per type. This means that if, for example, you use <a class="apilink" href="core-api-system.html#system_setcallback" title="Sets the callback for System level notifications.">System::setCallback</a> with <a class="apilink" href="core-api-system.html#fmod_system_callback_all" title="">FMOD_SYSTEM_CALLBACK_ALL</a>, when the callback is called, only one type will be passed for the <code>type</code> argument. Multiple types will not be combined for a single call.</p>
+<h2 id="documentation-conventions"><a href="#documentation-conventions">10.2 Documentation Conventions</a></h2>
+<h3 id="parameter-tokens"><a href="#parameter-tokens">10.2.1 Parameter Tokens</a></h3>
+<table>
+<thead>
+<tr>
+<th align="center">Token</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><span><span class="token" title="Output">Out</span></span></td>
+<td>The API function will fill in information in this parameter.</td>
+</tr>
+<tr>
+<td align="center"><span><span class="token" title="Optional">Opt</span></span></td>
+<td>This parameter is optional, specify null or zero to ignore.</td>
+</tr>
+<tr>
+<td align="center"><span><span class="token" title="Read-only">R/O</span></span></td>
+<td>This token applies to members of various structures which FMOD passes to user callbacks. User callbacks must not modify the values of these members. Modifying the values of these members will cause undefined behavior.</td>
+</tr>
+<tr>
+<td align="center"><span><span class="token" title="C#only">C#</span></span></td>
+<td>This is only available in C#.</td>
+</tr>
+<tr>
+<td align="center"><span><span class="token" title="Javscript-only">JS</span></span></td>
+<td>This is only available in Javascript.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="distance-units"><a href="#distance-units">10.3 Distance Units</a></h2>
+<p>The unit of measurement for distances for 3D calculations. By default 1 disance unit is equivalent to 1 meter. To use your game's distance units specify the scale of your game's distance units to meters using <a class="apilink" href="core-api-system.html#system_set3dsettings" title="Sets the global doppler scale, distance factor and log rolloff scale for all 3D sound in FMOD.">System::set3DSettings</a>. </p>
+<h2 id="handedness"><a href="#handedness">10.4 Handedness</a></h2>
+<p>Handedness is an innate property of 3D cartesian coordinate systems. The handedness of the coordinate system specifies the direction of the Z axis along the line perpendicular to the X and Y axes, and the direction of positive rotations.</p>
+<p>For 3D spatialization to behave intuitively it is important that FMOD is configured to use the same orientation as your game's coordinate system.</p>
+<p>By default FMOD uses a left-handed coordinate system. The positive Y axis points up, the positive X axis points to the right, and the positive Z axis points <em>away</em> from the listener. Positive rotations are <em>clockwise</em> around the axis of rotation when viewed so that the axis points towards the listener.</p>
+<p>FMOD may also be configured to use a right-handed coordinate system by passing FMOD_INIT_3D_RIGHTHANDED to <a class="apilink" href="core-api-system.html#system_init" title="Open the connection to the output and prepare FMOD for playback.">System::init</a>. When configured for a right-handed coordinate system the positive Y axis points up, the positive X axis points to the right, and the positive Z axis points <em>towards</em> the listener. Positive rotations are <em>counter-clockwise</em> around the axis of rotation when viewed so that the axis points towards the listener.</p>
+<h2 id="streaming-issues"><a href="#streaming-issues">10.5 Streaming Issues</a></h2>
+<p>Issues with looping streaming sounds may arise when changing the loop count or loop points of a playing stream.</p>
+<p>Sounds created with <a class="apilink" href="core-api-system.html#system_createstream" title="Opens a sound for streaming.">System::createStream</a> or <a class="apilink" href="core-api-common.html#fmod_createstream" title="">FMOD_CREATESTREAM</a> may have executed loop logic and buffered sample data before API calls to change their looping properties. If issues occur after changing loop properties you may need to call <a class="apilink" href="core-api-channel.html#channel_setposition" title="Sets the current playback position.">Channel::setPosition</a> to force a flush of the stream buffer.</p>
+<p>Note this will usually only happen if you have sounds or loop regions which are smaller than the stream <em>decode</em> buffer. See <a class="apilink" href="core-api-system.html#fmod_createsoundexinfo" title="Additional options for creating a Sound.">FMOD_CREATESOUNDEXINFO</a>.</p>
+<h2 id="studio-guids-and-paths"><a href="#studio-guids-and-paths">10.6 Studio GUIDs and Paths</a></h2>
+<p>Many functions in the FMOD Studio API allow you to identify an object within an FMOD Studio project by the object's globally unique identifier, or GUID. These API functions will accept the GUID in binary format (mostly useful when an object's GUID has been looked up programmatically by name), or as a string formatted as 32 digits separated by hyphens and enclosed in braces: <code>{00000000-0000-0000-0000-000000000000}</code>.</p>
+<p>Many functions in the FMOD Studio API allow you to identify an object within an FMOD Studio project by the object's path. Objects can only be identified by path if the project's <a href="#studio-strings-bank">strings bank</a> is loaded.</p>
+<p>See the <a href="https://fmod.com/resources/documentation-studio">FMOD Studio Documentation</a> for more information.</p>
+<h2 id="studio-strings-bank"><a href="#studio-strings-bank">10.7 Studio Strings Bank</a></h2>
+<p>When building a master bank FMOD Studio will also write out a strings bank for the project. The strings bank contains a string table which the FMOD Studio API can use to resolve GUIDs from paths. FMOD Studio API functions which accept paths require the project's strings bank to be loaded in order to function correctly.</p>
+<h2 id="studio-update-thread"><a href="#studio-update-thread">10.8 Studio Update Thread</a></h2>
+<p>A thread created by the FMOD Studio System to perform asynchronous processing of API commands and manage scheduling and playback logic for events. This thread is triggered from the Core Mixer thread at the period specified in the <a class="apilink" href="studio-api-system.html#fmod_studio_advancedsettings" title="Settings for advanced features like configuring memory and cpu usage.">FMOD_STUDIO_ADVANCEDSETTINGS</a>. If the Studio System is initialized with <a class="apilink" href="studio-api-system.html#fmod_studio_init_synchronous_update" title="">FMOD_STUDIO_INIT_SYNCHRONOUS_UPDATE</a> then no Studio Update thread is created.</p>
+<h2 id="sync-points"><a href="#sync-points">10.9 Sync Points</a></h2>
+<p>These points can be user generated or can come from a wav file with embedded markers.</p>
+<p>In sound forge, a marker can be added a wave file by clicking on the timeline / ruler, and right clicking then selecting 'Insert Marker/Region'.</p>
+<p>Riff wrapped mp3 files are also supported.</p></div>
+
+<p class="manual-footer">FMOD API User Manual 2.00.04 (2019-09-05). &copy; 2019 Firelight Technologies Pty Ltd.</p>
+</body>
+</html>
+
+</div>

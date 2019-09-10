@@ -1,0 +1,95 @@
+<html>
+<head>
+<title>White Papers | Terminology</title>
+<link rel="stylesheet" href="style/docs.css">
+<link rel="stylesheet" href="style/code_highlight.css">
+<script type="text/javascript" src="scripts/language-selector.js"></script></head>
+<body>
+<div class="docs-body">
+<div class="manual-toc">
+<p>FMOD API User Manual 2.00</p>
+<ul>
+<li><a href="welcome.html">Welcome to FMOD API</a></li>
+<li><a href="studio-guide.html">Studio API Guide</a></li>
+<li><a href="core-guide.html">Core API Guide</a></li>
+<li><a href="platforms.html">Platform Details</a></li>
+<li class="manual-current-chapter manual-inactive-chapter"><a href="white-papers.html">White Papers</a><ul class="subchapters"><li class="manual-current-chapter manual-active-chapter"><a href="white-papers-terminology.html">Terminology</a></li><li><a href="white-papers-getting-started.html">Getting Started</a></li><li><a href="white-papers-3d-reverb.html">3D Reverb</a></li><li><a href="white-papers-3d-sounds.html">3D Sounds</a></li><li><a href="white-papers-asynchronous-io.html">Asynchronous I/O</a></li><li><a href="white-papers-cpu-performance.html">CPU Performance</a></li><li><a href="white-papers-dsp-architecture.html">DSP Architecture and Usage</a></li><li><a href="white-papers-dsp-plugin-api.html">DSP Plugin API</a></li><li><a href="white-papers-handle-system.html">Handle System</a></li><li><a href="white-papers-memory-management.html">Memory Management</a></li><li><a href="white-papers-non-blocking-sound-creation.html">Non-blocking Sound Creation</a></li><li><a href="white-papers-spatial-audio.html">Spatial Audio</a></li><li><a href="white-papers-studio-3d-events.html">Studio API 3D Events</a></li><li><a href="white-papers-studio-banks.html">Studio API Banks</a></li><li><a href="white-papers-studio-threads.html">Studio API Threads</a></li><li><a href="white-papers-threads.html">Threads and Thread Safety</a></li><li><a href="white-papers-transitioning-from-fmodex.html">Transitioning from FMOD Ex</a></li><li><a href="white-papers-using-multiple-reverbs.html">Using Multiple Reverbs</a></li><li><a href="white-papers-virtual-voices.html">Virtual Voices</a></li></ul></li>
+<li><a href="studio-api.html">Studio API Reference</a></li>
+<li><a href="core-api.html">Core API Reference</a></li>
+<li><a href="fsbank-api.html">FSBank API Reference</a></li>
+<li><a href="plugin-api.html">Plugin API Reference</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+</ul>
+</div>
+<div class="manual-content api">
+<h1>5. White Papers | Terminology</h1>
+<div class="toc">
+<ul>
+<li><a href="#terminology-basic-concepts">Terminology / Basic Concepts</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#samples-vs-bytes-vs-milliseconds">Samples vs bytes vs milliseconds</a></li>
+<li><a href="#sounds-samples-vs-compressed-samples-vs-streams">Sounds. Samples vs compressed samples vs streams</a></li>
+<li><a href="#channels-and-sounds">Channels and sounds</a></li>
+<li><a href="#sub-mixing-and-channelgroups">Sub-mixing and ChannelGroups</a></li>
+<li><a href="#2d-vs-3d">2D vs 3D</a></li>
+<li><a href="#dsp">DSP</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="terminology-basic-concepts"><a href="#terminology-basic-concepts">Terminology / Basic Concepts</a></h2>
+<h3 id="introduction"><a href="#introduction">Introduction</a></h3>
+<p>Throughout FMOD documentation certain terms and concepts will be used. This section will explain some of these to alleviate confusion.</p>
+<p>It is recommended when you see an API function highlighted as a link, that you check the API reference for more detail.</p>
+<h3 id="samples-vs-bytes-vs-milliseconds"><a href="#samples-vs-bytes-vs-milliseconds">Samples vs bytes vs milliseconds</a></h3>
+<p>Within FMOD functions you will see references to PCM samples, bytes and milliseconds.</p>
+<p>To understand what the difference is a diagram has been provided to show how raw PCM sample data is stored in FMOD buffers. </p>
+<p><img alt="Samples vs Bytes vs Milliseconds" src="images/samples-bytes-milliseconds.png" /></p>
+<p>In this diagram you will see that a stereo sound has its left/right data interleaved one after the other.<br />
+A left/right pair (a sound with 2 <strong>channels</strong>) is called a <strong>sample</strong>.<br />
+Because this is made up of 16bit data, 1 <strong>sample</strong> = 4 <strong>bytes</strong>.<br />
+If the sample rate, or playback rate is 44.1khz, or 44100 samples per second, then <strong>1 sample is 1/44100th of a second</strong>, or <strong>1/44th of a millisecond</strong>. Therefore 44100 samples = 1 second or 1000ms worth of data.<br />
+To convert between the different terminologies, the following formulas can be used:</p>
+<ul>
+<li><strong>ms</strong> = samples * 1000 / samplerate.</li>
+<li><strong>samples</strong> = ms * samplerate / 1000.</li>
+<li><strong>samplerate</strong> = samples * 1000 / ms.</li>
+<li><strong>bytes</strong> = samples * bits * channels / 8.</li>
+<li><strong>samples</strong> = bytes * 8 / bits / channels.</li>
+</ul>
+<p>Some functions like Sound::getLength provide the length in milliseconds, bytes and samples to avoid needing to do these calculations.</p>
+<h3 id="sounds-samples-vs-compressed-samples-vs-streams"><a href="#sounds-samples-vs-compressed-samples-vs-streams">Sounds. Samples vs compressed samples vs streams</a></h3>
+<p>When a sound is loaded, it is either decompressed as a static sample into memory as PCM (samples), loaded into memory in its native format and decompressed at runtime (compressed samples), or streamed and decoded in realtime (in chunks) from an external media such as a harddisk or CD (streams).</p>
+<ul>
+<li>"<strong>Samples</strong>" are good for small sounds that need to be played more than once at a time, for example sound effects. These generally use little or no CPU to play back and can be hardware accelerated. See FMOD_CREATESAMPLE.</li>
+<li>"<strong>Streams</strong>" are good for large sounds that are too large to fit into memory and need to be streamed from disk into a small ringbuffer that FMOD manages. These take a small amount of CPU and disk bandwidth based on the file format. For example MP3 takes more cpu power to decode in real-time than a PCM decompressed wav file does. A streaming sound can only be played once at a time, they cannot be spawned multiple times at once like a sample, due to it only having 1 file handle per stream and 1 ringbuffer to decode into. See FMOD_CREATESTREAM.</li>
+<li>"<strong>Compressed samples</strong>" are an option that allows the user to load a certain compressed file format (such as IMA ADPCM, FADPCM, Vorbis, MP2, MP3, AT9 and XMA formats currently). FADPCM/Vorbis/AT9 are only supported through the .FSB container format), and leave them compressed in memory without decompressing them. They are software mixed on the CPU and don't have the 'once only' limitation of streams. They take more cpu than a standard PCM sample, but actually less than a stream due to not doing any disk access and much smaller memory buffers. See FMOD_CREATECOMPRESSEDSAMPLE.<br />
+<strong>By default <a class="apilink" href="core-api-system.html#system_createsound" title="Loads a sound into memory, or opens it for streaming.">System::createSound</a> will want to decode the whole sound fully into memory</strong> (ie, as a decompressed sample). To have it stream in realtime and save memory, use the <a class="apilink" href="core-api-common.html#fmod_createstream" title="">FMOD_CREATESTREAM</a> flag when creating a sound, or use the helper function <a class="apilink" href="core-api-system.html#system_createstream" title="Opens a sound for streaming.">System::createStream</a> which is essentially the same as <a class="apilink" href="core-api-system.html#system_createsound" title="Loads a sound into memory, or opens it for streaming.">System::createSound</a> but just has the <a class="apilink" href="core-api-common.html#fmod_createstream" title="">FMOD_CREATESTREAM</a> flag added in automatically for you. To make a compressed sample use <a class="apilink" href="core-api-system.html#system_createsound" title="Loads a sound into memory, or opens it for streaming.">System::createSound</a> with <a class="apilink" href="core-api-common.html#fmod_createcompressedsample" title="">FMOD_CREATECOMPRESSEDSAMPLE</a>.</li>
+</ul>
+<h3 id="channels-and-sounds"><a href="#channels-and-sounds">Channels and sounds</a></h3>
+<p>When you have loaded your sounds, you will want to play them. When you play them you will use <a class="apilink" href="core-api-system.html#system_playsound" title="Plays a Sound on a Channel.">System::playSound</a>, which will return you a pointer to a Channel / FMOD_CHANNEL handle.</p>
+<p>FMOD will automatically select a channel for the sound to play on, you do not have to manage your own channels.</p>
+<h3 id="sub-mixing-and-channelgroups"><a href="#sub-mixing-and-channelgroups">Sub-mixing and ChannelGroups</a></h3>
+<p>Instead of processing or controlling channels individually, channels can be grouped into a '<a class="apilink" href="core-api-channelgroup.html" title="">ChannelGroup</a>'. ChannelGroups allow you to operate on a group of channels at a time, and control the mix graph of the audio.</p>
+<p>A ChannelGroup can also be thought of as a 'sub mix', as in the signal chain, this would be the point that the channel signals mix into a single buffer. This buffer can then be processed with a DSP effect (see below) once, rather than once for each channel, saving a lot of CPU time.</p>
+<h3 id="2d-vs-3d"><a href="#2d-vs-3d">2D vs 3D</a></h3>
+<p>A 3D sound <strong>source</strong> is a channel that has a position and a velocity in space. When a 3D channel is playing, its volume, speaker placement and pitch will be affected automatically based on the relation to the <strong>listener</strong>. <br />
+A <strong>listener</strong> is the player, or the game camera. It has a position and velocity like a sound <strong>source</strong>, but it also has an orientation.</p>
+<p>The <strong>listener</strong> and the <strong>source</strong> distance from each other determine the volume. <br />
+The <strong>listener</strong> and the <strong>source</strong> relative velocity determines the pitch (doppler effect). <br />
+The orientation of the <strong>listener</strong> to the <strong>source</strong> determines the pan or speaker placement.</p>
+<p>A 2D sound is simply different in that it is not affected by the 3D sound <strong>listener</strong>, and does not have doppler or attenuation or speaker placement affected by it. <br />
+A 2D sound can call <a class="apilink" href="core-api-channelcontrol.html#channelcontrol_setmixlevelsoutput" title="Sets the outgoing volume levels after up/down mix.">ChannelControl::setMixLevelsOutput</a>, <a class="apilink" href="core-api-channelcontrol.html#channelcontrol_setmixmatrix" title="Sets a 2D pan matrix that maps input channels (columns) to output speakers (rows).">ChannelControl::setMixMatrix</a> or <a class="apilink" href="core-api-channelcontrol.html#channelcontrol_setpan" title="Sets the left/right pan level.">ChannelControl::setPan</a>, whereas these commands on a 3D sound will not have any effect, unless you call <a class="apilink" href="core-api-channelcontrol.html#channelcontrol_set3dlevel" title="Sets the blend between 3D attribute related panning and 2D panning functions.">ChannelControl::set3DLevel</a> to alter the 2D component of the 3D sound. You can blend a sound between 3D and 2D using this function. <br />
+A 3D sound can call any function with the word <strong>3D</strong> in the function name, whereas a 2D sound cannot.</p>
+<p>For a more detailed description of 3D sound, read the tutorial in the documentation on 3D sound.</p>
+<h3 id="dsp"><a href="#dsp">DSP</a></h3>
+<p>DSP stands for "Digital Signal Processing", and usually relates to processing raw PCM samples to alter the sound. FMOD provides a suite of DSP effects that can alter the sound in interesting ways to simulate real life or exaggerate a sound. <br />
+Examples of this are echo, reverb, lowpass filtering, flange and chorus. <br />
+Effects can easily be added to an FMOD channel, or a sub mix, or ChannelGroup with the <a class="apilink" href="core-api-channelcontrol.html#channelcontrol_adddsp" title="Adds a DSP unit to the specified index in the DSP chain.">ChannelControl::addDSP</a> function. <br />
+You also have the option of writing your own effects with <a class="apilink" href="core-api-system.html#system_createdsp" title="Create a DSP object given a plugin description structure.">System::createDSP</a>. See the Digital Signal Processing (DSP) Architecture and Usage tutorial for more.</p></div>
+
+<p class="manual-footer">FMOD API User Manual 2.00.04 (2019-09-05). &copy; 2019 Firelight Technologies Pty Ltd.</p>
+</body>
+</html>
+
+</div>

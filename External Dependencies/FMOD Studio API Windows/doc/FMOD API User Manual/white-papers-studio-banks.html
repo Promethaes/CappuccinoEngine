@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>White Papers | Studio API Banks</title>
+<link rel="stylesheet" href="style/docs.css">
+<link rel="stylesheet" href="style/code_highlight.css">
+<script type="text/javascript" src="scripts/language-selector.js"></script></head>
+<body>
+<div class="docs-body">
+<div class="manual-toc">
+<p>FMOD API User Manual 2.00</p>
+<ul>
+<li><a href="welcome.html">Welcome to FMOD API</a></li>
+<li><a href="studio-guide.html">Studio API Guide</a></li>
+<li><a href="core-guide.html">Core API Guide</a></li>
+<li><a href="platforms.html">Platform Details</a></li>
+<li class="manual-current-chapter manual-inactive-chapter"><a href="white-papers.html">White Papers</a><ul class="subchapters"><li><a href="white-papers-terminology.html">Terminology</a></li><li><a href="white-papers-getting-started.html">Getting Started</a></li><li><a href="white-papers-3d-reverb.html">3D Reverb</a></li><li><a href="white-papers-3d-sounds.html">3D Sounds</a></li><li><a href="white-papers-asynchronous-io.html">Asynchronous I/O</a></li><li><a href="white-papers-cpu-performance.html">CPU Performance</a></li><li><a href="white-papers-dsp-architecture.html">DSP Architecture and Usage</a></li><li><a href="white-papers-dsp-plugin-api.html">DSP Plugin API</a></li><li><a href="white-papers-handle-system.html">Handle System</a></li><li><a href="white-papers-memory-management.html">Memory Management</a></li><li><a href="white-papers-non-blocking-sound-creation.html">Non-blocking Sound Creation</a></li><li><a href="white-papers-spatial-audio.html">Spatial Audio</a></li><li><a href="white-papers-studio-3d-events.html">Studio API 3D Events</a></li><li class="manual-current-chapter manual-active-chapter"><a href="white-papers-studio-banks.html">Studio API Banks</a></li><li><a href="white-papers-studio-threads.html">Studio API Threads</a></li><li><a href="white-papers-threads.html">Threads and Thread Safety</a></li><li><a href="white-papers-transitioning-from-fmodex.html">Transitioning from FMOD Ex</a></li><li><a href="white-papers-using-multiple-reverbs.html">Using Multiple Reverbs</a></li><li><a href="white-papers-virtual-voices.html">Virtual Voices</a></li></ul></li>
+<li><a href="studio-api.html">Studio API Reference</a></li>
+<li><a href="core-api.html">Core API Reference</a></li>
+<li><a href="fsbank-api.html">FSBank API Reference</a></li>
+<li><a href="plugin-api.html">Plugin API Reference</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+</ul>
+</div>
+<div class="manual-content api">
+<h1>5. White Papers | Studio API Banks</h1>
+<div class="toc">
+<ul>
+<li><a href="#studio-banks">Studio Banks</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#bank-layout">Bank Layout</a></li>
+<li><a href="#bank-loading">Bank Loading</a></li>
+<li><a href="#sample-data">Sample Data</a><ul>
+<li><a href="#idle-pool">Idle Pool</a></li>
+</ul>
+</li>
+<li><a href="#streaming-data">Streaming Data</a></li>
+<li><a href="#strings-bank">Strings Bank</a></li>
+<li><a href="#bank-unload">Bank Unload</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="studio-banks"><a href="#studio-banks">Studio Banks</a></h2>
+<h3 id="introduction"><a href="#introduction">Introduction</a></h3>
+<p>This section explains the concepts of Studio Banks and how loading works.</p>
+<h3 id="bank-layout"><a href="#bank-layout">Bank Layout</a></h3>
+<p>The FMOD Studio Bank file contains event metadata and sound data in the one file.</p>
+<p><img alt="Studio Bank Layout" src="images/studio-bank-layout.png" /></p>
+<p>Loading a bank will load all metadata, which contains information about all the events, parameters, and other data needed for all events associated with that bank.</p>
+<p>The sound sample data has two different types, normal sample data, and streaming sound data. Normal sample data can be loaded per event type. Streaming data is streamed in on demand as events are played, and is never fully loaded ahead of time. Streaming data is good for music, voice over, and other sounds which are of a long duration. Whether sound data is streamed or not is set up by the designer in FMOD Studio and cannot be changed at runtime.</p>
+<h3 id="bank-loading"><a href="#bank-loading">Bank Loading</a></h3>
+<p>Banks are loaded by calling <a class="apilink" href="studio-api-system.html#studio_system_loadbankfile" title="Loads a Studio bank from a file.">Studio::System::loadBankFile</a>. They are unloaded by <a class="apilink" href="studio-api-bank.html#studio_bank_unload" title="Unloads the bank.">Studio::Bank::unload</a>.</p>
+<p>Bank loading can be controlled with the <a class="apilink" href="studio-api-system.html#fmod_studio_load_bank_flags" title="Flags to controlling bank loading.">FMOD_STUDIO_LOAD_BANK_FLAGS</a>. When loading banks with <a class="apilink" href="studio-api-system.html#fmod_studio_load_bank_normal" title="">FMOD_STUDIO_LOAD_BANK_NORMAL</a>, the function will not return until the bank has completed loading. When using the <a class="apilink" href="studio-api-system.html#fmod_studio_load_bank_nonblocking" title="">FMOD_STUDIO_LOAD_BANK_NONBLOCKING</a> flag, the load bank function will return before the bank has completed loading.</p>
+<p>As soon as a bank has completed loaded, all the metadata in it can be accessed. This means that event descriptions can be found with <a class="apilink" href="studio-api-system.html#studio_system_getevent" title="Retrieves an EventDescription.">Studio::System::getEvent</a>, and instances created from those descriptions. The bank loading state can be queried with <a class="apilink" href="studio-api-bank.html#studio_bank_getloadingstate" title="Retrieves the loading state.">Studio::Bank::getLoadingState</a>.</p>
+<h3 id="sample-data"><a href="#sample-data">Sample Data</a></h3>
+<p>Sample data is loaded from one of the three actions:</p>
+<ul>
+<li><a class="apilink" href="studio-api-bank.html#studio_bank_loadsampledata" title="Loads non-streaming sample data for all events in the bank.">Studio::Bank::loadSampleData</a></li>
+<li><a class="apilink" href="studio-api-eventdescription.html#studio_eventdescription_loadsampledata" title="Loads non-streaming sample data used by the event.">Studio::EventDescription::loadSampleData</a></li>
+<li><a class="apilink" href="studio-api-eventdescription.html#studio_eventdescription_createinstance" title="Creates a playable instance.">Studio::EventDescription::createInstance</a></li>
+</ul>
+<p>For cases where most or all of the events may play at any time, then loading calling <a class="apilink" href="studio-api-bank.html#studio_bank_loadsampledata" title="Loads non-streaming sample data for all events in the bank.">Studio::Bank::loadSampleData</a> to load all data up front may be the best approach. Once the bank sample data has loaded, then all event instances can be created or destroyed and use that existing data immediately. However, it does have the highest memory overhead. Repeated calls to <a class="apilink" href="studio-api-bank.html#studio_bank_loadsampledata" title="Loads non-streaming sample data for all events in the bank.">Studio::Bank::loadSampleData</a> are reference counted, and the bank's sample data is only unloaded when <a class="apilink" href="studio-api-bank.html#studio_bank_unloadsampledata" title="Unloads non-streaming sample data for all events in the bank.">Studio::Bank::unloadSampleData</a> has been called an equal number of times.</p>
+<p>Sample data can be loaded for selected event using <a class="apilink" href="studio-api-eventdescription.html#studio_eventdescription_loadsampledata" title="Loads non-streaming sample data used by the event.">Studio::EventDescription::loadSampleData</a>. It is best to load the sample data ahead of time, so that the event's sound sample data is ready when needed. For cases of very common events, the sample data could be loaded for the duration of the game or level. For less common events, the sample data may be loaded in or out as needed. Repeated calls to <a class="apilink" href="studio-api-eventdescription.html#studio_eventdescription_loadsampledata" title="Loads non-streaming sample data used by the event.">Studio::EventDescription::loadSampleData</a> are reference counted, and the bank's sample data is only unloaded when <a class="apilink" href="studio-api-eventdescription.html#studio_eventdescription_unloadsampledata" title="Unloads all non-streaming sample data.">Studio::EventDescription::unloadSampleData</a> has been called an equal number of times, or if the entire bank is unloaded.</p>
+<p>If neither of these API calls have been made, then sample data will be loaded if instances exist for that event. The sample loading state can be queried with <a class="apilink" href="studio-api-eventdescription.html#studio_eventdescription_getsampleloadingstate" title="Retrieves the sample data loading state.">Studio::EventDescription::getSampleLoadingState</a>. If the event's sample data has not yet finished loading, the event can still be started with <a class="apilink" href="studio-api-eventinstance.html#studio_eventinstance_start" title="Starts playback.">Studio::EventInstance::start</a>. However, the whole event will be delayed until sample data loading has finished.</p>
+<p>The automatic loading of sample data is the simplest approach and uses the least amount of memory. However it has the following disadvantages:</p>
+<ul>
+<li>Sample data will only start loading when the instance is created, which may be just before <a class="apilink" href="studio-api-eventinstance.html#studio_eventinstance_start" title="Starts playback.">Studio::EventInstance::start</a> is called.</li>
+<li>Sample data will only stay loaded for as long as at least one instance exists.</li>
+</ul>
+<p>For the case of one-shots, this may mean that the sample data is constantly loaded and unloaded whenever a one-shot plays, which is not a good approach. For these sort of common sounds, it is better to call <a class="apilink" href="studio-api-eventdescription.html#studio_eventdescription_loadsampledata" title="Loads non-streaming sample data used by the event.">Studio::EventDescription::loadSampleData</a> so the sample data stays in memory rather than constantly unloading then reloading it.</p>
+<p>The three approaches to bank loading can be combined. The sample data will stay loaded for as long as at least of the three conditions are met.</p>
+<h4 id="idle-pool"><a href="#idle-pool">Idle Pool</a></h4>
+<p>For users who don't explicitly load sample data, sounds will be loaded and unloaded on demand. To help avoid unnecessary file access, there is an idle pool for recently used sounds. When a sound is no longer needed (e.g due to an event instance finishing), its sample data will be placed into the idle pool to be reused later if needed.</p>
+<p>By default, the idle pool is set to 256kB in size. This can be customized via the <a class="apilink" href="studio-api-system.html#fmod_studio_advancedsettings_idlesampledatapoolsize" title="">FMOD_STUDIO_ADVANCEDSETTINGS::idleSampleDataPoolSize</a> field.</p>
+<h3 id="streaming-data"><a href="#streaming-data">Streaming Data</a></h3>
+<p>Streaming data is automatically loaded on demand when needed. There is no API for it since it cannot be preloaded or unloaded.</p>
+<h3 id="strings-bank"><a href="#strings-bank">Strings Bank</a></h3>
+<p>The Strings bank is a special bank which contains the string lookup of event path to GUID. The strings bank functions identically to a normal bank except that it never contains sample or streaming sound data.</p>
+<h3 id="bank-unload"><a href="#bank-unload">Bank Unload</a></h3>
+<p>Banks can be unloaded by calling <a class="apilink" href="studio-api-bank.html#studio_bank_unload" title="Unloads the bank.">Studio::Bank::unload</a>. Unloading a bank will free all sample data, invalidate the events descriptions belonging to that bank, and destroy associated instances.</p></div>
+
+<p class="manual-footer">FMOD API User Manual 2.00.04 (2019-09-05). &copy; 2019 Firelight Technologies Pty Ltd.</p>
+</body>
+</html>
+
+</div>
