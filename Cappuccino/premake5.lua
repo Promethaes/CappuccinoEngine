@@ -57,11 +57,11 @@ local config = " "
       config = "\\Release\\"
       os.execute("ECHO Building Project...")
       os.execute("mkdir " .. "build\\build\\"..arch..config)
-      os.execute("XCOPY " .. "..\\\"External Dependencies\"\\\"FMOD Studio API Windows\"\\api\\core\\lib\\x64\\fmod.dll " .."build\\build\\"..arch..config)
+      os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
       config = "\\Debug\\"
       os.execute("mkdir " .. "build\\build\\"..arch..config)
-      os.execute("XCOPY " .. "..\\\"External Dependencies\"\\\"FMOD Studio API Windows\"\\api\\core\\lib\\x64\\fmod.dll " .."build\\build\\"..arch..config)
-
+      os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
+      
       os.execute("Pause");
 
 project "Cappuccino - Built"
