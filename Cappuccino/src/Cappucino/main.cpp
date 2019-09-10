@@ -1,7 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <Cappuccino/CapMacros.h>
+#include "Cappuccino/CappMacros.h"
+
 
 #pragma region PROGRAM SETTINGS
 
@@ -21,7 +22,7 @@ int main() {
 		CAPP_PRINT_ERROR("Error initializing GLFW!\nExiting...");
 		SYS_EXIT(-1);
 	}
-	CAPP_PRINT("Success! Setting GLFW Window Hints...")
+	CAPP_PRINT("Success! Setting GLFW Window Hints...");
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -56,7 +57,7 @@ int main() {
 
 	#pragma region RENDER LOOP
 
-	CAPP_PRINT("\n----------STARTING RENDER LOOP...\n")
+	CAPP_PRINT("\n----------STARTING RENDER LOOP...\n");
 	while (!glfwWindowShouldClose(window)) {
 
 		// TODO: PROCESS INPUTS
