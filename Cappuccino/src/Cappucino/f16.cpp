@@ -5,7 +5,7 @@
 
 namespace Cappuccino {
 	F16::F16(const Mesh& MESH, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex)
-		:GameObject(SHADER,  std::vector<Texture*>{new Texture(std::string(std::getenv("EspressoShotPath")) + "Assets/Textures/Metal_specmap.png", TextureType::SpecularMap), new Texture(std::string(std::getenv("EspressoShotPath")) + "Assets/Textures/container2.png", TextureType::SpecularMap)},
+		:GameObject(SHADER,  std::vector<Texture*>{new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/Metal_specmap.png", TextureType::SpecularMap), new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/container2.png", TextureType::SpecularMap)},
 							 std::vector<Mesh*>	 {new Mesh(MESH)})
 	{
 		id = "F16";

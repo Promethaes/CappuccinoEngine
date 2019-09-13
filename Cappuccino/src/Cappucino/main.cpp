@@ -19,7 +19,6 @@
 #include "Cappuccino/f16.h"
 
 
-#define _CRT_SECURE_NO_WARNINGS
 #define Scenes Cappuccino::Scene::scenes
 #define GameObjects Cappuccino::GameObject::gameObjects
 

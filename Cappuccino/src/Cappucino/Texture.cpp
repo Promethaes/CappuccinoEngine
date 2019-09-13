@@ -7,7 +7,7 @@ namespace Cappuccino {
 	{
 		_path = PATH;
 		type = ID;
-		load();
+		//load();
 		/////<if it wasn't obvious, a lot of this code isn't mine, but this entire section is ACTUALLY copy and pasted to shit so...not like other sections aren't but yeah>
 		//glGenTextures(1, &texture);
 		//glBindTexture(GL_TEXTURE_2D, texture);

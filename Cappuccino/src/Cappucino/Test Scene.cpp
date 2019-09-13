@@ -51,9 +51,9 @@ Cappuccino::TestScene::TestScene(bool firstScene)
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
-	specularMap = Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/Metal_specmap.png",TextureType::SpecularMap);
+	specularMap = Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\Metal_specmap.png",TextureType::SpecularMap);
 	for (int i = 0; i < 10; i++) {
-		cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/container2.png",TextureType::DiffuseMap), true));
+		cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png",TextureType::DiffuseMap), true));
 		cubes.back().position = (glm::vec3(i + rand() % 5, rand() % 5 + 1, i + rand() % 5) *= -1);
 	}
 	specularMap.load();
