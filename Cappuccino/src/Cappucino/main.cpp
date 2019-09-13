@@ -21,6 +21,8 @@
 
 #define Scenes Cappuccino::Scene::scenes
 #define GameObjects Cappuccino::GameObject::gameObjects
+#define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
+#define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -37,16 +39,18 @@ Cappuccino::Camera* defaultCamera = new Cappuccino::Camera();
 
 float dt = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
+	
 int main() {
 	srand(time(0));
 
 	//initialize glfw
 #pragma region InitialzeGLFW
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+	//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+	GLint type = 0;
 
 	GLFWwindow* window = glfwCreateWindow(800 * 2, 600 * 2, "Cappuccino Test", NULL, NULL);
 	if (window == NULL)
@@ -67,9 +71,9 @@ int main() {
 		return -1;
 	}
 	//end initialization
+	
 #pragma endregion
 	
-
 
 
 #pragma region InitializeFmod
@@ -117,12 +121,12 @@ int main() {
 
 	//run this scene
 	//if (sceneTest)
-		Cappuccino::TestScene* s = new Cappuccino::TestScene(true);
+	//	Cappuccino::TestScene* s = new Cappuccino::TestScene(true);
 
 
 	glEnable(GL_DEPTH_TEST);
 
-
+	std::cout << glGetString(GL_RENDERER) << "\n";
 	//render loop
 	while (!glfwWindowShouldClose(window))
 	{

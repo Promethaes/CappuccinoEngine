@@ -8,7 +8,7 @@
 #include "Cappuccino/f16.h"
 
 #define CUBETEST false
-#define _CRT_SECURE_NO_WARNINGS
+
 
 namespace Cappuccino {
 

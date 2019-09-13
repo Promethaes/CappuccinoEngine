@@ -1,7 +1,6 @@
 #include "Cappuccino/f16.h"
 #include "Cappuccino/Events.h"
 #include "Cappuccino/Input.h"
-#define _CRT_SECURE_NO_WARNINGS
 
 namespace Cappuccino {
 	F16::F16(const Mesh& MESH, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex)
@@ -19,27 +18,27 @@ namespace Cappuccino {
 			_f16Pos += _f16ModelMat[0] * 2.5f * dt;
 		if (isEvent(Events::A)) {
 			_f16RotationV -= glm::vec3(1, 0, 0);
-			_f16RotationFloat -= 0.005f;
+			_f16RotationFloat -= 4*dt;
 		}
 		if (isEvent(Events::D)) {
 			_f16RotationV += glm::vec3(1, 0, 0);
-			_f16RotationFloat += 0.005f;
+			_f16RotationFloat += 4*dt;
 		}
 		if (isEvent(Events::Q)) {
 			_f16RotationV -= glm::vec3(0, 1, 0);
-			_f16RotationFloat -= 0.005f;
+			_f16RotationFloat -= 4*dt;
 		}
 		if (isEvent(Events::E)) {
 			_f16RotationV += glm::vec3(0, 1, 0);
-			_f16RotationFloat += 0.005f;
+			_f16RotationFloat += 4*dt;
 		}
 		if (isEvent(Events::C)) {
 			_f16RotationV -= glm::vec3(0, 0, 1);
-			_f16RotationFloat -= 0.005f;
+			_f16RotationFloat -= 4*dt;
 		}
 		if (isEvent(Events::Z)) {
 			_f16RotationV += glm::vec3(0, 0, 1);
-			_f16RotationFloat += 0.005f;
+			_f16RotationFloat += 4*dt;
 		}
 		draw();
 	}
