@@ -55,7 +55,7 @@ local config = " "
 
 project "Cappuccino Engine"
     kind "StaticLib"
-    targetname{"Capp"}
-    targetextension {".lib"}
     configuration "windows"
+        targetextension ".lib"
+        targetname "capp"
         links { "opengl32", "glfw3.lib","fmod_vc.lib"}
