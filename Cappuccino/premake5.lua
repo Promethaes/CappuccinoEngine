@@ -42,13 +42,14 @@ local config = " "
 
    filter {}
       libdirs{"libs/" .. arch .. config,"libs/" .. arch .. config.."/Fmod"}
-      config = "\\Release\\"
       os.execute("ECHO Building Project...")
-      os.execute("mkdir " .. "build\\build\\"..arch..config)
-      os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
-      config = "\\Debug\\"
-      os.execute("mkdir " .. "build\\build\\"..arch..config)
-      os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
+     
+     -- config = "\\Release\\"
+     -- os.execute("mkdir " .. "build\\build\\"..arch..config)
+     -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
+     -- config = "\\Debug\\"
+     -- os.execute("mkdir " .. "build\\build\\"..arch..config)
+     -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
       
       os.execute("Pause");
 
