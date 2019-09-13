@@ -58,11 +58,13 @@ int main() {
 
 	#pragma endregion 
 
+
+	
 	#pragma region RENDER LOOP
 
 	CAPP_PRINT_N("----------STARTING RENDER LOOP----------");	
-	CAPP_PRINT_N("Using OpenGL version %s", (char*)glGetString(GL_VERSION));
-	CAPP_PRINT_N("Using %s GPU to render", (char*)glGetString(GL_RENDERER));
+	CAPP_PRINT_N("Using OpenGL version %s", reinterpret_cast<char const*>(glGetString(GL_VERSION)));
+	CAPP_PRINT_N("Using %s GPU to render", reinterpret_cast<char const*>(glGetString(GL_RENDERER)));
 	
 	while (!glfwWindowShouldClose(window)) {
 
@@ -80,6 +82,8 @@ int main() {
 	}
 
 	#pragma	endregion
+
+	
 
 	#pragma region PROGRAM TERMINATION
 

@@ -1,8 +1,11 @@
 #ifndef CAPP_MACROS_H
 #define CAPP_MACROS_H
 
+#include "Cappuccino/HighPerformanceSwitch.h"
+
 #include <windows.h>
 #include <iostream>
+
 
 #define _CRT_SECURE_NO_WARNINGS
 

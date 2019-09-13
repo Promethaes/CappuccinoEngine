@@ -31,7 +31,7 @@ namespace Cappuccino {
  * Req.: No parameters
  * Returns: void
  */
-		void use();
+		void use() const;
 
 /*
  * Purp.: Changes the directory in which the shader program looks for the shader source files
@@ -39,7 +39,7 @@ namespace Cappuccino {
  *     directory: the directory in which to look for, use "default" to look in default directory ( %CappuccinoPath%\Assets\Shaders\ )
  * Returns: Nothing
  */
-		void changeShaderDirectory(const std::string& directory);
+		void changeShaderDirectory(const std::string& directory) const;
 
 /*
  * Purp.: Looks for and sets uniform variables in a specific shader
@@ -82,8 +82,10 @@ namespace Cappuccino {
 		
 	private:
 
+		// Function to load files as strings (used for shader source code)
+		static bool loadFileAsString(const std::string& file, std::string& output);
 		// Function to compile shaders in the constructor
-		void compileShader(const std::string& shaderPath, const ShaderType& type, GLuint& shader);
+		static void compileShader(const std::string& shaderPath, const ShaderType& type, GLuint& shader);
 		// Function to link shaders together after compilation
 		void createProgram(const GLuint vertex, const GLuint fragment, const GLuint geometry);
 		

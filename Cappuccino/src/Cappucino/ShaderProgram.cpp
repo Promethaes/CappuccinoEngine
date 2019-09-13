@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 using string = std::string;
 using ifstream = std::ifstream;
@@ -138,9 +139,17 @@ Cappuccino::Shader::Shader(const string& vertShaderPath, const string& fragShade
 	*/
 }
 
-void Cappuccino::Shader::use() { glUseProgram(_programID); }
+void Cappuccino::Shader::use() const { glUseProgram(_programID); }
 
-void Cappuccino::Shader::changeShaderDirectory(const string& directory) { _shaderDirectory = directory; }
+void Cappuccino::Shader::changeShaderDirectory(const string& directory) const {
+	string dir = directory;
+	std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
+	
+	if(dir == "default")
+		_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
+	else
+		_shaderDirectory = directory;
+}
 
 void Cappuccino::Shader::setUniform(const std::string& name, const bool value) const {
 	glUniform1i(
@@ -160,34 +169,32 @@ void Cappuccino::Shader::setUniform(const std::string& name, const GLfloat value
 
 GLuint Cappuccino::Shader::getID() const { return _programID; }
 
+// This function is brought to us by courtesy of Emilian.cpp
+bool Cappuccino::Shader::loadFileAsString(const std::string& file, std::string& output) {
+	const ifstream inStream(file.data());
+	sstream fileContent;
+
+	if(!inStream.good()) {
+		return false;
+	}
+
+	fileContent << inStream.rdbuf();
+	output = fileContent.str();
+	
+	return true;
+}
+
 void Cappuccino::Shader::compileShader(const string& shaderPath, const ShaderType& type, GLuint& shader) {
-	ifstream shaderFile;
-	sstream shaderStream;
 	string shaderString;
 	const GLchar *shaderSource;
 
-	shaderFile.exceptions(ifstream::failbit | ifstream::badbit);
-
 	CAPP_PRINT("Reading source code...");
-	try {
-		shaderFile.open(_shaderDirectory + shaderPath);
-		shaderStream << shaderFile.rdbuf();
-		shaderString = shaderStream.str();
-		shaderFile.close();
-		
-		shaderSource = shaderString.c_str();
-		throw 1;
-	}
-	catch(ifstream::failure& error) {
+	if(!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
 		CAPP_PRINT_ERROR("Failed to read shader from file!");
-		CAPP_PRINT_ERROR("%s", error.what());
-		shaderSource = "";
+		shaderString = "";
 	}
-	catch(int success) {
-		if(success) {
-			CAPP_PRINT_N("Success!");
-		}
-	}
+
+	shaderSource = shaderString.c_str();
 
 	CAPP_PRINT("Compiling shader...");
 	GLint success;
@@ -219,7 +226,6 @@ void Cappuccino::Shader::compileShader(const string& shaderPath, const ShaderTyp
 		CAPP_PRINT_ERROR("Failed to compile shader!");
 		CAPP_PRINT_ERROR(infoLog);
 	}
-	CAPP_PRINT_N("Success!");
 }
 
 void Cappuccino::Shader::createProgram(const GLuint vertex, const GLuint fragment, const GLuint geometry) {
@@ -254,8 +260,12 @@ void Cappuccino::Shader::createProgram(const GLuint vertex, const GLuint fragmen
 		CAPP_PRINT_ERROR(infoLog);						
 	}
 
-	CAPP_PRINT_N("Success! Deleting shaders...");
-	glDeleteShader(vertex);								
-	glDeleteShader(fragment);							
+	CAPP_PRINT_N("Deleting shaders...");
+	if (vertex)
+		glDeleteShader(vertex);
+	if (fragment)
+		glDeleteShader(fragment);
+	if (geometry)
+		glDeleteShader(geometry);
 }
 
