@@ -22,9 +22,9 @@
 
 #pragma region PROGRAM SETTINGS
 
-constexpr GLuint  SCR_WIDTH  = 800*2;
+constexpr GLuint  SCR_WIDTH =  800*2;
 constexpr GLuint  SCR_HEIGHT = 600*2;
-constexpr GLchar* SCR_NAME   = "Cappuccino Engine v1.0";
+constexpr GLchar* SCR_NAME = "Cappuccino Engine v1.0";
 
 #pragma endregion
 
@@ -48,29 +48,29 @@ float lastFrame = 0.0f; // Time of last frame
 int main() {
 	srand(time(0));
 
-	#pragma region GLFW/GLAD SETUP
+#pragma region GLFW/GLAD SETUP
 
 	CAPP_PRINT_N("----------INITIALIZING GLFW----------");
 	if (!glfwInit()) {
 		CAPP_PRINT_ERROR("Error initializing GLFW!\nExiting...");
 		SYS_EXIT(-1);
 	}
-	
+
 	CAPP_PRINT_N("Success! Setting GLFW Window Hints...\n");
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
-	
+
 	CAPP_PRINT_N("----------CREATING GLFW WINDOW----------");
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, SCR_NAME, NULL, NULL);
 
-	if(window == NULL) {
+	if (window == NULL) {
 		const char* error;
 		glfwGetError(&error);
 		CAPP_PRINT_ERROR(error);
-		
+
 		CAPP_PRINT_ERROR("Error creating GLFW window!\nExiting...");
 		glfwTerminate();
 		SYS_EXIT(-2);
@@ -79,9 +79,10 @@ int main() {
 	CAPP_PRINT_N("Success! Setting window settings...\n");
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); });
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
-	
 	CAPP_PRINT_N("----------INITIALIZING GLAD----------");
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		CAPP_PRINT_ERROR("Error initializing GLAD!\nExiting...");
@@ -91,16 +92,19 @@ int main() {
 
 	CAPP_PRINT_N("Success! OpenGL function pointers loaded.\n");
 
-	#pragma endregion 
+#pragma endregion 
 
 
-	
-	#pragma region RENDER LOOP
 
-	CAPP_PRINT_N("----------STARTING RENDER LOOP----------");	
+#pragma region RENDER LOOP
+
+	CAPP_PRINT_N("----------STARTING RENDER LOOP----------");
 	CAPP_PRINT_N("Using OpenGL version %s", reinterpret_cast<char const*>(glGetString(GL_VERSION)));
 	CAPP_PRINT_N("Using %s GPU to render", reinterpret_cast<char const*>(glGetString(GL_RENDERER)));
+
 	
+	glEnable(GL_DEPTH_TEST);
+
 	while (!glfwWindowShouldClose(window)) {
 
 		// TODO: PROCESS INPUTS HERE!!!
@@ -128,11 +132,11 @@ int main() {
 		glfwPollEvents();
 	}
 
-	#pragma	endregion
+#pragma	endregion
 
-	
 
-	#pragma region PROGRAM TERMINATION
+
+#pragma region PROGRAM TERMINATION
 
 	CAPP_PRINT_N("----------CLEANING UP AND EXITING----------");
 
@@ -140,12 +144,12 @@ int main() {
 	CAPP_PRINT_N("GLFW Terminated.\n");
 
 #if _DEBUG
-//this spreads viruses
-	//system("pause");
+	//this spreads viruses
+		//system("pause");
 #endif
 	return 0;
 
-	#pragma	endregion
+#pragma	endregion
 }
 
 void processInput(Cappuccino::Camera& defaultCamera, float dt, GLFWwindow* window)
