@@ -23,15 +23,17 @@ local config = " "
       symbols "On"
       targetdir ("build/build/" .. arch .. "/Debug")
       config = "/Debug"
+      libdirs{os.getenv("CappuccinoPath").."libs/" .. arch .. "/Debug",os.getenv("CappuccinoPath").."libs/" .. arch .. "/Debug".."/Fmod"}
 
    filter "configurations:Release"
       defines { "NDEBUG" }
       optimize "On"
       targetdir ("build/build/" .. arch .. "/Release")
       config = "/Release"
+      libdirs{os.getenv("CappuccinoPath").."libs/" .. arch .. "/Release",os.getenv("CappuccinoPath").."libs/" .. arch .. "/Release".."/Fmod"}
+
 
    filter {}
-      libdirs{os.getenv("CappuccinoPath").."libs/" .. arch .. config,os.getenv("CappuccinoPath").."libs/" .. arch .. config.."/Fmod"}
       
       -- config = "\\Release\\"
       -- os.execute("mkdir " .. "build\\build\\"..arch..config)
@@ -42,6 +44,9 @@ local config = " "
       os.execute("ECHO Enter Project Name")
       local s = io.read();
       os.execute("ECHO Creating Project...")
+      os.execute("mkdir " ..solutionDir.."\\src")
+      os.execute("XCOPY main.cpp " .. solutionDir .. "\\src")
+      files{solutionDir.."\\src\\**.cpp"}
       
 project (s)
     kind "ConsoleApp"
