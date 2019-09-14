@@ -101,35 +101,35 @@ void Cappuccino::TestScene::childUpdate(float dt,Camera& defaultCamera)
 #endif
 	_lightingShader.loadViewMatrix(defaultCamera);
 	_lightingShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
-	_lightingShader.setInt("material.diffuse", 0);
-	_lightingShader.setInt("material.specular", 1);
-	_lightingShader.setFloat("material.shininess", 32.0f);
+	_lightingShader.setUniform("material.diffuse", (int)0);
+	_lightingShader.setUniform("material.specular", (int)1);
+	_lightingShader.setUniform("material.shininess", (float)32.0f);
 
 	// directional light
-	_lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	_lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-	_lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-	_lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+	_lightingShader.setUniform("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	_lightingShader.setUniform("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	_lightingShader.setUniform("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	_lightingShader.setUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 	for (unsigned i = 0; i < 4; i++) {
 
-		_lightingShader.setVec3 ("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
-		_lightingShader.setVec3 ("pointLights[" + std::to_string(i) + "].ambient", 0.05f * 2, 0.05f * 2, 0.05f * 2);
-		_lightingShader.setVec3 ("pointLights[" + std::to_string(i) + "].diffuse", 0.8f * 2, 0.8f * 2, 0.8f * 2);
-		_lightingShader.setVec3 ("pointLights[" + std::to_string(i) + "].specular", 1.0f * 2, 1.0f * 2, 1.0f * 2);
-		_lightingShader.setFloat("pointLights[" + std::to_string(i) + "].constant", 1.0f * 2);
-		_lightingShader.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09 * 2);
-		_lightingShader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", 0.032 * 2);
+		_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
+		_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].ambient", 0.05f * 2, 0.05f * 2, 0.05f * 2);
+		_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse", 0.8f * 2, 0.8f * 2, 0.8f * 2);
+		_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].specular", 1.0f * 2, 1.0f * 2, 1.0f * 2);
+		_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].constant",		(float)1.0f * 2);
+		_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].linear",		(float)0.09 * 2);
+		_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].quadratic",	(float)0.032 * 2);
 	}
 
 	glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1);
 	glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
 	glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
 
-	_lightingShader.setVec3("light.ambient", ambientColor);
-	_lightingShader.setVec3("light.diffuse", diffuseColor);
-	_lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+	_lightingShader.setUniform("light.ambient", ambientColor);
+	_lightingShader.setUniform("light.diffuse", diffuseColor);
+	_lightingShader.setUniform("light.specular", 1.0f, 1.0f, 1.0f);
 
 
-	_lightingShader.setVec3("viewPos", defaultCamera.getPosition());
+	_lightingShader.setUniform("viewPos", defaultCamera.getPosition());
 }

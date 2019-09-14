@@ -22,7 +22,7 @@ namespace Cappuccino {
 	void GameObject::draw()
 	{
 		//set active shader
-		glUseProgram(_shader.getId());
+		glUseProgram(_shader.getID());
 
 		//bind the textures to their proper slots
 		for (unsigned i = 0; i < _textures.size(); i++) {

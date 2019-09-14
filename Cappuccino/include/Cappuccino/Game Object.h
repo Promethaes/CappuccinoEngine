@@ -20,7 +20,7 @@ namespace Cappuccino {
 
 		void setShader(const Shader& SHADER) {
 			_shader = SHADER;
-			_shader.createProgram();
+			_shader.createShader();
 		}
 
 		static std::vector<GameObject*> gameObjects;

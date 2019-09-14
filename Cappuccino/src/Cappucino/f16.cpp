@@ -45,7 +45,7 @@ namespace Cappuccino {
 
 	void Cappuccino::F16::draw()
 	{
-		glUseProgram(_shader.getId());
+		glUseProgram(_shader.getID());
 
 		for (unsigned i = 0; i < _textures.size(); i++) {
 			if (_textures[i]->type == TextureType::DiffuseMap)
