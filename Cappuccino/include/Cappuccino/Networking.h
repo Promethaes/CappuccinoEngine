@@ -4,6 +4,7 @@
 #include <vector>
 #pragma comment(lib,"ws2_32.lib")
 
+//i followed this tutorial https://www.youtube.com/watch?v=uIanSvWou1M&
 
 class WinSocketCommon {
 public:
