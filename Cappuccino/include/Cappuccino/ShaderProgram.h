@@ -1,9 +1,12 @@
 #pragma once
-
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <GLFW/glfw3.h>
+#include <optional>
 #include <string>
-
 namespace Cappuccino {
+	class Camera;
+
 	enum class ShaderType : GLuint {
 		VERTEX = 0,
 		FRAGMENT,
@@ -47,16 +50,17 @@ namespace Cappuccino {
  *     value: the value to set the uniform variable to
  * Returns: void
  */
-		void setUniform(const std::string& name, bool value)    const;
-		void setUniform(const std::string& name, GLint value)   const;
-		void setUniform(const std::string& name, GLfloat value) const;
+		void setUniform(const std::string& name,const bool value)    const;
+		void setUniform(const std::string& name,const GLint value)   const;
+		void setUniform(const std::string& name,const GLfloat value) const;
+		void setUniform(const std::string& name,const glm::vec3& value) const;
+		void setUniform(const std::string& name,const glm::vec4& value) const;
+		void setUniform(const std::string&name, const float x, const float y, const float z) const;
 		
-		//void setUniform(std::string& name, glm::vec3 value) const;
-		//void setUniform(std::string& name, glm::vec4 value) const;
-		//void setUniform(std::string& name, const GLfloat value1, const GLfloat value2, const GLfloat value3) const;
-		//void setUniform(std::string& name, const GLfloat value1, const GLfloat value2, const GLfloat value3, const GLfloat value4 = NULL) const;
-
 		GLuint getID() const;
+		glm::mat4 loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle);
+		void loadViewMatrix(Camera& defaultCamera);
+		void loadProjectionMatrix(float width, float height);
 		
 	private:
 

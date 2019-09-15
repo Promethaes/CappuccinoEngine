@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/Scene Manager.h"
 
 #pragma region PROGRAM SETTINGS
 

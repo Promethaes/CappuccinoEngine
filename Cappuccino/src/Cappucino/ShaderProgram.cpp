@@ -1,14 +1,12 @@
 #include "Cappuccino/ShaderProgram.h"
 #include "Cappuccino/CappMacros.h"
-
+#include "Cappuccino/Camera.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-
 using string = std::string;
 using ifstream = std::ifstream;
 using sstream = std::stringstream;
-
 namespace Cappuccino {
 	
 	string Shader::_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
@@ -17,15 +15,27 @@ namespace Cappuccino {
 		_programID = 0;
 		GLuint vertShader = 0, fragShader = 0, geoShader = 0;
 
+		_vertexShaderPath = vertShaderPath;
+		_fragmentShaderPath = fragShaderPath;
+		_geometryShaderPath = geoShaderPath;
+
+
+	}
+
+	void Shader::createShader()
+	{
+		_programID = 0;
+		GLuint vertShader = 0, fragShader = 0, geoShader = 0;
+
 		CAPP_PRINT_N("----------COMPILING SHADERS----------");
 
 		CAPP_PRINT_N("------VERTEX SHADER------");
-		compileShader(vertShaderPath, ShaderType::VERTEX, vertShader);
+		compileShader(_vertexShaderPath, ShaderType::VERTEX, vertShader);
 		CAPP_PRINT_N("-----FRAGMENT SHADER-----");
-		compileShader(fragShaderPath, ShaderType::FRAGMENT, fragShader);
-		if (!geoShaderPath.empty()) {
+		compileShader(_fragmentShaderPath, ShaderType::FRAGMENT, fragShader);
+		if (!_geometryShaderPath.empty()) {
 			CAPP_PRINT_N("-----GEOMETRY SHADER-----");
-			compileShader(geoShaderPath, ShaderType::GEOMETRY, geoShader);
+			compileShader(_geometryShaderPath, ShaderType::GEOMETRY, geoShader);
 		}
 
 		CAPP_PRINT_N("----------LINKING SHADERS AND CREATING SHADER PROGRAM----------");
@@ -42,22 +52,6 @@ namespace Cappuccino {
 			_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
 		else
 			_shaderDirectory = directory;
-	}
-
-	void Shader::setUniform(const std::string& name, const bool value) const {
-		glUniform1i(
-			glGetUniformLocation(_programID, name.c_str()), static_cast<GLint>(value)
-		);
-	}
-	void Shader::setUniform(const std::string& name, const GLint value) const {
-		glUniform1i(
-			glGetUniformLocation(_programID, name.c_str()), value
-		);
-	}
-	void Shader::setUniform(const std::string& name, const GLfloat value) const {
-		glUniform1f(
-			glGetUniformLocation(_programID, name.c_str()), value
-		);
 	}
 
 	GLuint Shader::getID() const { return _programID; }
@@ -162,4 +156,64 @@ namespace Cappuccino {
 			glDeleteShader(geometry);
 	}
 
+	glm::mat4 Shader::loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+
+		if (translation.has_value())
+			model = glm::translate(model, translation.value());
+		if (scaleBy.has_value())
+			model = glm::scale(model, glm::vec3(scaleBy.value()));
+		if (rotateBy.has_value())
+			model = glm::rotate(model, rotateAngle.value(), rotateBy.value());
+
+		unsigned int modelLoc = glGetUniformLocation(_programID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		return model;
+	}
+
+	void Shader::loadViewMatrix(Camera& defaultCamera)
+	{
+		glm::mat4 view;
+		view = defaultCamera.whereAreWeLooking();
+
+		unsigned int viewLoc = glGetUniformLocation(_programID, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	}
+
+	void Shader::loadProjectionMatrix(float width, float height)
+	{
+		glm::mat4 projection = glm::mat4(1.0f);
+		projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(_programID, "projection"), 1, GL_FALSE, &projection[0][0]);
+
+	}
+
+
+	void Cappuccino::Shader::setUniform(const std::string& name, const bool value) const {
+		glUniform1i(
+			glGetUniformLocation(_programID, name.c_str()), static_cast<GLint>(value)
+		);
+	}
+	void Cappuccino::Shader::setUniform(const std::string& name, const GLint value) const {
+		glUniform1i(
+			glGetUniformLocation(_programID, name.c_str()), value
+		);
+	}
+	void Cappuccino::Shader::setUniform(const std::string& name, const GLfloat value) const {
+		glUniform1f(
+			glGetUniformLocation(_programID, name.c_str()), value
+		);
+	}
+	void Shader::setUniform(const std::string& name, const float x, const float y, const float z) const {
+		glUniform3fv(glGetUniformLocation(_programID, name.c_str()), 1, &(glm::vec3(x, y, z))[0]);
+	}
+	void Shader::setUniform(const std::string& name, const glm::vec3& value) const {
+		glUniform3fv(glGetUniformLocation(_programID, name.c_str()), 1, &value[0]);
+	}
+	void Shader::setUniform(const std::string& name, const glm::vec4& value) const
+	{
+		glUniform4fv(glGetUniformLocation(_programID, name.c_str()), 1, &value[0]);
+
+	}
 }

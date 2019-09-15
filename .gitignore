@@ -331,3 +331,6 @@ ASALocalRun/
 
 */[Bb]uild/
 !*/[Ll]ibs/**/*
+Cappuccino/Assets/source/
+
+Cappuccino/test game project/
