@@ -11,19 +11,19 @@ namespace Cappuccino {
 	
 	string Shader::_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
 
+	Shader::Shader() : _programID(0), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
+
 	Shader::Shader(const string& vertShaderPath, const string& fragShaderPath, const string& geoShaderPath) {
 		_programID = 0;
-		GLuint vertShader = 0, fragShader = 0, geoShader = 0;
 
 		_vertexShaderPath = vertShaderPath;
 		_fragmentShaderPath = fragShaderPath;
 		_geometryShaderPath = geoShaderPath;
 
-
+		createShader();
 	}
 
-	void Shader::createShader()
-	{
+	void Shader::createShader() {
 		_programID = 0;
 		GLuint vertShader = 0, fragShader = 0, geoShader = 0;
 

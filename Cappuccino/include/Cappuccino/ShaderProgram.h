@@ -1,9 +1,10 @@
 #pragma once
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
 #include <optional>
 #include <string>
+
 namespace Cappuccino {
 	class Camera;
 
@@ -17,7 +18,7 @@ namespace Cappuccino {
 	class Shader {
 	public:
 
-		Shader() = default;
+		Shader();
 
 /*
  * Purp.: Creates the shader program using shader files specified by the constructor parameters
@@ -35,6 +36,9 @@ namespace Cappuccino {
  */
 		void use() const;
 
+		
+		void createShader();
+		
 /*
  * Purp.: Changes the directory in which the shader program looks for the shader source files
  * Req.:
@@ -73,6 +77,10 @@ namespace Cappuccino {
 		
 		GLuint _programID;
 		static std::string _shaderDirectory;
+
+		std::string _vertexShaderPath;
+		std::string _fragmentShaderPath;
+		std::string _geometryShaderPath;
 		
 	};
 	
