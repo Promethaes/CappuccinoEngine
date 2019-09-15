@@ -1,5 +1,4 @@
-#ifndef CAPP_MACROS_H
-#define CAPP_MACROS_H
+#pragma once
 
 #include "Cappuccino/HighPerformanceSwitch.h"
 
@@ -31,7 +30,5 @@
 #define CAPP_PRINT_N					__noop
 #define CAPP_PRINT_ERROR				__noop
 #define SYS_EXIT						__noop
-
-#endif
 
 #endif

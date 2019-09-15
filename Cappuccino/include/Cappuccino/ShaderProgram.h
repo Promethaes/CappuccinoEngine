@@ -1,5 +1,4 @@
-#ifndef SHADER_PROGRAM_H
-#define SHADER_PROGRAM_H
+#pragma once
 
 #include <glad/glad.h>
 #include <string>
@@ -49,23 +48,7 @@ namespace Cappuccino {
  * Returns: void
  */
 		void setUniform(const std::string& name, bool value)    const;
-
-/*
- * Purp.: Looks for and sets uniform variables in a specific shader
- * Req.:
- *     name: the name of the shader where the variable is
- *     value: the value to set the uniform variable to
- * Returns: void
- */
 		void setUniform(const std::string& name, GLint value)   const;
-
-/*
- * Purp.: Looks for and sets uniform variables in a specific shader
- * Req.:
- *     name: the name of the shader where the variable is
- *     value: the value to set the uniform variable to
- * Returns: void
- */
 		void setUniform(const std::string& name, GLfloat value) const;
 		
 		//void setUniform(std::string& name, glm::vec3 value) const;
@@ -73,11 +56,6 @@ namespace Cappuccino {
 		//void setUniform(std::string& name, const GLfloat value1, const GLfloat value2, const GLfloat value3) const;
 		//void setUniform(std::string& name, const GLfloat value1, const GLfloat value2, const GLfloat value3, const GLfloat value4 = NULL) const;
 
-/*
- * Purp.: Returns the shader program ID as defined by OpenGL
- * Req.: No parameters
- * Returns: the shader's programID (GLuint)
- */
 		GLuint getID() const;
 		
 	private:
@@ -87,7 +65,7 @@ namespace Cappuccino {
 		// Function to compile shaders in the constructor
 		static void compileShader(const std::string& shaderPath, const ShaderType& type, GLuint& shader);
 		// Function to link shaders together after compilation
-		void createProgram(const GLuint vertex, const GLuint fragment, const GLuint geometry);
+		void createProgram(GLuint vertex, GLuint fragment, GLuint geometry);
 		
 		GLuint _programID;
 		static std::string _shaderDirectory;
@@ -95,5 +73,3 @@ namespace Cappuccino {
 	};
 	
 }
-
-#endif
