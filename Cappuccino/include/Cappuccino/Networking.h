@@ -4,7 +4,6 @@
 #include <vector>
 #pragma comment(lib,"ws2_32.lib")
 
-//i followed this tutorial https://www.youtube.com/watch?v=uIanSvWou1M&
 
 class WinSocketCommon {
 public:
@@ -15,15 +14,17 @@ protected:
 
 };
 
-class Server : public WinSocketCommon {
+class Network : public WinSocketCommon {
 public:
-	Server(unsigned port);
-	void listen();
-	void recvfromPackets();
+	Network(unsigned port,const std::string& IP);
 
-	void cleanup();
+	void sendMessage(const std::string& message, const std::string& IP);
+	void listen();
+
 private:
+	int port;
 	SOCKET in = socket(AF_INET, SOCK_DGRAM, 0);
+	SOCKET out = socket(AF_INET, SOCK_DGRAM, 0);
 	sockaddr_in serverHint;
 	sockaddr_in client;
 	int clientLength;
@@ -31,24 +32,3 @@ private:
 
 };
 
-class Client : public WinSocketCommon {
-public:
-	Client(unsigned port);
-	void sendMessage(const std::string& message);
-
-private:
-	sockaddr_in server;
-	SOCKET out = socket(AF_INET, SOCK_DGRAM, 0);
-};
-class Network {
-public:
-	Network(unsigned port);
-	~Network();
-	void sendMessage(const std::string& message);
-	void listen();
-
-private:
-	bool firstListen = true;
-	Client* client;
-	Server* server;
-};

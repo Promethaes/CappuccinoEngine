@@ -20,15 +20,17 @@ WinSocketCommon::WinSocketCommon()
 	}
 }
 
-Server::Server(unsigned port)
+Network::Network(unsigned port,const std::string& IP)
 {
 	if (!winSocketInitialized)
 		return;
-
+	this->port = port;
 
 	serverHint.sin_addr.S_un.S_addr = ADDR_ANY;
 	serverHint.sin_family = AF_INET;
 	serverHint.sin_port = htons(port);
+
+	inet_pton(AF_INET, IP.c_str(), &serverHint.sin_addr);
 
 	if (bind(in, (sockaddr*)& serverHint, sizeof(serverHint)) == SOCKET_ERROR) {
 		std::cout << "can't find socket " << WSAGetLastError() << "\n";
@@ -36,16 +38,30 @@ Server::Server(unsigned port)
 	}
 	clientLength = sizeof(client);
 	ZeroMemory(&client, clientLength);
-
-
-
 }
 
-void Server::listen()
+void Network::sendMessage(const std::string& message, const std::string& IP)
+{
+	sockaddr_in temp;
+	temp.sin_addr.S_un.S_addr = ADDR_ANY;
+	temp.sin_family = AF_INET;
+	temp.sin_port = htons(port);
+
+	inet_pton(AF_INET, IP.c_str(), &temp.sin_addr);
+
+	int sendOk = sendto(out, message.c_str(), message.size() + 1, 0, (sockaddr*)& temp, sizeof(temp));
+
+	if (sendOk == SOCKET_ERROR)
+		std::cout << "failed " << WSAGetLastError() << "\n";
+}
+
+void Network::listen()
 {
 	ZeroMemory(&buf, 1024);
 
-	recvfromPackets();
+	int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)& client, &clientLength);
+	if (bytesIn == SOCKET_ERROR)
+		std::cout << "error recieving from client " << WSAGetLastError() << "\n";
 
 	char clientIp[256];
 	ZeroMemory(&clientIp, 256);
@@ -53,58 +69,8 @@ void Server::listen()
 	inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
 
 	std::cout << clientIp << " : " << buf << "\n";
-}
-void Server::recvfromPackets()
-{
-	int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)& client, &clientLength);
-	if (bytesIn == SOCKET_ERROR)
-		std::cout << "error recieving from client " << WSAGetLastError() << "\n";
+	sendMessage("Message Received Anthony", clientIp);
 }
 
-void Server::cleanup()
-{
-	closesocket(in);
-}
 
-Client::Client(unsigned port)
-{
-	server.sin_family = AF_INET;
-	server.sin_port = htons(port);
-	inet_pton(AF_INET, "127.0.0.1", &server.sin_addr);
-}
-
-void Client::sendMessage(const std::string& message)
-{
-	int sendOk = sendto(out, message.c_str(), message.size() + 1, 0, (sockaddr*)& server, sizeof(server));
-
-	if (sendOk == SOCKET_ERROR)
-		std::cout << "failed " << WSAGetLastError() << "\n";
-}
-
-Network::Network(unsigned port)
-	:server(new Server(port))
-{
-	client = (new Client(port));
-}
-
-Network::~Network()
-{
-	delete client;
-	delete server;
-}
-
-void Network::sendMessage(const std::string& message)
-{
-	client->sendMessage(message);
-}
-
-void Network::listen()
-{
-	if (firstListen) {
-		client->sendMessage("ping");
-		firstListen = false;
-	}
-
-	server->listen();
-}
 
