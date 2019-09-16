@@ -1,4 +1,3 @@
-
 os.execute("ECHO Enter Project Directory")
 local solutionDir = io.read()
 workspace "Cappuccino Game"
@@ -45,7 +44,7 @@ local config = " "
       local s = io.read();
       os.execute("ECHO Creating Project...")
       os.execute("mkdir " ..solutionDir.."\\src")
-      os.execute("XCOPY main.cpp " .. solutionDir .. "\\src")
+      os.execute("XCOPY %CappuccinoPath%\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
       files{solutionDir.."\\src\\**.cpp"}
       
 project (s)

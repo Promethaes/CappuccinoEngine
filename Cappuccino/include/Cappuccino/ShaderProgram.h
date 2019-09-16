@@ -1,13 +1,13 @@
-#ifndef SHADER_PROGRAM_H
-#define SHADER_PROGRAM_H
+#pragma once
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
 #include <optional>
 #include <string>
+
 namespace Cappuccino {
 	class Camera;
+
 	enum class ShaderType : GLuint {
 		VERTEX = 0,
 		FRAGMENT,
@@ -18,7 +18,7 @@ namespace Cappuccino {
 	class Shader {
 	public:
 
-		Shader() = default;
+		Shader();
 
 /*
  * Purp.: Creates the shader program using shader files specified by the constructor parameters
@@ -28,7 +28,7 @@ namespace Cappuccino {
  *    geoShaderPath: the file path to the geometry shader (empty by default)
  */
 		Shader(const std::string& vertShaderPath, const std::string& fragShaderPath, const std::string& geoShaderPath = "");
-		void createShader();
+
 /*
  * Purp.: Activates the shader for use
  * Req.: No parameters
@@ -36,6 +36,9 @@ namespace Cappuccino {
  */
 		void use() const;
 
+		
+		void createShader();
+		
 /*
  * Purp.: Changes the directory in which the shader program looks for the shader source files
  * Req.:
@@ -65,12 +68,12 @@ namespace Cappuccino {
 		
 	private:
 
-		void createProgram(const GLuint vertex, const GLuint fragment, const GLuint geometry);
 		// Function to load files as strings (used for shader source code)
 		static bool loadFileAsString(const std::string& file, std::string& output);
 		// Function to compile shaders in the constructor
 		static void compileShader(const std::string& shaderPath, const ShaderType& type, GLuint& shader);
 		// Function to link shaders together after compilation
+		void createProgram(GLuint vertex, GLuint fragment, GLuint geometry);
 		
 		GLuint _programID;
 		static std::string _shaderDirectory;
@@ -82,5 +85,3 @@ namespace Cappuccino {
 	};
 	
 }
-
-#endif
