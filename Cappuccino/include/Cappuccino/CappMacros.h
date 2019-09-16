@@ -12,6 +12,8 @@
 
 #if _DEBUG
 
+#define NETWORKTEST true
+
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 
 #define CAPP_PRINT_N(message, ...)		printf(message, ##__VA_ARGS__);\

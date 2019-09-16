@@ -1,7 +1,12 @@
 #include "Cappuccino/Application.h"
-
+#if NETWORKTEST
+#include <Cappuccino/Networking.h>
+Network network(54000,"");///<edit here>
+#endif
 
 namespace Cappuccino {
+
+
 
 	GLuint  Application::_width = 10u;
 	GLuint  Application::_height = 10u;
