@@ -119,20 +119,20 @@ namespace Cappuccino {
 		_programID = glCreateProgram();
 
 		CAPP_PRINT_N("Linking shaders...");
-		if (vertex)
+		//if (vertex)
 			glAttachShader(_programID, vertex);
-		else
-			CAPP_PRINT_ERROR("No vertex shader linked!");
+		//else
+		//	CAPP_PRINT_ERROR("No vertex shader linked!");
 
-		if (fragment)
+		//if (fragment)
 			glAttachShader(_programID, fragment);
-		else
-			CAPP_PRINT_ERROR("No fragment shader linked!");
+		//else
+		//	CAPP_PRINT_ERROR("No fragment shader linked!");
 
-		if (geometry)
+		//if (geometry)
 			glAttachShader(_programID, geometry);
-		else
-			CAPP_PRINT_ERROR("No geometry shader linked!");
+		//else
+		//	CAPP_PRINT_ERROR("No geometry shader linked!");
 
 		CAPP_PRINT("Creating program...");
 		GLint success;

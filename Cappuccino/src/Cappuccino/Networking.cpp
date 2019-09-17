@@ -69,7 +69,24 @@ void Network::listen()
 	inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
 
 	std::cout << clientIp << " : " << buf << "\n";
-	sendMessage("Message Received Anthony", clientIp);
+	sendMessage("Message Recieved Anthony", clientIp);
+}
+
+std::string Network::listen(bool returnString)
+{
+	ZeroMemory(&buf, 1024);
+
+	int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)& client, &clientLength);
+	if (bytesIn == SOCKET_ERROR)
+		std::cout << "error recieving from client " << WSAGetLastError() << "\n";
+
+	char clientIp[256];
+	ZeroMemory(&clientIp, 256);
+
+	inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
+
+	std::cout << clientIp << " : " << buf << "\n";
+	return std::string(buf);
 }
 
 
