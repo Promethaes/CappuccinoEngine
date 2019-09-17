@@ -20,6 +20,7 @@ public:
 
 	void sendMessage(const std::string& message, const std::string& IP);
 	void listen();
+	std::string listen(bool returnString);
 
 private:
 	int port;

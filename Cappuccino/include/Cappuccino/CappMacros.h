@@ -12,7 +12,9 @@
 
 #if _DEBUG
 
-#define NETWORKTEST true
+#define SCENETEST false
+
+#define NETWORKTEST false
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 

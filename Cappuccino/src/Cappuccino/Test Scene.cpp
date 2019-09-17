@@ -1,7 +1,9 @@
 #include "Cappuccino/Test Scene.h"
+#include "Cappuccino/CappMacros.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cstdlib>
 
 Cappuccino::TestScene::TestScene(bool firstScene)
 	:Scene(firstScene), specularMap("", TextureType::DiffuseMap)
@@ -132,4 +134,8 @@ void Cappuccino::TestScene::childUpdate(float dt,Camera& defaultCamera)
 
 
 	_lightingShader.setUniform("viewPos", defaultCamera.getPosition());
+#if NETWORKTEST
+	_f16._f16Pos += glm::vec4((float)std::stoi(info)*dt, 0, 0, 1);
+	//std::cout << _f16._f16Pos.x << "\n";
+#endif
 }

@@ -20,4 +20,8 @@ namespace Cappuccino {
 			}
 		}
 	}
+	void Scene::sendString(const std::string& info)
+	{
+		this->info = info;
+	}
 }

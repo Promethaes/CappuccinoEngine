@@ -1,7 +1,30 @@
 #include "Cappuccino/Application.h"
 #if NETWORKTEST
 #include <Cappuccino/Networking.h>
-Network network(54000,"");///<edit here>
+Network network(54000,"192.168.0.101");///<edit here>
+#endif
+#include "Cappuccino/Camera.h"
+#include "Cappuccino/Game Object.h"
+#include "Cappuccino/Scene Manager.h"
+#include "Cappuccino/Test Scene.h"
+
+
+
+#define Scenes Cappuccino::Scene::scenes
+#define GameObjects Cappuccino::GameObject::gameObjects
+
+
+float dt = 0.0f;	// Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
+
+#if SCENETEST
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+float lastX = 400, lastY = 300;
+float yaw = -90.0f;
+float pitch = 0.0f;
+bool firstMouse = true;
+
+Cappuccino::Camera* defaultCamera = new Cappuccino::Camera();
 #endif
 
 namespace Cappuccino {
@@ -64,8 +87,10 @@ namespace Cappuccino {
 		CAPP_PRINT_N("Setting window settings...\n");
 		glfwMakeContextCurrent(window);
 		glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
-
-
+#if SCENETEST
+		glfwSetCursorPosCallback(window, mouse_callback);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+#endif
 
 		CAPP_PRINT_N("----------INITIALIZING GLAD----------");
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -86,17 +111,45 @@ namespace Cappuccino {
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
+
+
+#if SCENETEST
+		TestScene* testScene = new TestScene(true);
+#endif
+
+//#if NETWORKTEST
+//		network.sendMessage("From Anthony","192.168.0.101");
+//#endif
+
+		//glEnable(GL_DEPTH_TEST);
 		while (!glfwWindowShouldClose(window)) {
-			glfwPollEvents();
+			float currentFrame = glfwGetTime();
+			dt = currentFrame - lastFrame;
+			lastFrame = currentFrame;
 			// TODO: PROCESS INPUTS HERE
 
 			// Clear the screen
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			
+			for (unsigned i = 0; i < Scenes.size(); i++) {
+				if (!Scenes[i]->isInit())
+					Scenes[i]->init();
+#if NETWORKTEST
+				Scenes[i]->sendString(network.listen(true));
+#endif
+
+				if (Scenes[i]->isInit())
+					Scenes[i]->baseUpdate(dt, *defaultCamera);
+			}
+			for (auto x : GameObjects)
+				x->baseUpdate(dt);
+
 			// TODO: RENDER HERE
 
 			// Swap the buffers and poll events for the next frame
+			glfwPollEvents();
 			glfwSwapBuffers(window);
 		}
 
@@ -118,3 +171,23 @@ namespace Cappuccino {
 		#pragma endregion
 	}
 }
+
+
+#if SCENETEST
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	defaultCamera->doMouseMovement(xoffset, yoffset);
+}
+#endif

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 /*
 The Scene Manager handles a list of all scenes, updating the current one while keeping the others in a sort of "freeze" state
 */
@@ -18,10 +19,13 @@ namespace Cappuccino {
 		virtual bool exit() = 0;
 		static std::vector<Scene*> scenes;
 
+		void sendString(const std::string& info);
+
 		bool isActive() const { return _active; }
 		bool isInit() const { return _initialized; }
 		bool ShouldExit() const { return _shouldExit; }
 	protected:
+		std::string info;
 		bool _active = false;
 		bool _initialized = false;
 		bool _shouldExit = false;
