@@ -6,8 +6,7 @@
 #include "Cappuccino/Scene Manager.h"
 #include "Cappuccino/Cube.h"
 #include "Cappuccino/f16.h"
-
-#define CUBETEST false
+#include "Cappuccino/CappMacros.h"
 
 
 namespace Cappuccino {

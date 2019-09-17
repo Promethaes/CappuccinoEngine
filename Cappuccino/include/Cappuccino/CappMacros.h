@@ -12,7 +12,9 @@
 
 #if _DEBUG
 
-#define SCENETEST false
+#define CUBETEST false
+
+#define SCENETEST true
 
 #define NETWORKTEST false
 

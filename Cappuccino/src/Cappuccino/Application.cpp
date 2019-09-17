@@ -121,7 +121,7 @@ namespace Cappuccino {
 //		network.sendMessage("From Anthony","192.168.0.101");
 //#endif
 
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 		while (!glfwWindowShouldClose(window)) {
 			float currentFrame = glfwGetTime();
 			dt = currentFrame - lastFrame;
@@ -130,7 +130,7 @@ namespace Cappuccino {
 
 			// Clear the screen
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			
 			for (unsigned i = 0; i < Scenes.size(); i++) {

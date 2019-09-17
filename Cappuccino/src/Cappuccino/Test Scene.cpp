@@ -1,5 +1,4 @@
 #include "Cappuccino/Test Scene.h"
-#include "Cappuccino/CappMacros.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -8,6 +7,7 @@
 Cappuccino::TestScene::TestScene(bool firstScene)
 	:Scene(firstScene), specularMap("", TextureType::DiffuseMap)
 {
+	_f16._f16Pos.z = 1;
 #if CUBETEST
 	float vertices2[] = {
 		// positions          // normals           // texture coords
