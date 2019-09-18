@@ -7,6 +7,7 @@
 #include "Cappuccino/Cube.h"
 #include "Cappuccino/f16.h"
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/Networking.h"
 
 
 namespace Cappuccino {
@@ -18,12 +19,12 @@ namespace Cappuccino {
 		bool init() override;
 		bool exit() override;
 		
-		void childUpdate(float dt, Camera& defaultCamera) override;
+		void childUpdate(float dt) override;
 
 	private:
 		Shader _lightingShader{"lightingShader.vert","lightingShader.frag"};
 		F16 _f16{ Mesh(std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj"), _lightingShader,nullptr,0 };
-#ifdef CUBETEST
+#if CUBETEST
 		float rotate = 0;
 		std::vector<Cube> cubes;
 		Texture specularMap;

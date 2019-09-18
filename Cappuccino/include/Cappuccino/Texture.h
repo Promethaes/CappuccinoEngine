@@ -15,7 +15,7 @@ namespace Cappuccino {
 	class Texture {
 	public:
 		Texture(std::string PATH,const TextureType& type);
-		
+		Texture() = default;
 		/*
 		Purp: loads the texture into memory
 		returns: bool if it was successful or not

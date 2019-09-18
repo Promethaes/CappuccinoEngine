@@ -12,7 +12,7 @@
 
 #if _DEBUG
 
-#define CUBETEST false
+#define CUBETEST true
 
 #define SCENETEST true
 

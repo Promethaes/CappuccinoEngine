@@ -13,17 +13,17 @@ namespace Cappuccino {
 	public:
 
 		Application(
-			      GLuint  width,
-			      GLuint  height,
+			GLuint  width,
+			GLuint  height,
 			const GLchar* title,
-			      GLuint  contextVersionMajor = 4u,
-			      GLuint  contextVersionMinor = 2u
+			GLuint  contextVersionMajor = 4u,
+			GLuint  contextVersionMinor = 2u
 		);
 
 		static bool isInstantiated();
 		void run();
 
-		
+
 	private:
 
 		static GLuint  _width;
@@ -34,7 +34,7 @@ namespace Cappuccino {
 
 
 		static bool _instantiated;
-		
+
 	};
 
 }
