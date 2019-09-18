@@ -33,10 +33,6 @@ namespace Cappuccino {
 		for (unsigned i = 0; i < Scenes.size(); i++) {
 			if (!Scenes[i]->isInit())
 				Scenes[i]->init();
-#if NETWORKTEST
-			Scenes[i]->sendString(network.listen(true));
-#endif
-
 			if (Scenes[i]->isInit())
 				Scenes[i]->baseUpdate(dt);
 		}

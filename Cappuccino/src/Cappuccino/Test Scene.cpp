@@ -3,6 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdlib>
+#include "Cappuccino/Input.h"
+#include "Cappuccino/Events.h"
 
 
 namespace Cappuccino {
@@ -78,8 +80,9 @@ namespace Cappuccino {
 	void Cappuccino::TestScene::childUpdate(float dt)
 	{
 		//centre cube
-
-
+#if NETWORKTEST
+		sendString(testNetwork.listen(true));
+#endif
 		glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
@@ -116,14 +119,14 @@ namespace Cappuccino {
 		_lightingShader.setUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 		for (unsigned i = 0; i < 4; i++) {
-
+			
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
-			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].ambient", 0.05f * 2, 0.05f * 2, 0.05f * 2);
-			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse", 0.8f * 2, 0.8f * 2, 0.8f * 2);
-			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].specular", 1.0f * 2, 1.0f * 2, 1.0f * 2);
-			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].constant", (float)1.0f * 2);
-			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].linear", (float)0.09 * 2);
-			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].quadratic", (float)0.032 * 2);
+			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].ambient", 0.05f * 3, 0.05f * 3, 0.05f * 3);
+			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse", 0.8f * 3, 0.8f * 3, 0.8f * 3);
+			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].specular", 1.0f * 3, 1.0f * 3, 1.0f * 3);
+			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].constant", 1.0f * 3);
+			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].linear", 0.09f * 3);
+			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].quadratic", 0.032f * 3);
 		}
 
 		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1);
@@ -137,6 +140,15 @@ namespace Cappuccino {
 
 		_lightingShader.setUniform("viewPos", Scene::defaultCamera->getPosition());
 #if NETWORKTEST
+		//if (isEvent(Events::Up)) {
+		//
+		//}
+		//if (isEvent(Events::A)) {
+		//
+		//}
+		//if (isEvent(Events::D)) {
+		//
+		//}
 		_f16._f16Pos += glm::vec4((float)std::stoi(info) * dt, 0, 0, 1);
 		//std::cout << _f16._f16Pos.x << "\n";
 #endif

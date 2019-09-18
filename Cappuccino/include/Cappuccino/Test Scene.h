@@ -9,6 +9,9 @@
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Networking.h"
 
+#if NETWORKTEST
+#include "Cappuccino/Networking.h"
+#endif
 
 namespace Cappuccino {
 
@@ -24,6 +27,14 @@ namespace Cappuccino {
 	private:
 		Shader _lightingShader{"lightingShader.vert","lightingShader.frag"};
 		F16 _f16{ Mesh(std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj"), _lightingShader,nullptr,0 };
+
+		//networking test
+#if NETWORKTEST
+		//put your IP here
+		Network testNetwork{ 54000,"192.168.0.101" };
+#endif
+
+		//cube test
 #if CUBETEST
 		float rotate = 0;
 		std::vector<Cube> cubes;

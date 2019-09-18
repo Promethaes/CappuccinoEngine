@@ -1,8 +1,4 @@
 #include "Cappuccino/Application.h"
-#if NETWORKTEST
-#include <Cappuccino/Networking.h>
-Network network(54000, "192.168.0.101");///<edit here>
-#endif
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
 #include "Cappuccino/Scene Manager.h"
@@ -120,9 +116,6 @@ namespace Cappuccino {
 		TestScene* testScene = new TestScene(true);
 #endif
 
-		//#if NETWORKTEST
-		//		network.sendMessage("From Anthony","192.168.0.101");
-		//#endif
 
 		glEnable(GL_DEPTH_TEST);
 		while (!glfwWindowShouldClose(window)) {

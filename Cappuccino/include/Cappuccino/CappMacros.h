@@ -16,7 +16,7 @@
 
 #define SCENETEST true
 
-#define NETWORKTEST false
+#define NETWORKTEST true
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 
