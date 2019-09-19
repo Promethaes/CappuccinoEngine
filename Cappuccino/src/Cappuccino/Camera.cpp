@@ -6,7 +6,17 @@ namespace Cappuccino {
 		return glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
 	}
 
-	void Camera::doMouseMovement(float xoffset,float yoffset) {
+	void Camera::lookAt(const glm::vec3& lookVec)
+	{
+		auto temp = lookVec - _cameraPos;
+
+		temp = temp / sqrt(temp.x * temp.x + temp.y * temp.y + temp.z * temp.z);
+
+		_cameraFront = temp;
+		glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
+	}
+
+	void Camera::doMouseMovement(float xoffset, float yoffset) {
 		xoffset *= _mouseSensitivity;
 		yoffset *= _mouseSensitivity;
 
@@ -20,7 +30,7 @@ namespace Cappuccino {
 		update();
 	}
 
-	void Camera::move(GLFWwindow* window,float _movementSpeed) {
+	void Camera::move(GLFWwindow* window, float _movementSpeed) {
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 			_cameraPos += _movementSpeed * _cameraFront;
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)

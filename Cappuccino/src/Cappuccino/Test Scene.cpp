@@ -60,9 +60,12 @@ namespace Cappuccino {
 		specularMap = Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\Metal_specmap.png", TextureType::SpecularMap);
 		for (int i = 0; i < 10; i++) {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
-			cubes.back().position = (glm::vec3(i + rand() % 5, rand() % 5 + 1, i + rand() % 5) *= -1);
+			cubes.back().position = glm::vec3(i, i, i);
 		}
-		
+		_f16._f16Pos = glm::vec4(4, 4, 4, _f16._f16Pos.w);
+
+
+
 #endif
 	}
 
@@ -80,9 +83,8 @@ namespace Cappuccino {
 	void Cappuccino::TestScene::childUpdate(float dt)
 	{
 		//centre cube
-#if NETWORKTEST
-		sendString(testNetwork.listen(true));
-#endif
+
+
 		glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
@@ -119,7 +121,7 @@ namespace Cappuccino {
 		_lightingShader.setUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 		for (unsigned i = 0; i < 4; i++) {
-			
+
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].ambient", 0.05f * 3, 0.05f * 3, 0.05f * 3);
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse", 0.8f * 3, 0.8f * 3, 0.8f * 3);
@@ -140,18 +142,28 @@ namespace Cappuccino {
 
 		_lightingShader.setUniform("viewPos", Scene::defaultCamera->getPosition());
 #if NETWORKTEST
-		//if (isEvent(Events::Up)) {
-		//
-		//}
+		if (isEvent(Events::Up)) {
+			testNetwork.sendMessage("1", "192.168.0.101");
+		}
+		else
+			testNetwork.sendMessage("0", "192.168.0.101");
 		//if (isEvent(Events::A)) {
 		//
 		//}
 		//if (isEvent(Events::D)) {
 		//
 		//}
-		_f16._f16Pos += glm::vec4((float)std::stoi(info) * dt, 0, 0, 1);
+
+		sendString(testNetwork.listen(true));
+
+		//_f16._f16Pos += glm::vec4((float)std::stoi(info) * dt, 0, 0, 1);
+
+		if (std::stoi(info) == 1)
+			_f16._f16Pos += _f16._f16ModelMat[0] * 2.5f * dt;
+
 		//std::cout << _f16._f16Pos.x << "\n";
 #endif
+		defaultCamera->lookAt(_f16._f16Pos);
 	}
 
 }
