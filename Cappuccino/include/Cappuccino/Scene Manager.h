@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "Cappuccino/Camera.h"
 /*
 The Scene Manager handles a list of all scenes, updating the current one while keeping the others in a sort of "freeze" state
 */
@@ -14,10 +15,11 @@ namespace Cappuccino {
 		Reg.: dt: a float of the time between updates, defaultCamera: a pointer to the camera used
 		Returns: The function does not return any data
 		*/
-		void baseUpdate(float dt, Camera& defaultCamera);
+		void baseUpdate(float dt);
 		virtual bool init() = 0;
 		virtual bool exit() = 0;
 		static std::vector<Scene*> scenes;
+		static Camera* defaultCamera;
 
 		void sendString(const std::string& info);
 
@@ -29,6 +31,24 @@ namespace Cappuccino {
 		bool _active = false;
 		bool _initialized = false;
 		bool _shouldExit = false;
-		virtual void childUpdate(float dt, Camera& defaultCamera) = 0;
+		virtual void childUpdate(float dt) = 0;
+	};
+
+	class SceneManager {
+		friend Scene;
+	public:
+
+		/*
+		Purp: get the user to add a scene in a nice looking way
+		Req: a pointer to a scene
+		*/
+		static void addScene(Scene* scene) {}
+
+		static void updateScenes(float dt);
+
+		static void changeScene(unsigned index);
+
+	private:
+		SceneManager();
 	};
 }

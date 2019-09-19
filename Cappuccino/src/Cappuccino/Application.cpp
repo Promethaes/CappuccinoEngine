@@ -1,8 +1,4 @@
 #include "Cappuccino/Application.h"
-#if NETWORKTEST
-#include <Cappuccino/Networking.h>
-Network network(54000,"192.168.0.101");///<edit here>
-#endif
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
 #include "Cappuccino/Scene Manager.h"
@@ -10,24 +6,23 @@ Network network(54000,"192.168.0.101");///<edit here>
 
 
 
-#define Scenes Cappuccino::Scene::scenes
+namespace Cappuccino {
+
 #define GameObjects Cappuccino::GameObject::gameObjects
 
 
-float dt = 0.0f;	// Time between current frame and last frame
-float lastFrame = 0.0f; // Time of last frame
+	float dt = 0.0f;	// Time between current frame and last frame
+	float lastFrame = 0.0f; // Time of last frame
 
 #if SCENETEST
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-float lastX = 400, lastY = 300;
-float yaw = -90.0f;
-float pitch = 0.0f;
-bool firstMouse = true;
+	void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+	float lastX = 400, lastY = 300;
+	float yaw = -90.0f;
+	float pitch = 0.0f;
+	bool firstMouse = true;
 
-Cappuccino::Camera* defaultCamera = new Cappuccino::Camera();
 #endif
 
-namespace Cappuccino {
 
 
 
@@ -53,7 +48,7 @@ namespace Cappuccino {
 	bool Application::isInstantiated() { return _instantiated; }
 
 	void Application::run() {
-		#pragma region GLFW/GLAD SETUP
+#pragma region GLFW/GLAD SETUP
 
 		CAPP_PRINT_N("----------INITIALIZING GLFW----------");
 		CAPP_PRINT_N("Initializing...");
@@ -62,7 +57,7 @@ namespace Cappuccino {
 			SYS_EXIT(-1);
 		}
 
-		CAPP_PRINT_N("Setting GLFW window hints...");			   
+		CAPP_PRINT_N("Setting GLFW window hints...");
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -75,11 +70,11 @@ namespace Cappuccino {
 		if (window == NULL) {
 			glfwTerminate();
 			CAPP_PRINT_ERROR("Error creating GLFW window!");
-			
+
 			const char* error;
 			glfwGetError(&error);
 			CAPP_PRINT_ERROR(error);
-			
+
 			CAPP_PRINT_ERROR("Exiting...\n");
 			SYS_EXIT(-2);
 		}
@@ -87,25 +82,29 @@ namespace Cappuccino {
 		CAPP_PRINT_N("Setting window settings...\n");
 		glfwMakeContextCurrent(window);
 		glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
+
+
 #if SCENETEST
 		glfwSetCursorPosCallback(window, mouse_callback);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 #endif
 
+
+
 		CAPP_PRINT_N("----------INITIALIZING GLAD----------");
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			glfwTerminate();
-						
+
 			CAPP_PRINT_ERROR("Error initializing GLAD! Exiting...\n");
 			SYS_EXIT(-3);
 		}
 
 		CAPP_PRINT_N("OpenGL function pointers loaded.\n");
 
-		#pragma endregion 
+#pragma endregion 
 
-		
-		#pragma region RENDER LOOP
+
+#pragma region RENDER LOOP
 
 		CAPP_PRINT_N("----------STARTING RENDER LOOP----------");
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
@@ -117,11 +116,8 @@ namespace Cappuccino {
 		TestScene* testScene = new TestScene(true);
 #endif
 
-//#if NETWORKTEST
-//		network.sendMessage("From Anthony","192.168.0.101");
-//#endif
 
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 		while (!glfwWindowShouldClose(window)) {
 			float currentFrame = glfwGetTime();
 			dt = currentFrame - lastFrame;
@@ -130,19 +126,11 @@ namespace Cappuccino {
 
 			// Clear the screen
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			
-			for (unsigned i = 0; i < Scenes.size(); i++) {
-				if (!Scenes[i]->isInit())
-					Scenes[i]->init();
-#if NETWORKTEST
-				Scenes[i]->sendString(network.listen(true));
-#endif
 
-				if (Scenes[i]->isInit())
-					Scenes[i]->baseUpdate(dt, *defaultCamera);
-			}
+			SceneManager::updateScenes(dt);
+
 			for (auto x : GameObjects)
 				x->baseUpdate(dt);
 
@@ -153,41 +141,42 @@ namespace Cappuccino {
 			glfwSwapBuffers(window);
 		}
 
-		#pragma	endregion
+#pragma	endregion
 
 
 
-		#pragma region PROGRAM TERMINATION
+#pragma region PROGRAM TERMINATION
 
 		CAPP_PRINT_N("----------CLEANING UP AND EXITING----------");
 
 		glfwTerminate();
 		CAPP_PRINT_N("GLFW Terminated.\n");
 
-		#if _DEBUG
+#if _DEBUG
 		system("pause");
-		#endif
+#endif
 
-		#pragma endregion
+#pragma endregion
 	}
-}
 
 
 #if SCENETEST
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
+	void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	{
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos;
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+
+		Cappuccino::Scene::defaultCamera->doMouseMovement(xoffset, yoffset);
+
 	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	defaultCamera->doMouseMovement(xoffset, yoffset);
-}
 #endif
+}

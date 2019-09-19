@@ -17,6 +17,8 @@ namespace Cappuccino {
 		Purp: returns the view matrix
 		*/
 		glm::mat4 whereAreWeLooking() const;
+
+		void lookAt(const glm::vec3& lookVec);
 		
 		/*
 		Purp: does mouse movement calculations, changes the view matrix
@@ -32,6 +34,8 @@ namespace Cappuccino {
 		//getters
 		glm::vec3& getPosition() { return _cameraPos; }
 		glm::vec3& getFront() { return _cameraFront; }
+
+		void setPosition(const glm::vec3& pos) { _cameraPos = pos; }
 	private:
 		//updates the camera
 		void update();
