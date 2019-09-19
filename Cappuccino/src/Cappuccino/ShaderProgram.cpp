@@ -75,7 +75,7 @@ namespace Cappuccino {
 		string shaderString;
 		const GLchar* shaderSource;
 
-		CAPP_PRINT("Reading source code...");
+		CAPP_PRINT_N("Reading source code...");
 		if (!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
 			CAPP_PRINT_ERROR("Failed to read shader from file!");
 			shaderString = "";
@@ -83,7 +83,7 @@ namespace Cappuccino {
 
 		shaderSource = shaderString.c_str();
 
-		CAPP_PRINT("Compiling shader...");
+		CAPP_PRINT_N("Compiling shader...");
 		GLint success;
 		GLuint shaderType = NULL;
 
