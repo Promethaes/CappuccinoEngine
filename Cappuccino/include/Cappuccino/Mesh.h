@@ -20,6 +20,7 @@ namespace Cappuccino {
 		Returns: A boolean representing if the load succeeded or not
 		*/
 		bool loadMesh();
+
 		/*
 		Purpose: This function will wipe all the data of the object
 		Reg.: None
@@ -46,4 +47,5 @@ namespace Cappuccino {
 		unsigned _numVerts = 0;
 		std::string _path;
 	};
+
 }

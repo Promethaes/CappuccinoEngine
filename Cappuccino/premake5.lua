@@ -44,13 +44,6 @@ local config = " "
       libdirs{"libs/" .. arch .. config,"libs/" .. arch .. config.."/Fmod"}
       os.execute("ECHO Building Project...")
      
-     -- config = "\\Release\\"
-     -- os.execute("mkdir " .. "build\\build\\"..arch..config)
-     -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
-     -- config = "\\Debug\\"
-     -- os.execute("mkdir " .. "build\\build\\"..arch..config)
-     -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
-      
       os.execute("Pause");
 
 project "Cappuccino Engine"

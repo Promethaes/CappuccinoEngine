@@ -10,7 +10,6 @@ workspace "Cappuccino Game"
    includedirs{os.getenv("CappuccinoPath").."include/"}
 
 local arch = " "
-local config = " "
    filter { "platforms:x64" }
       system "Windows"
       architecture "x64"
@@ -21,25 +20,16 @@ local config = " "
       defines { "DEBUG" }
       symbols "On"
       targetdir ("build/build/" .. arch .. "/Debug")
-      config = "/Debug"
       libdirs{os.getenv("CappuccinoPath").."libs/" .. arch .. "/Debug",os.getenv("CappuccinoPath").."libs/" .. arch .. "/Debug".."/Fmod"}
 
    filter "configurations:Release"
       defines { "NDEBUG" }
       optimize "On"
       targetdir ("build/build/" .. arch .. "/Release")
-      config = "/Release"
       libdirs{os.getenv("CappuccinoPath").."libs/" .. arch .. "/Release",os.getenv("CappuccinoPath").."libs/" .. arch .. "/Release".."/Fmod"}
 
 
    filter {}
-      
-      -- config = "\\Release\\"
-      -- os.execute("mkdir " .. "build\\build\\"..arch..config)
-      -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
-      -- config = "\\Debug\\"
-      -- os.execute("mkdir " .. "build\\build\\"..arch..config)
-      -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
       os.execute("ECHO Enter Project Name")
       local s = io.read();
       os.execute("ECHO Creating Project...")

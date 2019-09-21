@@ -1,8 +1,8 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include <glad/glad.h>
 #include "Cappuccino/Mesh.h"
 #include <glm/glm.hpp>
 #include <vector>
+#include "Cappuccino/CappMacros.h"
 
 namespace Cappuccino {
 
@@ -223,6 +223,7 @@ namespace Cappuccino {
 		input.close();
 
 	}
+
 
 	void Mesh::unload()
 	{

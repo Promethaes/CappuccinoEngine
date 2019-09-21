@@ -40,9 +40,6 @@ namespace Cappuccino {
 		Purp: draw the game object
 		*/
 		virtual void draw();
-		bool _loadedTextures = false;
-		bool _loadedMesh = false;
-
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshs;
 		Shader _shader;
@@ -52,6 +49,9 @@ namespace Cappuccino {
 		Req: delta time to update properly
 		*/
 		virtual void childUpdate(float dt) = 0;
+
+		bool _loadedTextures = false;
+		bool _loadedMesh = false;
 
 	};
 }
