@@ -18,7 +18,7 @@ namespace Cappuccino {
 		/*
 		Purp: load a 2D sound into memory
 		Req: relative file path to the sound
-		Returns: index at which the sound is stored
+		Returns: index at which the sound is created
 		*/
 		static unsigned load2DSound(const std::string& relativeFilePath);
 
@@ -31,9 +31,9 @@ namespace Cappuccino {
 
 		/*
 		Purp: play a 2D sound at the provided indicies
-		Req: index to the proper channel and group
+		Req: index to the proper sounds and group
 		*/
-		static void playSound2D(unsigned channelsIndex, unsigned groupsIndex);
+		static void playSound2D(unsigned soundsIndex, unsigned groupsIndex);
 
 		static void setDefaultPath(const std::string& defaultFilePath) { _soundPath = defaultFilePath; }
 	private:

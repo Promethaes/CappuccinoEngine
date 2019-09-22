@@ -104,16 +104,14 @@ namespace Cappuccino {
 
 #pragma endregion 
 
-#pragma region FMOD
-		
+		SoundSystem::init(CAPP_PATH + "Assets\\Sounds\\");
 
-		
+#if SOUNDTEST
+		auto soundRef = SoundSystem::load2DSound("testSound.mp3");
+		auto groupRef = SoundSystem::createChannelGroup("group1");
 
-
-
-#pragma endregion
-
-
+		SoundSystem::playSound2D(soundRef, groupRef);
+#endif
 
 #pragma region RENDER LOOP
 
