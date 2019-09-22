@@ -14,3 +14,4 @@ START %CappuccinoPath%\..\"External Dependencies"\Premake\premake5.exe --file="%
 ECHO Project Generated
 ECHO.
 
+Pause

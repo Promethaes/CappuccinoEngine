@@ -6,6 +6,7 @@
 
 
 
+
 namespace Cappuccino {
 
 #define GameObjects Cappuccino::GameObject::gameObjects
@@ -103,6 +104,16 @@ namespace Cappuccino {
 
 #pragma endregion 
 
+#pragma region FMOD
+		
+
+		
+
+
+
+#pragma endregion
+
+
 
 #pragma region RENDER LOOP
 
@@ -153,12 +164,10 @@ namespace Cappuccino {
 		glfwTerminate();
 		CAPP_PRINT_N("GLFW Terminated.\n");
 
-#if _DEBUG
-		system("pause");
-#endif
 
 #pragma endregion
 	}
+
 
 
 #if SCENETEST

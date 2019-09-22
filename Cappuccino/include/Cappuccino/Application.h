@@ -2,10 +2,11 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Fmod/fmod.hpp"
+#include "Fmod/fmod_errors.h"
 
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Scene Manager.h"
-
 
 namespace Cappuccino {
 
@@ -31,6 +32,8 @@ namespace Cappuccino {
 		static GLchar* _title;
 		static GLuint  _contextVersionMajor;
 		static GLuint  _contextVersionMinor;
+
+		FMOD::System* _system = NULL;
 
 
 		static bool _instantiated;
