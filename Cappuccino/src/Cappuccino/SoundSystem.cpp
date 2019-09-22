@@ -15,6 +15,7 @@ namespace Cappuccino {
 	{
 		//i followed some documentation https://www.fmod.com/resources/documentation-api?version=2.0&page=white-papers-getting-started.html
 		if (!_initialized) {
+			CAPP_PRINT_N("----------INITIALIZING SOUND SYSTEM----------");
 			_soundPath = defaultFilePath;
 
 			_result = FMOD::System_Create(&_system);
@@ -23,6 +24,8 @@ namespace Cappuccino {
 			_result = _system->init(512, FMOD_INIT_NORMAL, 0);
 			checkFmodErrors(_result, "system initialization");
 			_initialized = true;
+
+			CAPP_PRINT_N("Sound System Initialized");
 		}
 	}
 
@@ -49,7 +52,7 @@ namespace Cappuccino {
 
 	}
 
-	void SoundSystem::playSound2D(unsigned soundsIndex,unsigned groupsIndex)
+	void SoundSystem::playSound2D(unsigned soundsIndex, unsigned groupsIndex)
 	{
 		FMOD::Channel* channel = NULL;
 		_result = _system->playSound(sounds[soundsIndex], channelGroups[groupsIndex], false, &channel);
@@ -63,7 +66,7 @@ namespace Cappuccino {
 	{
 		if (result != FMOD_OK)
 		{
-			CAPP_PRINT_ERROR("FMOD error! (%d) %s at %s\n", result, FMOD_ErrorString(result),whereError.c_str());
+			CAPP_PRINT_ERROR("FMOD error! (%d) %s at %s\n", result, FMOD_ErrorString(result), whereError.c_str());
 			SYS_EXIT(-1);
 		}
 
