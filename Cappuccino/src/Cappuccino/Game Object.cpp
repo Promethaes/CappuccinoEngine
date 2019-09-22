@@ -18,6 +18,7 @@ namespace Cappuccino {
 	void GameObject::baseUpdate(float dt)
 	{
 		childUpdate(dt);
+		_pos += _acceleration * dt;
 	}
 	void GameObject::draw()
 	{
@@ -33,7 +34,8 @@ namespace Cappuccino {
 		}
 		//sets the model matrix variable to the fully transformed matrix, after loading the model matrix into the GPU
 		for (unsigned i = 0; i < _meshs.size(); i++) {
-			_meshs[i]->modelMatrix = _shader.loadModelMatrix(std::nullopt, std::nullopt, std::nullopt, std::nullopt);
+			_modelMat = _meshs[i]->modelMatrix;
+			_meshs[i]->modelMatrix = _shader.loadModelMatrix(_pos, std::nullopt, _rotationV, _rotationFloat);
 			_meshs[i]->draw();
 		}
 
