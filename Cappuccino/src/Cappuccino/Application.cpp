@@ -109,6 +109,7 @@ namespace Cappuccino {
 #if SOUNDTEST
 		auto soundRef = SoundSystem::load2DSound("testSound.mp3");
 		auto groupRef = SoundSystem::createChannelGroup("group1");
+		auto groupRef2 = SoundSystem::createChannelGroup("group2");
 
 		SoundSystem::playSound2D(soundRef, groupRef);
 #endif

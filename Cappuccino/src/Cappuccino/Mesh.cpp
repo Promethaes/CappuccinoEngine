@@ -1,7 +1,10 @@
 #include <glad/glad.h>
-#include "Cappuccino/Mesh.h"
 #include <glm/glm.hpp>
 #include <vector>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+#include "Cappuccino/Mesh.h"
 #include "Cappuccino/CappMacros.h"
 
 namespace Cappuccino {
@@ -190,6 +193,8 @@ namespace Cappuccino {
 				unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].z);
 			}
 		}
+
+
 
 		_numFaces = faces.size();
 		_numVerts = _numFaces * 3;

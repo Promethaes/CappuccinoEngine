@@ -8,7 +8,7 @@ using string = std::string;
 using ifstream = std::ifstream;
 using sstream = std::stringstream;
 namespace Cappuccino {
-	
+
 	string Shader::_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
 
 	Shader::Shader() : _programID(0), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
@@ -55,6 +55,7 @@ namespace Cappuccino {
 	}
 
 	GLuint Shader::getID() const { return _programID; }
+
 
 	// This function is brought to us by courtesy of Emilian.cpp
 	bool Shader::loadFileAsString(const std::string& file, std::string& output) {
@@ -120,17 +121,17 @@ namespace Cappuccino {
 
 		CAPP_PRINT_N("Linking shaders...");
 		//if (vertex)
-			glAttachShader(_programID, vertex);
+		glAttachShader(_programID, vertex);
 		//else
 		//	CAPP_PRINT_ERROR("No vertex shader linked!");
 
 		//if (fragment)
-			glAttachShader(_programID, fragment);
+		glAttachShader(_programID, fragment);
 		//else
 		//	CAPP_PRINT_ERROR("No fragment shader linked!");
 
 		//if (geometry)
-			glAttachShader(_programID, geometry);
+		glAttachShader(_programID, geometry);
 		//else
 		//	CAPP_PRINT_ERROR("No geometry shader linked!");
 
@@ -154,6 +155,11 @@ namespace Cappuccino {
 			glDeleteShader(fragment);
 		if (geometry)
 			glDeleteShader(geometry);
+	}
+	void Shader::loadModelMatrix(const glm::mat4& modelMatrix)
+	{
+		unsigned int modelLoc = glGetUniformLocation(_programID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	}
 
 	glm::mat4 Shader::loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle)

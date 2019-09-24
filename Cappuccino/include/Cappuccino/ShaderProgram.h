@@ -62,6 +62,7 @@ namespace Cappuccino {
 		void setUniform(const std::string&name, const float x, const float y, const float z) const;
 		
 		GLuint getID() const;
+		void loadModelMatrix(const glm::mat4& modelmatrix);
 		glm::mat4 loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle);
 		void loadViewMatrix(Camera& defaultCamera);
 		void loadProjectionMatrix(float width, float height);
