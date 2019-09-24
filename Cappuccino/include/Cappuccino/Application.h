@@ -8,7 +8,6 @@
 #include "Cappuccino/Scene Manager.h"
 
 namespace Cappuccino {
-
 	class Application {
 	public:
 
@@ -23,7 +22,6 @@ namespace Cappuccino {
 		static bool isInstantiated();
 		void run();
 
-
 	private:
 
 		static GLuint  _width;
@@ -32,10 +30,6 @@ namespace Cappuccino {
 		static GLuint  _contextVersionMajor;
 		static GLuint  _contextVersionMinor;
 
-
-
 		static bool _instantiated;
-
 	};
-
 }

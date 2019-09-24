@@ -6,7 +6,7 @@
 
 ///<this code is brought to you by the courtesy of Emilian>
 //loads the file as a string
-static bool loadFileAsString(const std::string & file, std::string& output)
+static bool loadFileAsString(const std::string& file, std::string& output)
 {
 	//create the ifstream object
 	std::ifstream inStream(file.data());
@@ -16,7 +16,6 @@ static bool loadFileAsString(const std::string & file, std::string& output)
 		std::cout << "Failed to load a file as a string: badbits are at it again!\n";
 		return false;
 	}
-
 
 	//sets the output to the file's string
 
@@ -28,8 +27,5 @@ static bool loadFileAsString(const std::string & file, std::string& output)
 	//setting value of passed in string to the contents of the out stream
 	output = contents.str();
 
-	
-
 	return true;
-
 }

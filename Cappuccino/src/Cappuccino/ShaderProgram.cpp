@@ -8,7 +8,6 @@ using string = std::string;
 using ifstream = std::ifstream;
 using sstream = std::stringstream;
 namespace Cappuccino {
-
 	string Shader::_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
 
 	Shader::Shader() : _programID(0), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
@@ -55,7 +54,6 @@ namespace Cappuccino {
 	}
 
 	GLuint Shader::getID() const { return _programID; }
-
 
 	// This function is brought to us by courtesy of Emilian.cpp
 	bool Shader::loadFileAsString(const std::string& file, std::string& output) {
@@ -156,10 +154,11 @@ namespace Cappuccino {
 		if (geometry)
 			glDeleteShader(geometry);
 	}
-	void Shader::loadModelMatrix(const glm::mat4& modelMatrix)
+	glm::mat4 Shader::loadModelMatrix(const glm::mat4& modelMatrix)
 	{
 		unsigned int modelLoc = glGetUniformLocation(_programID, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		return modelMatrix;
 	}
 
 	glm::mat4 Shader::loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle)
@@ -192,9 +191,7 @@ namespace Cappuccino {
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(_programID, "projection"), 1, GL_FALSE, &projection[0][0]);
-
 	}
-
 
 	void Cappuccino::Shader::setUniform(const std::string& name, const bool value) const {
 		glUniform1i(
@@ -220,6 +217,5 @@ namespace Cappuccino {
 	void Shader::setUniform(const std::string& name, const glm::vec4& value) const
 	{
 		glUniform4fv(glGetUniformLocation(_programID, name.c_str()), 1, &value[0]);
-
 	}
 }

@@ -14,7 +14,7 @@ namespace Cappuccino {
 	*/
 	class Texture {
 	public:
-		Texture(std::string PATH,const TextureType& type);
+		Texture(std::string PATH, const TextureType& type);
 		Texture() = default;
 		/*
 		Purp: loads the texture into memory
@@ -23,7 +23,7 @@ namespace Cappuccino {
 		bool load();
 
 		unsigned getTextureId() const { return _texture; }
-		
+
 		/*
 		Purp: binds the texture in the proper slot
 		*/

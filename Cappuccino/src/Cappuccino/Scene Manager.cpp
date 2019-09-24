@@ -3,15 +3,14 @@
 #include <string>
 #define Scenes Scene::scenes
 namespace Cappuccino {
-
 	std::vector<Scene*> Scene::scenes = {};
 	Camera* Scene::defaultCamera = new Camera();
-	Scene::Scene(bool firstScene){
+	Scene::Scene(bool firstScene) {
 		_active = firstScene;
 		scenes.push_back(this);
 	}
 
-	void Scene::baseUpdate(float dt){
+	void Scene::baseUpdate(float dt) {
 		for (int i = 0; i < scenes.size(); i++) {
 			if (scenes[i]->isActive()) {
 				scenes[i]->childUpdate(dt);

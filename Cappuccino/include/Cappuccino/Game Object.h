@@ -35,10 +35,11 @@ namespace Cappuccino {
 		Purp: draw the game object
 		*/
 		void draw();
+		glm::vec3 position;
 		std::vector<Texture*> _textures;
-		std::vector<Mesh*> _meshs;
+		std::vector<Mesh*> _meshes;
 		Shader _shader;
-	//	glm::vec3 _position;
+		//	glm::vec3 _position;
 	private:
 		/*
 		Purp: pure virtual function that calls the appropriate child update definition

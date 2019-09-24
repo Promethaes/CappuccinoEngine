@@ -46,5 +46,4 @@ namespace Cappuccino {
 		unsigned _numVerts = 0;
 		std::string _path;
 	};
-
 }

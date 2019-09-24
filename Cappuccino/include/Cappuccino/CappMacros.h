@@ -5,7 +5,6 @@
 #include <windows.h>
 #include <iostream>
 
-
 #define _CRT_SECURE_NO_WARNINGS
 
 #define CAPP_PATH						std::string(std::getenv("CappuccinoPath"))

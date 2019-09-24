@@ -4,13 +4,8 @@
 #include "Cappuccino/Scene Manager.h"
 #include "Cappuccino/Test Scene.h"
 
-
-
-
 namespace Cappuccino {
-
 #define GameObjects Cappuccino::GameObject::gameObjects
-
 
 	float dt = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
@@ -24,9 +19,6 @@ namespace Cappuccino {
 
 #endif
 
-
-
-
 	GLuint  Application::_width = 10u;
 	GLuint  Application::_height = 10u;
 	GLchar* Application::_title = "Cappuccino Engine";
@@ -34,7 +26,6 @@ namespace Cappuccino {
 	GLuint  Application::_contextVersionMinor = 2u;
 
 	bool Application::_instantiated = false;
-
 
 	Application::Application(const GLuint width, const GLuint height, const GLchar* title, const GLuint contextVersionMajor, const GLuint contextVersionMinor) {
 		_width = width;
@@ -63,8 +54,6 @@ namespace Cappuccino {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
-
 		CAPP_PRINT_N("Creating window...");
 		GLFWwindow* window = glfwCreateWindow(_width, _height, _title, NULL, NULL);
 
@@ -84,13 +73,10 @@ namespace Cappuccino {
 		glfwMakeContextCurrent(window);
 		glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
 
-
 #if SCENETEST
 		glfwSetCursorPosCallback(window, mouse_callback);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 #endif
-
-
 
 		CAPP_PRINT_N("----------INITIALIZING GLAD----------");
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -102,7 +88,7 @@ namespace Cappuccino {
 
 		CAPP_PRINT_N("OpenGL function pointers loaded.\n");
 
-#pragma endregion 
+#pragma endregion
 
 		SoundSystem::init(CAPP_PATH + "Assets\\Sounds\\");
 
@@ -120,12 +106,9 @@ namespace Cappuccino {
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
-
-
 #if SCENETEST
 		TestScene* testScene = new TestScene(true);
 #endif
-
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
@@ -154,8 +137,6 @@ namespace Cappuccino {
 
 #pragma	endregion
 
-
-
 #pragma region PROGRAM TERMINATION
 
 		CAPP_PRINT_N("----------CLEANING UP AND EXITING----------");
@@ -163,11 +144,8 @@ namespace Cappuccino {
 		glfwTerminate();
 		CAPP_PRINT_N("GLFW Terminated.\n");
 
-
 #pragma endregion
 	}
-
-
 
 #if SCENETEST
 	void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -185,7 +163,6 @@ namespace Cappuccino {
 		lastY = ypos;
 
 		Cappuccino::Scene::defaultCamera->doMouseMovement(xoffset, yoffset);
-
 	}
 #endif
 }

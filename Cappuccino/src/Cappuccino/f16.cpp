@@ -13,15 +13,15 @@ namespace Cappuccino {
 	}
 	void F16::childUpdate(float dt)
 	{
-
-		if (isEvent(Events::W))
-			for (auto x : _meshs)
+		if (isEvent(Events::Alt))
+			for (auto x : _meshes)
 				x->transform.translate(x->transform.transformMat[0] * 2.5f * dt);
-
 
 		if (isEvent(Events::A)) {
 			_f16RotationV -= glm::vec3(1, 0, 0);
 			_f16RotationFloat -= 4 * dt;
+			for (auto x : _meshes)
+				x->transform.rotate(_f16RotationV, _f16RotationFloat);
 		}
 		if (isEvent(Events::D)) {
 			_f16RotationV += glm::vec3(1, 0, 0);
@@ -44,5 +44,4 @@ namespace Cappuccino {
 			_f16RotationFloat += 4 * dt;
 		}
 	}
-
 }

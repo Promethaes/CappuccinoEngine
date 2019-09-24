@@ -14,7 +14,6 @@
 #endif
 
 namespace Cappuccino {
-
 	class TestScene : public Scene {
 	public:
 		TestScene(bool firstScene);

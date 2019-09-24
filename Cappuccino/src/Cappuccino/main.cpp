@@ -14,7 +14,6 @@ constexpr GLchar* SCR_TITLE = static_cast<GLchar*>("Cappuccino Engine v1.0");
 #pragma endregion
 
 int main() {
-
 	if (!Application::isInstantiated()) {
 		//add your scenes here
 
