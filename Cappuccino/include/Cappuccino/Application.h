@@ -2,9 +2,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
-#include "Cappuccino/CappMacros.h"
-#include "Cappuccino/Scene Manager.h"
+#include <glm/glm.hpp>
+#include <string>
 
 
 namespace Cappuccino {
@@ -12,12 +11,13 @@ namespace Cappuccino {
 	class Application {
 	public:
 
+		Application();
 		Application(
-			GLuint  width,
-			GLuint  height,
-			const GLchar* title,
-			GLuint  contextVersionMajor = 4u,
-			GLuint  contextVersionMinor = 2u
+			GLuint       WIDTH,
+			GLuint       HEIGHT,
+	  const std::string& TITLE,
+			GLuint       contextVersionMajor = 4u,
+			GLuint       contextVersionMinor = 2u
 		);
 
 		static bool isInstantiated();
@@ -26,11 +26,18 @@ namespace Cappuccino {
 
 	private:
 
-		static GLuint  _width;
-		static GLuint  _height;
-		static GLchar* _title;
-		static GLuint  _contextVersionMajor;
-		static GLuint  _contextVersionMinor;
+		void init();
+		void cleanup();
+
+		void update(GLfloat dt);
+		void draw(GLfloat dt);
+
+
+		GLFWwindow* _window;
+		GLuint _width, _height;
+		std::string _title;
+		GLuint _contextVersionMajor, _contextVersionMinor;
+		glm::vec4 _clearColour;
 
 
 		static bool _instantiated;
