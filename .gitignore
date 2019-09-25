@@ -334,3 +334,5 @@ ASALocalRun/
 Cappuccino/Assets/source/
 
 Cappuccino/test game project/
+
+*.bsc

@@ -10,7 +10,6 @@ using string = std::string;
 namespace Cappuccino {
 
 	#if SCENETEST
-
 	void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	float lastX = 400, lastY = 300;
 	float yaw = -90.0f;
@@ -81,8 +80,6 @@ namespace Cappuccino {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-
 
 		CAPP_PRINT_N("Creating window...");
 		_window = glfwCreateWindow(_width, _height, _title.c_str(), NULL, NULL);

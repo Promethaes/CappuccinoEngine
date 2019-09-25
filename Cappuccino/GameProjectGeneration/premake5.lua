@@ -8,9 +8,12 @@ workspace "Cappuccino Game"
    language "C++"
    cppdialect "C++17"
    includedirs{os.getenv("CappuccinoPath").."include/"}
+   os.execute("mkdir " ..solutionDir.."\\build")
+   os.execute("mkdir " ..solutionDir.."\\build\\x64")
+   os.execute("mkdir " ..solutionDir.."\\build\\x64\\Debug")
+   os.execute("mkdir " ..solutionDir.."\\build\\x64\\Release")
 
 local arch = " "
-local config = " "
    filter { "platforms:x64" }
       system "Windows"
       architecture "x64"
@@ -20,26 +23,17 @@ local config = " "
    filter "configurations:Debug"
       defines { "DEBUG" }
       symbols "On"
-      targetdir ("build/build/" .. arch .. "/Debug")
-      config = "/Debug"
+      targetdir (solutionDir.."\\build\\" .. arch .. "\\Debug")
       libdirs{os.getenv("CappuccinoPath").."libs/" .. arch .. "/Debug",os.getenv("CappuccinoPath").."libs/" .. arch .. "/Debug".."/Fmod"}
 
    filter "configurations:Release"
       defines { "NDEBUG" }
       optimize "On"
-      targetdir ("build/build/" .. arch .. "/Release")
-      config = "/Release"
+      targetdir (solutionDir.."\\build\\" .. arch .. "\\Release")
       libdirs{os.getenv("CappuccinoPath").."libs/" .. arch .. "/Release",os.getenv("CappuccinoPath").."libs/" .. arch .. "/Release".."/Fmod"}
 
 
    filter {}
-      
-      -- config = "\\Release\\"
-      -- os.execute("mkdir " .. "build\\build\\"..arch..config)
-      -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
-      -- config = "\\Debug\\"
-      -- os.execute("mkdir " .. "build\\build\\"..arch..config)
-      -- os.execute("XCOPY " .. "libs\\x64\\Debug\\Fmod\\fmod.dll " .."build\\build\\"..arch..config)
 	  os.execute("ECHO.");      
 	  os.execute("ECHO Enter Project Name")
       local s = io.read();
@@ -47,6 +41,8 @@ local config = " "
       os.execute("ECHO Creating Project...")
       os.execute("mkdir " ..solutionDir.."\\src")
       os.execute("XCOPY %CappuccinoPath%\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
+      os.execute("XCOPY %CappuccinoPath%\\libs\\x64\\Release\\Fmod\\fmod.dll " .. solutionDir .. "\\build\\x64\\Debug")
+      os.execute("XCOPY %CappuccinoPath%\\libs\\x64\\Release\\Fmod\\fmod.dll " .. solutionDir .. "\\build\\x64\\Release")
       files{solutionDir.."\\src\\**.cpp"}
       
 project (s)
@@ -55,4 +51,4 @@ project (s)
         targetname (s)
         links {"capp.lib"}
     os.execute("ECHO Created Successfully");
-    os.execute("Pause");
+    

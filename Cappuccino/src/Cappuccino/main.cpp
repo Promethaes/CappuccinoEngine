@@ -22,7 +22,6 @@ extern "C" {
 }
 
 int main() {
-
 	if (!Application::isInstantiated()) {
 		Application* application = new Application(SCR_WIDTH, SCR_HEIGHT, SCR_TITLE);
 		application->run();

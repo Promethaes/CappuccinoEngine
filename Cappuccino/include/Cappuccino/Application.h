@@ -7,7 +7,6 @@
 
 
 namespace Cappuccino {
-
 	class Application {
 	public:
 
@@ -22,7 +21,6 @@ namespace Cappuccino {
 
 		static bool isInstantiated();
 		void run();
-
 
 	private:
 
@@ -41,7 +39,5 @@ namespace Cappuccino {
 
 
 		static bool _instantiated;
-
 	};
-
 }

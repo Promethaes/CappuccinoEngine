@@ -6,7 +6,6 @@
 #include "Cappuccino/Input.h"
 #include "Cappuccino/Events.h"
 
-
 namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
@@ -58,20 +57,20 @@ namespace Cappuccino {
 			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 		};
 		specularMap = Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\Metal_specmap.png", TextureType::SpecularMap);
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 4; i++) {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
 		_f16._f16Pos = glm::vec4(4, 4, 4, _f16._f16Pos.w);
 
-
+		for (int i = 0; i < 4; i++)
+			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 #endif
 	}
 
 	bool Cappuccino::TestScene::init()
 	{
-
 		return _initialized = true;
 	}
 
@@ -84,13 +83,14 @@ namespace Cappuccino {
 	{
 		//centre cube
 
-
 		glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
 		};
+
+		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1);
 		//cubeeeee
 #if CUBETEST
 		rotate += dt;
@@ -100,13 +100,26 @@ namespace Cappuccino {
 		glBindTexture(GL_TEXTURE_2D, specularMap.getTextureId());
 		for (unsigned int i = 0; i < cubes.size(); i++)
 		{
-			_lightingShader.loadModelMatrix(glm::vec3(i * 2 + 1, i * 2 + 1, i * 2 + 1), std::nullopt, glm::vec3(i, i, i), rotate);
-			cubes.back().draw();
+			_lightingShader.loadModelMatrix(pointLightPositions[i] + glm::vec3(3, 3, 3), std::nullopt, glm::vec3(i, i, i), rotate);
+			cubes[i].draw();
 		}
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+		_lightcubeShader.use();
+
+		_lightcubeShader.setUniform("Colour", lightColor);
+		for (unsigned i = 0; i < lightCubes.size(); i++) {
+			_lightcubeShader.loadModelMatrix(pointLightPositions[i], 0.5f, std::nullopt, std::nullopt);
+			lightCubes[i].draw();
+		}
+
+		_lightcubeShader.loadViewMatrix(*Scene::defaultCamera);
+		_lightcubeShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
+
+		_lightingShader.use();
 #endif
 		_lightingShader.loadViewMatrix(*Scene::defaultCamera);
 		_lightingShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
@@ -121,7 +134,6 @@ namespace Cappuccino {
 		_lightingShader.setUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 		for (unsigned i = 0; i < 4; i++) {
-
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].ambient", 0.05f * 3, 0.05f * 3, 0.05f * 3);
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse", 0.8f * 3, 0.8f * 3, 0.8f * 3);
@@ -131,7 +143,6 @@ namespace Cappuccino {
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].quadratic", 0.032f * 3);
 		}
 
-		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1);
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
 
@@ -139,31 +150,27 @@ namespace Cappuccino {
 		_lightingShader.setUniform("light.diffuse", diffuseColor);
 		_lightingShader.setUniform("light.specular", 1.0f, 1.0f, 1.0f);
 
-
 		_lightingShader.setUniform("viewPos", Scene::defaultCamera->getPosition());
+
 #if NETWORKTEST
 		if (isEvent(Events::Up)) {
 			testNetwork.sendMessage("1", "192.168.0.101");
 		}
 		else
 			testNetwork.sendMessage("0", "192.168.0.101");
-		//if (isEvent(Events::A)) {
-		//
-		//}
-		//if (isEvent(Events::D)) {
-		//
-		//}
 
 		sendString(testNetwork.listen(true));
-
-		//_f16._f16Pos += glm::vec4((float)std::stoi(info) * dt, 0, 0, 1);
-
 		if (std::stoi(info) == 1)
 			_f16._f16Pos += _f16._f16ModelMat[0] * 2.5f * dt;
-
-		//std::cout << _f16._f16Pos.x << "\n";
 #endif
-		defaultCamera->lookAt(_f16._f16Pos);
-	}
+		glm::vec3 camPos = defaultCamera->getPosition();
+		if (isEvent(Events::Up))
+			camPos += 2.5f * dt * defaultCamera->getFront();
+		if (isEvent(Events::Down))
+			camPos -= 2.5f * dt * defaultCamera->getFront();
 
+		defaultCamera->setPosition(camPos);
+		//defaultCamera->lookAt(_f16._f16Pos);
+		//defaultCamera->setPosition(glm::vec3(_f16._f16Pos) + glm::vec3(-5, 5, 0));
+	}
 }

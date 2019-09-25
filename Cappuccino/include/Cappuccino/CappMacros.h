@@ -5,18 +5,16 @@
 #include <windows.h>
 #include <iostream>
 
-
 #define _CRT_SECURE_NO_WARNINGS
 
 #define CAPP_PATH						std::string(std::getenv("CappuccinoPath"))
 
 #if _DEBUG
 
+#define SOUNDTEST true
 #define CUBETEST true
 #define SCENETEST true
 #define NETWORKTEST false
-
-
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 

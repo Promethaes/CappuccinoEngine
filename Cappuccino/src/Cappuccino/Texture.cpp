@@ -2,7 +2,6 @@
 
 #include <iostream>
 namespace Cappuccino {
-
 	Texture::Texture(std::string PATH, const TextureType& ID)
 	{
 		_path = PATH;
@@ -32,7 +31,6 @@ namespace Cappuccino {
 		//	std::cout << "Failed to load texture" << std::endl;
 		//
 		//stbi_image_free(data);
-
 	}
 	bool Texture::load() {
 		//again, one hundred million % not mine
@@ -42,7 +40,7 @@ namespace Cappuccino {
 
 		//load the file into memory
 		int width, height, nrComponents;
-		unsigned char *data = stbi_load(_path.c_str(), &width, &height, &nrComponents, 0);
+		unsigned char* data = stbi_load(_path.c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
 			GLenum format;
@@ -52,7 +50,6 @@ namespace Cappuccino {
 				format = GL_RGB;
 			else if (nrComponents == 4)
 				format = GL_RGBA;
-
 
 			//set up the proper openGL settings
 			glBindTexture(GL_TEXTURE_2D, textureID);

@@ -27,6 +27,29 @@ namespace Cappuccino {
 
 		std::string id;
 
+		//void setPosition(const glm::vec3& newPos) { _position = newPos; }
+		//glm::vec3 getPosition() const { return _position; }
+		void setPosition(const glm::vec3& newPos);
+	protected:
+		/*
+		Purp: draw the game object
+		*/
+		void draw();
+		glm::vec3 position;
+		std::vector<Texture*> _textures;
+		std::vector<Mesh*> _meshes;
+		Shader _shader;
+		//	glm::vec3 _position;
+	private:
+		/*
+		Purp: pure virtual function that calls the appropriate child update definition
+		Req: delta time to update properly
+		*/
+		virtual void childUpdate(float dt) = 0;
+
+		bool _loadedTextures = false;
+		bool _loadedMesh = false;
+
 		/*
 		Purp: load the textures, make sure this is only called once
 		*/
@@ -35,23 +58,5 @@ namespace Cappuccino {
 		load the meshs
 		*/
 		void loadMesh();
-	protected:
-		/*
-		Purp: draw the game object
-		*/
-		virtual void draw();
-		bool _loadedTextures = false;
-		bool _loadedMesh = false;
-
-		std::vector<Texture*> _textures;
-		std::vector<Mesh*> _meshs;
-		Shader _shader;
-	private:
-		/*
-		Purp: pure virtual function that calls the appropriate child update definition
-		Req: delta time to update properly
-		*/
-		virtual void childUpdate(float dt) = 0;
-
 	};
 }

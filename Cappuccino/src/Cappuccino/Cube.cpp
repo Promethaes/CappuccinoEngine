@@ -2,7 +2,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 namespace Cappuccino {
-
 	//unsigned Cube::VAO = 0;
 	//bool Cube::VAOExist = false;
 	Cappuccino::Cube::Cube(float* verts, const unsigned sizeOfArray, Texture* TEXTURERECT, bool irregularVertData)
@@ -29,7 +28,6 @@ namespace Cappuccino {
 
 		glBindVertexArray(VAO);
 		if (!irregularVertData) {
-
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
 		}
