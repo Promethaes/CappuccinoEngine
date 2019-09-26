@@ -15,31 +15,30 @@ namespace Cappuccino {
 	{
 		if (isEvent(Events::Alt))
 			for (auto x : _meshes)
-				position = x->transform.translate(x->transform.transformMat[0] * 2.5f * dt);
+				position = x->transform.translate(x->transform._transformMat[0] * 2.5f * dt);
 
-		if (isEvent(Events::A)) {
+		if (isEvent(Events::A))
 			for (auto x : _meshes)
-				x->transform.rotate(glm::vec3(0,1,0), -dt);
-		}
-		if (isEvent(Events::D)) {
+				x->transform.rotate(glm::vec3(0, 1, 0), -dt);
+
+		if (isEvent(Events::D))
 			for (auto x : _meshes)
 				x->transform.rotate(glm::vec3(0, 1, 0), dt);
-		}
-		if (isEvent(Events::Q)) {
+
+		if (isEvent(Events::Q))
 			for (auto x : _meshes)
-				x->transform.rotate(x->transform.transformMat[3], -dt);
-		}
-		if (isEvent(Events::E)) {
+				x->transform.rotate(glm::vec3(1, 0, 0), -dt);
+
+		if (isEvent(Events::E))
 			for (auto x : _meshes)
-				x->transform.rotate(x->transform.transformMat[3], dt);
-		}
-		if (isEvent(Events::C)) {
-			_f16RotationV -= glm::vec3(0, 0, 1);
-			_f16RotationFloat -= 4 * dt;
-		}
-		if (isEvent(Events::Z)) {
-			_f16RotationV += glm::vec3(0, 0, 1);
-			_f16RotationFloat += 4 * dt;
-		}
+				x->transform.rotate(glm::vec3(1, 0, 0), dt);
+
+		if (isEvent(Events::C))
+			for (auto x : _meshes)
+				x->transform.rotate(glm::vec3(0, 0, 1), -dt);
+
+		if (isEvent(Events::Z))
+			for (auto x : _meshes)
+				x->transform.rotate(glm::vec3(0, 0, 1), dt);
 	}
 }

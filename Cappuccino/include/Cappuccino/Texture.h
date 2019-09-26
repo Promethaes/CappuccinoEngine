@@ -4,7 +4,7 @@
 #include "stb_image.h"
 #include <string>
 namespace Cappuccino {
-	enum TextureType {
+	enum class TextureType {
 		DiffuseMap = 0,
 		SpecularMap
 	};

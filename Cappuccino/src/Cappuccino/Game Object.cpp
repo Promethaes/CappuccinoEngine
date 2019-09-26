@@ -24,9 +24,23 @@ namespace Cappuccino {
 	}
 	void GameObject::setPosition(const glm::vec3& newPos)
 	{
-		for (auto x : _meshes) {
-			x->transform.translate(newPos);
-		}
+		for (auto x : _meshes)
+			position = x->transform.translate(newPos);
+	}
+	void GameObject::scaleX(const float sizeScalar)
+	{
+		for (auto x : _meshes)
+			x->transform.scale(glm::vec3(1, 0, 0), sizeScalar);
+	}
+	void GameObject::scaleY(const float sizeScalar)
+	{
+		for (auto x : _meshes)
+			x->transform.scale(glm::vec3(0, 1, 0), sizeScalar);
+	}
+	void GameObject::scaleZ(const float sizeScalar)
+	{
+		for (auto x : _meshes)
+			x->transform.scale(glm::vec3(0, 0, 1), sizeScalar);
 	}
 	void GameObject::draw()
 	{
@@ -42,7 +56,7 @@ namespace Cappuccino {
 		}
 
 		for (auto x : _meshes) {
-			x->transform.transformMat = _shader.loadModelMatrix(x->transform.transformMat);
+			x->transform._transformMat = _shader.loadModelMatrix(x->transform._transformMat);
 			x->draw();
 		}
 

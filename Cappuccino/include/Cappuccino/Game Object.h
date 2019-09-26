@@ -27,9 +27,11 @@ namespace Cappuccino {
 
 		std::string id;
 
-		//void setPosition(const glm::vec3& newPos) { _position = newPos; }
-		//glm::vec3 getPosition() const { return _position; }
 		void setPosition(const glm::vec3& newPos);
+
+		void scaleX(const float sizeScalar);
+		void scaleY(const float sizeScalar);
+		void scaleZ(const float sizeScalar);
 	protected:
 		/*
 		Purp: draw the game object

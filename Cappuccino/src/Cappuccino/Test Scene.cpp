@@ -10,7 +10,6 @@ namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
-		_f16._f16Pos.z = 1;
 #if CUBETEST
 		float vertices2[] = {
 			// positions          // normals           // texture coords
