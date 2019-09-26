@@ -39,7 +39,6 @@ namespace Cappuccino {
 
 		init();
 
-		CAPP_PRINT_N("----------STARTING RENDER LOOP----------");
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
@@ -57,8 +56,8 @@ namespace Cappuccino {
 			const GLfloat currentFrame = glfwGetTime();
 			const GLfloat deltaTime = currentFrame - lastFrame;
 			
-			update(deltaTime);
 			draw(deltaTime);
+			update(deltaTime);
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
@@ -69,19 +68,15 @@ namespace Cappuccino {
 	}
 
 	void Application::init() {
-		CAPP_PRINT_N("----------INITIALIZING GLFW----------");
-		CAPP_PRINT_N("Initializing...");
 		if (!glfwInit()) {
 			CAPP_PRINT_ERROR("Error initializing GLFW! Exiting...\n");
 			SYS_EXIT(-1);
 		}
 
-		CAPP_PRINT_N("Setting GLFW window hints...");
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		CAPP_PRINT_N("Creating window...");
 		_window = glfwCreateWindow(_width, _height, _title.c_str(), NULL, NULL);
 
 		if (_window == NULL) {
@@ -93,10 +88,10 @@ namespace Cappuccino {
 			CAPP_PRINT_ERROR(error);
 
 			CAPP_PRINT_ERROR("Exiting...\n");
+			std::cin.get();
 			SYS_EXIT(-2);
 		}
 
-		CAPP_PRINT_N("Setting window settings...\n");
 		glfwMakeContextCurrent(_window);
 		glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
 
@@ -123,7 +118,6 @@ namespace Cappuccino {
 
 
 
-		CAPP_PRINT_N("----------INITIALIZING GLAD----------");
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			glfwTerminate();
 
@@ -131,18 +125,11 @@ namespace Cappuccino {
 			SYS_EXIT(-3);
 		}
 
-		CAPP_PRINT_N("OpenGL function pointers loaded.\n");
 	}
 
 	void Application::cleanup() {
-		CAPP_PRINT_N("----------CLEANING UP AND EXITING----------");
 
 		glfwTerminate();
-		CAPP_PRINT_N("GLFW Terminated.\n");
-
-#if _DEBUG
-		system("pause");
-#endif
 	}
 
 	void Application::update(GLfloat dt) {

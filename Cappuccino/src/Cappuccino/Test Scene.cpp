@@ -60,7 +60,6 @@ namespace Cappuccino {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
-		_f16._f16Pos = glm::vec4(4, 4, 4, _f16._f16Pos.w);
 
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
