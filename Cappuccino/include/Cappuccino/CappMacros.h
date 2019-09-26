@@ -11,12 +11,9 @@
 
 #if _DEBUG
 
-#define SOUNDTEST false
-
-#define CUBETEST false
-
+#define SOUNDTEST true
+#define CUBETEST true
 #define SCENETEST true
-
 #define NETWORKTEST false
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)

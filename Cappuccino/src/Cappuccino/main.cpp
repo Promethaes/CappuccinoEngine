@@ -7,21 +7,27 @@ using SceneManager = Cappuccino::SceneManager;
 
 #pragma region PROGRAM SETTINGS
 
-constexpr GLuint  SCR_WIDTH = 800 * 2;
-constexpr GLuint  SCR_HEIGHT = 600 * 2;
-constexpr GLchar* SCR_TITLE = static_cast<GLchar*>("Cappuccino Engine v1.0");
+constexpr GLuint  SCR_WIDTH = 1600;
+constexpr GLuint  SCR_HEIGHT = 1200;
+constexpr GLchar* SCR_TITLE = "Cappuccino Engine v1.0";
 
 #pragma endregion
 
+// This piece of code was given to us by Shawn Matthews
+// Auto-magically changes OpenGL to use the high performance GPU to render rather than the iGPU
+// (for dual GPU systems)
+extern "C" {
+	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x01;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 0x01;
+}
+
 int main() {
 	if (!Application::isInstantiated()) {
-		//add your scenes here
-
 		Application* application = new Application(SCR_WIDTH, SCR_HEIGHT, SCR_TITLE);
 		application->run();
+		delete application;
 	}
 
 	return 0;
 
-#pragma	endregion
 }

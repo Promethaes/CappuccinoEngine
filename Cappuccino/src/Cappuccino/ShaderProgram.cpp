@@ -30,14 +30,14 @@ namespace Cappuccino {
 
 		CAPP_PRINT_N("------VERTEX SHADER------");
 		compileShader(_vertexShaderPath, ShaderType::VERTEX, vertShader);
-		CAPP_PRINT_N("-----FRAGMENT SHADER-----");
+		CAPP_PRINT_N("\n-----FRAGMENT SHADER-----");
 		compileShader(_fragmentShaderPath, ShaderType::FRAGMENT, fragShader);
 		if (!_geometryShaderPath.empty()) {
-			CAPP_PRINT_N("-----GEOMETRY SHADER-----");
+			CAPP_PRINT_N("\n-----GEOMETRY SHADER-----");
 			compileShader(_geometryShaderPath, ShaderType::GEOMETRY, geoShader);
 		}
 
-		CAPP_PRINT_N("----------LINKING SHADERS AND CREATING SHADER PROGRAM----------");
+		CAPP_PRINT_N("\n----------LINKING SHADERS AND CREATING SHADER PROGRAM----------");
 		createProgram(vertShader, fragShader, geoShader);
 	}
 
@@ -118,22 +118,28 @@ namespace Cappuccino {
 		_programID = glCreateProgram();
 
 		CAPP_PRINT_N("Linking shaders...");
-		//if (vertex)
-		glAttachShader(_programID, vertex);
-		//else
-		//	CAPP_PRINT_ERROR("No vertex shader linked!");
+		if (vertex) {
+			glAttachShader(_programID, vertex);
+		}
+		else {
+			CAPP_PRINT_ERROR("No vertex shader linked!");
+		}
 
-		//if (fragment)
-		glAttachShader(_programID, fragment);
-		//else
-		//	CAPP_PRINT_ERROR("No fragment shader linked!");
+		if (fragment) {
+			glAttachShader(_programID, fragment);
+		}
+		else {
+			CAPP_PRINT_ERROR("No fragment shader linked!");
+		}
 
-		//if (geometry)
-		glAttachShader(_programID, geometry);
-		//else
-		//	CAPP_PRINT_ERROR("No geometry shader linked!");
+		if (geometry) {
+			glAttachShader(_programID, geometry);
+		}
+		else {
+			CAPP_PRINT_ERROR("No geometry shader linked!");
+		}
 
-		CAPP_PRINT("Creating program...");
+		CAPP_PRINT_N("Creating program...");
 		GLint success;
 
 		glLinkProgram(_programID);
@@ -147,12 +153,15 @@ namespace Cappuccino {
 		}
 
 		CAPP_PRINT_N("Deleting shaders...");
-		if (vertex)
+		if (vertex) {
 			glDeleteShader(vertex);
-		if (fragment)
+		}
+		if (fragment) {
 			glDeleteShader(fragment);
-		if (geometry)
+		}
+		if (geometry) {
 			glDeleteShader(geometry);
+		}
 	}
 	glm::mat4 Shader::loadModelMatrix(const glm::mat4& modelMatrix)
 	{

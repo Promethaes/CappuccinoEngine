@@ -34,8 +34,10 @@ local arch = " "
 
 
    filter {}
-      os.execute("ECHO Enter Project Name")
+	  os.execute("ECHO.");      
+	  os.execute("ECHO Enter Project Name")
       local s = io.read();
+	  os.execute("ECHO.");
       os.execute("ECHO Creating Project...")
       os.execute("mkdir " ..solutionDir.."\\src")
       os.execute("XCOPY %CappuccinoPath%\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
