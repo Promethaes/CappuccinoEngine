@@ -15,25 +15,23 @@ namespace Cappuccino {
 	{
 		if (isEvent(Events::Alt))
 			for (auto x : _meshes)
-				x->transform.translate(x->transform.transformMat[0] * 2.5f * dt);
+				position = x->transform.translate(x->transform.transformMat[0] * 2.5f * dt);
 
 		if (isEvent(Events::A)) {
-			_f16RotationV -= glm::vec3(1, 0, 0);
-			_f16RotationFloat -= 4 * dt;
 			for (auto x : _meshes)
-				x->transform.rotate(_f16RotationV, _f16RotationFloat);
+				x->transform.rotate(x->transform.transformMat[0], -dt);
 		}
 		if (isEvent(Events::D)) {
-			_f16RotationV += glm::vec3(1, 0, 0);
-			_f16RotationFloat += 4 * dt;
+			for (auto x : _meshes)
+				x->transform.rotate(x->transform.transformMat[0], dt);
 		}
 		if (isEvent(Events::Q)) {
-			_f16RotationV -= glm::vec3(0, 1, 0);
-			_f16RotationFloat -= 4 * dt;
+			for (auto x : _meshes)
+				x->transform.rotate(x->transform.transformMat[1], -dt);
 		}
 		if (isEvent(Events::E)) {
-			_f16RotationV += glm::vec3(0, 1, 0);
-			_f16RotationFloat += 4 * dt;
+			for (auto x : _meshes)
+				x->transform.rotate(x->transform.transformMat[1], dt);
 		}
 		if (isEvent(Events::C)) {
 			_f16RotationV -= glm::vec3(0, 0, 1);

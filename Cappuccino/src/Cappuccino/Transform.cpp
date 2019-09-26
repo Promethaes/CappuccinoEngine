@@ -14,14 +14,14 @@ namespace Cappuccino {
 	}
 	glm::vec3 Transform::translate(const glm::vec3& translateBy)
 	{
-		transformMat = glm::translate(transformMat, translateBy);
+		transformMat *= glm::translate(glm::mat4(1.0f), translateBy);
+		return transformMat[3];
 		//position *= transformMat;
-		return translateBy;
 	}
 
 	glm::mat4 Transform::rotate(const glm::vec3& rotateOn, float rotationAngle)
 	{
-		return transformMat = glm::rotate(transformMat, rotationAngle, rotateOn);
+		return transformMat *= glm::rotate(glm::mat4(1.0f), rotationAngle, rotateOn);
 		//	position *= transformMat;
 	}
 

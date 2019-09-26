@@ -11,7 +11,7 @@
 
 #if _DEBUG
 
-#define SOUNDTEST true
+#define SOUNDTEST false
 
 #define CUBETEST false
 
