@@ -17,6 +17,9 @@ namespace Cappuccino {
 	void GameObject::baseUpdate(float dt)
 	{
 		childUpdate(dt);
+		for (auto x : _meshes) {
+			x->transform.update();
+		}
 		draw();
 	}
 	void GameObject::setPosition(const glm::vec3& newPos)

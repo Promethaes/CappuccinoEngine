@@ -19,19 +19,19 @@ namespace Cappuccino {
 
 		if (isEvent(Events::A)) {
 			for (auto x : _meshes)
-				x->transform.rotate(x->transform.transformMat[0], -dt);
+				x->transform.rotate(glm::vec3(0,1,0), -dt);
 		}
 		if (isEvent(Events::D)) {
 			for (auto x : _meshes)
-				x->transform.rotate(x->transform.transformMat[0], dt);
+				x->transform.rotate(glm::vec3(0, 1, 0), dt);
 		}
 		if (isEvent(Events::Q)) {
 			for (auto x : _meshes)
-				x->transform.rotate(x->transform.transformMat[1], -dt);
+				x->transform.rotate(x->transform.transformMat[3], -dt);
 		}
 		if (isEvent(Events::E)) {
 			for (auto x : _meshes)
-				x->transform.rotate(x->transform.transformMat[1], dt);
+				x->transform.rotate(x->transform.transformMat[3], dt);
 		}
 		if (isEvent(Events::C)) {
 			_f16RotationV -= glm::vec3(0, 0, 1);

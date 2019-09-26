@@ -4,29 +4,32 @@ namespace Cappuccino {
 	glm::mat4 Transform::doTransform(const std::optional<glm::vec3>& translation, const std::optional<glm::vec3>& rotateOn, const std::optional<float> rotationAngle, const std::optional<glm::vec3>& scaleVec, const std::optional<float>& sizeScalar)
 	{
 		if (translation.has_value())
-			translate(translation.value());
+			transformMat = glm::translate(transformMat, translation.value());
 		if (rotateOn.has_value())
-			rotate(rotateOn.value(), rotationAngle.value());
+			transformMat = glm::rotate(transformMat,rotationAngle.value(),rotateOn.value());
 		if (scaleVec.has_value())
-			scale(scaleVec.value(), (sizeScalar.has_value() ? sizeScalar.value() : 1));
+			transformMat = glm::scale(transformMat, scaleVec.value() * sizeScalar.value());
 
 		return transformMat;
 	}
+	void Transform::update()
+	{
+		transformMat = scaleMat * rotateMat * translateMat;
+	}
 	glm::vec3 Transform::translate(const glm::vec3& translateBy)
 	{
-		transformMat *= glm::translate(glm::mat4(1.0f), translateBy);
-		return transformMat[3];
+		translateMat = glm::translate(translateMat, translateBy);
+		return glm::vec3(translateMat[3].x, translateMat[3].y, translateMat[3].z);
 		//position *= transformMat;
 	}
 
 	glm::mat4 Transform::rotate(const glm::vec3& rotateOn, float rotationAngle)
 	{
-		return transformMat *= glm::rotate(glm::mat4(1.0f), rotationAngle, rotateOn);
-		//	position *= transformMat;
+		return rotateMat = glm::rotate(rotateMat, rotationAngle, rotateOn);
 	}
 
 	glm::mat4 Transform::scale(const glm::vec3& scaleVec, float sizeScalar)
 	{
-		return transformMat = glm::scale(transformMat, scaleVec * sizeScalar);
+		return scaleMat = glm::scale(glm::mat4(sizeScalar), scaleVec);
 	}
 }
