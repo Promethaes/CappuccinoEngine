@@ -20,7 +20,7 @@ WinSocketCommon::WinSocketCommon()
 	}
 }
 
-Network::Network(unsigned port,const std::string& IP)
+Network::Network(unsigned port, const std::string& IP)
 {
 	if (!winSocketInitialized)
 		return;
@@ -32,7 +32,7 @@ Network::Network(unsigned port,const std::string& IP)
 
 	inet_pton(AF_INET, IP.c_str(), &serverHint.sin_addr);
 
-	if (bind(in, (sockaddr*)& serverHint, sizeof(serverHint)) == SOCKET_ERROR) {
+	if (bind(in, (sockaddr*)&serverHint, sizeof(serverHint)) == SOCKET_ERROR) {
 		std::cout << "can't find socket " << WSAGetLastError() << "\n";
 		return;
 	}
@@ -49,7 +49,7 @@ void Network::sendMessage(const std::string& message, const std::string& IP)
 
 	inet_pton(AF_INET, IP.c_str(), &temp.sin_addr);
 
-	int sendOk = sendto(out, message.c_str(), message.size() + 1, 0, (sockaddr*)& temp, sizeof(temp));
+	int sendOk = sendto(out, message.c_str(), message.size() + 1, 0, (sockaddr*)&temp, sizeof(temp));
 
 	if (sendOk == SOCKET_ERROR)
 		std::cout << "failed " << WSAGetLastError() << "\n";
@@ -59,7 +59,7 @@ void Network::listen()
 {
 	ZeroMemory(&buf, 1024);
 
-	int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)& client, &clientLength);
+	int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)&client, &clientLength);
 	if (bytesIn == SOCKET_ERROR)
 		std::cout << "error recieving from client " << WSAGetLastError() << "\n";
 
@@ -76,7 +76,7 @@ std::string Network::listen(bool returnString)
 {
 	ZeroMemory(&buf, 1024);
 
-	int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)& client, &clientLength);
+	int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)&client, &clientLength);
 	if (bytesIn == SOCKET_ERROR)
 		std::cout << "error recieving from client " << WSAGetLastError() << "\n";
 
@@ -88,6 +88,3 @@ std::string Network::listen(bool returnString)
 	std::cout << clientIp << " : " << buf << "\n";
 	return std::string(buf);
 }
-
-
-

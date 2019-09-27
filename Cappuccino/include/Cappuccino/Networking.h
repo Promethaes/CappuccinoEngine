@@ -4,19 +4,17 @@
 #include <vector>
 #pragma comment(lib,"ws2_32.lib")
 
-
 class WinSocketCommon {
 public:
 	~WinSocketCommon();
 protected:
 	static bool winSocketInitialized;
 	WinSocketCommon();
-
 };
 
 class Network : public WinSocketCommon {
 public:
-	Network(unsigned port,const std::string& IP);
+	Network(unsigned port, const std::string& IP);
 
 	void sendMessage(const std::string& message, const std::string& IP);
 	void listen();
@@ -30,6 +28,4 @@ private:
 	sockaddr_in client;
 	int clientLength;
 	char buf[1024];
-
 };
-

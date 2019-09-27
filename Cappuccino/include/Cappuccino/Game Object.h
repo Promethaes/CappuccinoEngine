@@ -26,27 +26,22 @@ namespace Cappuccino {
 		static std::vector<GameObject*> gameObjects;
 
 		std::string id;
-		glm::mat4 _modelMat = glm::mat4(1.0f);
-		glm::vec4 _pos = glm::vec4(0, 0, 0, 1);
-		glm::vec4 _acceleration = glm::vec4(0.0f);
-		/*
-		Purp: load the textures, make sure this is only called once
-		*/
-		void loadTextures();
-		/*
-		load the meshs
-		*/
-		void loadMesh();
+
+		void setPosition(const glm::vec3& newPos);
+
+		void scaleX(const float sizeScalar);
+		void scaleY(const float sizeScalar);
+		void scaleZ(const float sizeScalar);
 	protected:
 		/*
 		Purp: draw the game object
 		*/
-		virtual void draw();
+		void draw();
+		glm::vec3 position;
 		std::vector<Texture*> _textures;
-		std::vector<Mesh*> _meshs;
+		std::vector<Mesh*> _meshes;
 		Shader _shader;
-		glm::vec3 _rotationV = glm::vec3(1, 1, 1);
-		float _rotationFloat = 0.0f;
+		//	glm::vec3 _position;
 	private:
 		/*
 		Purp: pure virtual function that calls the appropriate child update definition
@@ -59,5 +54,13 @@ namespace Cappuccino {
 		
 		
 
+		/*
+		Purp: load the textures, make sure this is only called once
+		*/
+		void loadTextures();
+		/*
+		load the meshs
+		*/
+		void loadMesh();
 	};
 }

@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 namespace Cappuccino {
-
 	/*
 	Desc.: a 3D cube here for visual representation with functions pertaining to that purpose
 	*/
@@ -24,8 +23,7 @@ namespace Cappuccino {
 		Returns: Returns the texture of the cube
 		*/
 		Texture getTexture() const { return textureRect; }
-		
-		
+
 		//The cube's position in the 3D plane
 		glm::vec3 position;
 

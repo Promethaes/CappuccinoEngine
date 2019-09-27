@@ -6,12 +6,10 @@
 #include "Cappuccino/Input.h"
 #include "Cappuccino/Events.h"
 
-
 namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
-		_f16._f16Pos.z = 1;
 #if CUBETEST
 		float vertices2[] = {
 			// positions          // normals           // texture coords
@@ -62,18 +60,15 @@ namespace Cappuccino {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
-		_f16._f16Pos = glm::vec4(4, 4, 4, _f16._f16Pos.w);
 
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
-
 
 #endif
 	}
 
 	bool Cappuccino::TestScene::init()
 	{
-
 		return _initialized = true;
 	}
 
@@ -85,7 +80,6 @@ namespace Cappuccino {
 	void Cappuccino::TestScene::childUpdate(float dt)
 	{
 		//centre cube
-
 
 		glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
@@ -104,7 +98,7 @@ namespace Cappuccino {
 		glBindTexture(GL_TEXTURE_2D, specularMap.getTextureId());
 		for (unsigned int i = 0; i < cubes.size(); i++)
 		{
-			_lightingShader.loadModelMatrix(pointLightPositions[i] + glm::vec3(3,3,3), std::nullopt, glm::vec3(i, i, i), rotate);
+			_lightingShader.loadModelMatrix(pointLightPositions[i] + glm::vec3(3, 3, 3), std::nullopt, glm::vec3(i, i, i), rotate);
 			cubes[i].draw();
 		}
 		glActiveTexture(GL_TEXTURE0);
@@ -138,7 +132,6 @@ namespace Cappuccino {
 		_lightingShader.setUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 		for (unsigned i = 0; i < 4; i++) {
-
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].ambient", 0.05f * 3, 0.05f * 3, 0.05f * 3);
 			_lightingShader.setUniform("pointLights[" + std::to_string(i) + "].diffuse", 0.8f * 3, 0.8f * 3, 0.8f * 3);
@@ -155,12 +148,7 @@ namespace Cappuccino {
 		_lightingShader.setUniform("light.diffuse", diffuseColor);
 		_lightingShader.setUniform("light.specular", 1.0f, 1.0f, 1.0f);
 
-
 		_lightingShader.setUniform("viewPos", Scene::defaultCamera->getPosition());
-
-
-
-
 
 #if NETWORKTEST
 		if (isEvent(Events::Up)) {
@@ -183,5 +171,4 @@ namespace Cappuccino {
 		//defaultCamera->lookAt(_f16._f16Pos);
 		//defaultCamera->setPosition(glm::vec3(_f16._f16Pos) + glm::vec3(-5, 5, 0));
 	}
-
 }

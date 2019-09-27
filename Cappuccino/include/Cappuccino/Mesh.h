@@ -1,8 +1,7 @@
 #pragma once
-#include "IO.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+
+#include <Cappuccino/Transform.h>
+#include <string>
 namespace Cappuccino {
 	class Mesh {
 	public:
@@ -41,11 +40,10 @@ namespace Cappuccino {
 		unsigned getFaces() const { return _numFaces; }
 		unsigned getVerts() const { return _numVerts; }
 
-		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		Transform transform;
 	private:
 		unsigned _numFaces = 0;
 		unsigned _numVerts = 0;
 		std::string _path;
 	};
-
 }

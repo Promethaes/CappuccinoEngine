@@ -1,7 +1,6 @@
 #include "Cappuccino/SoundSystem.h"
 #include "Cappuccino/CappMacros.h"
 namespace Cappuccino {
-
 	bool SoundSystem::_initialized = false;
 	std::vector<FMOD::Sound*> SoundSystem::sounds = {};
 	std::vector<FMOD::ChannelGroup*> SoundSystem::channelGroups = {};
@@ -9,7 +8,6 @@ namespace Cappuccino {
 	FMOD::System* SoundSystem::_system = NULL;
 	FMOD_RESULT SoundSystem::_result = FMOD_OK;
 	std::string SoundSystem::_soundPath = "";
-
 
 	void Cappuccino::SoundSystem::init(const std::string& defaultFilePath)
 	{
@@ -49,7 +47,6 @@ namespace Cappuccino {
 		channelGroups.push_back(group);
 
 		return channelGroups.size() - 1;
-
 	}
 
 	void SoundSystem::playSound2D(unsigned soundsIndex, unsigned groupsIndex)
@@ -59,7 +56,6 @@ namespace Cappuccino {
 		checkFmodErrors(_result, "play sound 2D");
 
 		channels.push_back(channel);
-
 	}
 
 	void SoundSystem::checkFmodErrors(FMOD_RESULT& result, const std::string& whereError)
@@ -69,7 +65,5 @@ namespace Cappuccino {
 			CAPP_PRINT_ERROR("FMOD error! (%d) %s at %s\n", result, FMOD_ErrorString(result), whereError.c_str());
 			SYS_EXIT(-1);
 		}
-
 	}
-
 }

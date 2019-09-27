@@ -1,18 +1,18 @@
 #include <glad/glad.h>
-#include "Cappuccino/Mesh.h"
 #include <glm/glm.hpp>
 #include <vector>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+#include "Cappuccino/Mesh.h"
 #include "Cappuccino/CappMacros.h"
 
 namespace Cappuccino {
-
 	struct FaceData {
-
 		unsigned vertexData[3];
 		unsigned textureData[3];
 		unsigned normalData[3];
 	};
-
 
 	bool Cappuccino::Mesh::loadMesh(const std::string& path)
 	{
@@ -141,7 +141,6 @@ namespace Cappuccino {
 		}
 		//import data
 		while (!input.eof()) {
-
 			input.getline(inputString, 128);
 
 			//vertex data
@@ -221,9 +220,7 @@ namespace Cappuccino {
 		glBindVertexArray(0);
 
 		input.close();
-
 	}
-
 
 	void Mesh::unload()
 	{
@@ -240,7 +237,6 @@ namespace Cappuccino {
 
 		_numFaces = 0;//reset all numbers
 		_numVerts = 0;
-
 	}
 
 	void Mesh::draw()
@@ -248,5 +244,4 @@ namespace Cappuccino {
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, _numVerts);
 	}
-
 }

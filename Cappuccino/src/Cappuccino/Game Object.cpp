@@ -1,6 +1,5 @@
 #include "Cappuccino/Game Object.h"
 namespace Cappuccino {
-
 	std::vector<GameObject*> GameObject::gameObjects = {};
 	GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& _textures, const std::vector<Mesh*>& _meshs)
 		:_shader(_shader)
@@ -8,7 +7,7 @@ namespace Cappuccino {
 		//mesh = new Mesh(MESH);
 
 		this->_textures = _textures;
-		this->_meshs = _meshs;
+		this->_meshes = _meshs;
 
 		loadTextures();
 		loadMesh();
@@ -18,7 +17,30 @@ namespace Cappuccino {
 	void GameObject::baseUpdate(float dt)
 	{
 		childUpdate(dt);
-		_pos += _acceleration * dt;
+		for (auto x : _meshes) {
+			x->transform.update();
+		}
+		draw();
+	}
+	void GameObject::setPosition(const glm::vec3& newPos)
+	{
+		for (auto x : _meshes)
+			position = x->transform.translate(newPos);
+	}
+	void GameObject::scaleX(const float sizeScalar)
+	{
+		for (auto x : _meshes)
+			x->transform.scale(glm::vec3(1, 0, 0), sizeScalar);
+	}
+	void GameObject::scaleY(const float sizeScalar)
+	{
+		for (auto x : _meshes)
+			x->transform.scale(glm::vec3(0, 1, 0), sizeScalar);
+	}
+	void GameObject::scaleZ(const float sizeScalar)
+	{
+		for (auto x : _meshes)
+			x->transform.scale(glm::vec3(0, 0, 1), sizeScalar);
 	}
 	void GameObject::draw()
 	{
@@ -26,32 +48,29 @@ namespace Cappuccino {
 		glUseProgram(_shader.getID());
 
 		//bind the textures to their proper slots
-		for (unsigned i = 0; i < _textures.size(); i++) {
-			if (_textures[i]->type == TextureType::DiffuseMap)
-				_textures[i]->bind(0);
-			else if (_textures[i]->type == TextureType::SpecularMap)
-				_textures[i]->bind(1);
-		}
-		//sets the model matrix variable to the fully transformed matrix, after loading the model matrix into the GPU
-		for (unsigned i = 0; i < _meshs.size(); i++) {
-			_modelMat = _meshs[i]->modelMatrix;
-			_meshs[i]->modelMatrix = _shader.loadModelMatrix(_pos, std::nullopt, _rotationV, _rotationFloat);
-			_meshs[i]->draw();
+		for (auto x : _textures) {
+			if (x->type == TextureType::DiffuseMap)
+				x->bind(0);
+			else if (x->type == TextureType::SpecularMap)
+				x->bind(1);
 		}
 
+		for (auto x : _meshes) {
+			x->transform._transformMat = _shader.loadModelMatrix(x->transform._transformMat);
+			x->draw();
+		}
 
 		//unloads the textures
-		for (unsigned i = 0; i < _textures.size(); i++) {
-			if (_textures[i]->type == TextureType::DiffuseMap)
-				_textures[i]->unbind(0);
-			else if (_textures[i]->type == TextureType::SpecularMap)
-				_textures[i]->unbind(1);
+		for (auto x : _textures) {
+			if (x->type == TextureType::DiffuseMap)
+				x->unbind(0);
+			else if (x->type == TextureType::SpecularMap)
+				x->unbind(1);
 		}
 	}
 	void GameObject::loadTextures()
 	{
 		if (!_loadedTextures) {
-
 			for (unsigned i = 0; i < _textures.size(); i++) {
 				if (_textures[i]->load())
 					continue;
@@ -60,14 +79,12 @@ namespace Cappuccino {
 			}
 			_loadedTextures = true;
 		}
-
 	}
 	void GameObject::loadMesh()
 	{
 		if (!_loadedMesh) {
-
-			for (unsigned i = 0; i < _meshs.size(); i++) {
-				if (_meshs[i]->loadMesh())
+			for (unsigned i = 0; i < _meshes.size(); i++) {
+				if (_meshes[i]->loadMesh())
 					continue;
 				else
 					return;

@@ -8,7 +8,6 @@ using string = std::string;
 using ifstream = std::ifstream;
 using sstream = std::stringstream;
 namespace Cappuccino {
-	
 	string Shader::_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
 
 	Shader::Shader() : _programID(0), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
@@ -27,18 +26,13 @@ namespace Cappuccino {
 		_programID = 0;
 		GLuint vertShader = 0, fragShader = 0, geoShader = 0;
 
-		CAPP_PRINT_N("----------COMPILING SHADERS----------");
 
-		CAPP_PRINT_N("------VERTEX SHADER------");
 		compileShader(_vertexShaderPath, ShaderType::VERTEX, vertShader);
-		CAPP_PRINT_N("-----FRAGMENT SHADER-----");
 		compileShader(_fragmentShaderPath, ShaderType::FRAGMENT, fragShader);
 		if (!_geometryShaderPath.empty()) {
-			CAPP_PRINT_N("-----GEOMETRY SHADER-----");
 			compileShader(_geometryShaderPath, ShaderType::GEOMETRY, geoShader);
 		}
 
-		CAPP_PRINT_N("----------LINKING SHADERS AND CREATING SHADER PROGRAM----------");
 		createProgram(vertShader, fragShader, geoShader);
 	}
 
@@ -75,7 +69,6 @@ namespace Cappuccino {
 		string shaderString;
 		const GLchar* shaderSource;
 
-		CAPP_PRINT_N("Reading source code...");
 		if (!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
 			CAPP_PRINT_ERROR("Failed to read shader from file!");
 			shaderString = "";
@@ -83,7 +76,6 @@ namespace Cappuccino {
 
 		shaderSource = shaderString.c_str();
 
-		CAPP_PRINT_N("Compiling shader...");
 		GLint success;
 		GLuint shaderType = NULL;
 
@@ -118,23 +110,27 @@ namespace Cappuccino {
 	void Shader::createProgram(const GLuint vertex, const GLuint fragment, const GLuint geometry) {
 		_programID = glCreateProgram();
 
-		CAPP_PRINT_N("Linking shaders...");
-		//if (vertex)
+		if (vertex) {
 			glAttachShader(_programID, vertex);
-		//else
-		//	CAPP_PRINT_ERROR("No vertex shader linked!");
+		}
+		else {
+			CAPP_PRINT_ERROR("No vertex shader linked!");
+		}
 
-		//if (fragment)
+		if (fragment) {
 			glAttachShader(_programID, fragment);
-		//else
-		//	CAPP_PRINT_ERROR("No fragment shader linked!");
+		}
+		else {
+			CAPP_PRINT_ERROR("No fragment shader linked!");
+		}
 
-		//if (geometry)
+		if (geometry) {
 			glAttachShader(_programID, geometry);
-		//else
-		//	CAPP_PRINT_ERROR("No geometry shader linked!");
+		}
+		else {
+			CAPP_PRINT_ERROR("No geometry shader linked!");
+		}
 
-		CAPP_PRINT("Creating program...");
 		GLint success;
 
 		glLinkProgram(_programID);
@@ -147,13 +143,21 @@ namespace Cappuccino {
 			CAPP_PRINT_ERROR(infoLog);
 		}
 
-		CAPP_PRINT_N("Deleting shaders...");
-		if (vertex)
+		if (vertex) {
 			glDeleteShader(vertex);
-		if (fragment)
+		}
+		if (fragment) {
 			glDeleteShader(fragment);
-		if (geometry)
+		}
+		if (geometry) {
 			glDeleteShader(geometry);
+		}
+	}
+	glm::mat4 Shader::loadModelMatrix(const glm::mat4& modelMatrix)
+	{
+		unsigned int modelLoc = glGetUniformLocation(_programID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		return modelMatrix;
 	}
 
 	glm::mat4 Shader::loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle)
@@ -186,9 +190,7 @@ namespace Cappuccino {
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(_programID, "projection"), 1, GL_FALSE, &projection[0][0]);
-
 	}
-
 
 	void Cappuccino::Shader::setUniform(const std::string& name, const bool value) const {
 		glUniform1i(
@@ -214,6 +216,5 @@ namespace Cappuccino {
 	void Shader::setUniform(const std::string& name, const glm::vec4& value) const
 	{
 		glUniform4fv(glGetUniformLocation(_programID, name.c_str()), 1, &value[0]);
-
 	}
 }
