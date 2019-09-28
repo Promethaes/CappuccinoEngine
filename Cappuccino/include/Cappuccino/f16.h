@@ -8,7 +8,9 @@ namespace Cappuccino {
 
 		void childUpdate(float dt) override;
 
-		
+		static Texture* text1;
+		static Texture* text2;
+		static Mesh* mesh;
 	private:
 		Sedna::XinputController* _controller = nullptr;
 	};

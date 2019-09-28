@@ -40,7 +40,7 @@ namespace Cappuccino {
 		unsigned getFaces() const { return _numFaces; }
 		unsigned getVerts() const { return _numVerts; }
 
-		Transform transform;
+		bool loaded = false;
 	private:
 		unsigned _numFaces = 0;
 		unsigned _numVerts = 0;

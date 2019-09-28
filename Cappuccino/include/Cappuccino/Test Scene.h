@@ -29,19 +29,6 @@ namespace Cappuccino {
 		Shader _lightingShader{ "lightingShader.vert","lightingShader.frag" };
 		F16 _f16{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 		F16 _f162{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f1622{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f16222{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f162222{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f1622222{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f1623{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f16233{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f162333{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f1623333{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f16233333{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f162333333{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f1623333333{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f16254{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
-		F16 _f1626{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 
 		//networking test
 #if NETWORKTEST

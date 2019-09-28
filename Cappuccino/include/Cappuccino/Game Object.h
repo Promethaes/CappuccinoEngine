@@ -57,6 +57,8 @@ namespace Cappuccino {
 		void scaleZ(const float sizeScalar);
 
 		void changeState(const State& newState);
+
+		Transform transform;
 	protected:
 		/*
 		Purp: draw the game object

@@ -10,7 +10,9 @@ namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
-		_f162.setPosition(glm::vec3(5, 5, 5));
+		for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
+			GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
+		}
 #if CUBETEST
 		float vertices2[] = {
 			// positions          // normals           // texture coords
