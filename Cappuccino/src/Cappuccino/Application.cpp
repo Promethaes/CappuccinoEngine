@@ -2,6 +2,8 @@
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
 #include "Cappuccino/Test Scene.h"
+#include "Cappuccino/Input.h"
+#include "Cappuccino/Events.h"
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;
@@ -108,6 +110,10 @@ namespace Cappuccino {
 	}
 
 	void Application::update(GLfloat dt) {
+#ifdef _DEBUG
+		if (isEvent(Events::Escape))
+			exit(0);
+#endif
 
 		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
