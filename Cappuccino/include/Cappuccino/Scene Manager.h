@@ -26,6 +26,14 @@ namespace Cappuccino {
 		bool isActive() const { return _active; }
 		bool isInit() const { return _initialized; }
 		bool ShouldExit() const { return _shouldExit; }
+
+		/*
+		Purp: determine the mouse callback for the scene
+		it is suggested that some control booleans are put in place
+		eg. isPaused, if so then make the mouse visible and so on
+		*/
+		virtual void mouseFunction(double xpos, double ypos) = 0;
+
 	protected:
 		std::string info;
 		bool _active = false;

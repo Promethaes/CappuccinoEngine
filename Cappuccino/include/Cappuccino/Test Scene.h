@@ -23,6 +23,8 @@ namespace Cappuccino {
 
 		void childUpdate(float dt) override;
 
+		void mouseFunction(double xpos,double ypos) override;
+
 	private:
 		Shader _lightingShader{ "lightingShader.vert","lightingShader.frag" };
 		F16 _f16{ Mesh(std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj"), _lightingShader,nullptr,0 };
@@ -42,5 +44,10 @@ namespace Cappuccino {
 		std::vector<Cube> cubes;
 		Texture specularMap;
 #endif
+		float lastX = 400, lastY = 300;
+		float yaw = -90.0f;
+		float pitch = 0.0f;
+		bool firstMouse = true;
+
 	};
 }
