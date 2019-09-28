@@ -6,6 +6,8 @@ namespace Cappuccino {
 	{
 		//mesh = new Mesh(MESH);
 
+		_state = new State();
+
 		this->_textures = _textures;
 		this->_meshes = _meshs;
 
@@ -17,30 +19,30 @@ namespace Cappuccino {
 	void GameObject::baseUpdate(float dt)
 	{
 		childUpdate(dt);
-		for (auto x : _meshes) {
-			x->transform.update();
-		}
+		
+			transform.update();
+		
 		draw();
 	}
 	void GameObject::setPosition(const glm::vec3& newPos)
 	{
-		for (auto x : _meshes)
-			position = x->transform.translate(newPos);
+		
+			position = transform.translate(newPos);
 	}
 	void GameObject::scaleX(const float sizeScalar)
 	{
-		for (auto x : _meshes)
-			x->transform.scale(glm::vec3(1, 0, 0), sizeScalar);
+		
+			transform.scale(glm::vec3(1, 0, 0), sizeScalar);
 	}
 	void GameObject::scaleY(const float sizeScalar)
 	{
-		for (auto x : _meshes)
-			x->transform.scale(glm::vec3(0, 1, 0), sizeScalar);
+		
+			transform.scale(glm::vec3(0, 1, 0), sizeScalar);
 	}
 	void GameObject::scaleZ(const float sizeScalar)
 	{
-		for (auto x : _meshes)
-			x->transform.scale(glm::vec3(0, 0, 1), sizeScalar);
+		
+			transform.scale(glm::vec3(0, 0, 1), sizeScalar);
 	}
 	void GameObject::draw()
 	{
@@ -55,8 +57,8 @@ namespace Cappuccino {
 				x->bind(1);
 		}
 
+			transform._transformMat = _shader.loadModelMatrix(transform._transformMat);
 		for (auto x : _meshes) {
-			x->transform._transformMat = _shader.loadModelMatrix(x->transform._transformMat);
 			x->draw();
 		}
 

@@ -3,9 +3,13 @@
 #include "Cappuccino/Input.h"
 
 namespace Cappuccino {
-	F16::F16(const Mesh& MESH, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex)
-		:GameObject(SHADER, std::vector<Texture*>{new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/Metal_specmap.png", TextureType::SpecularMap), new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/container2.png", TextureType::SpecularMap)},
-			std::vector<Mesh*>	 {new Mesh(MESH)})
+
+	Texture* F16::text1 = nullptr;
+	Texture* F16::text2 = nullptr;
+	Mesh* F16::mesh = nullptr;
+	F16::F16(const std::string& path, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex)
+		:GameObject(SHADER, std::vector<Texture*>{text1 == nullptr ? text1 = new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/Metal_specmap.png", TextureType::SpecularMap) : text1, text2 == nullptr ? text2 = new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/container2.png", TextureType::SpecularMap) : text2},
+			std::vector<Mesh*>{mesh == nullptr ? mesh = new Mesh(path) : mesh})
 	{
 		id = "F16";
 		if (manager != nullptr)
@@ -14,31 +18,30 @@ namespace Cappuccino {
 	void F16::childUpdate(float dt)
 	{
 		if (isEvent(Events::Alt))
-			for (auto x : _meshes)
-				position = x->transform.translate(x->transform._transformMat[0] * 2.5f * dt);
+
+			position = transform.translate(transform._transformMat[0] * 2.5f * dt);
 
 		if (isEvent(Events::A))
-			for (auto x : _meshes)
-				x->transform.rotate(glm::vec3(0, 1, 0), -dt);
+			transform.rotate(glm::vec3(0, 1, 0), -dt);
 
 		if (isEvent(Events::D))
-			for (auto x : _meshes)
-				x->transform.rotate(glm::vec3(0, 1, 0), dt);
+
+			transform.rotate(glm::vec3(0, 1, 0), dt);
 
 		if (isEvent(Events::Q))
-			for (auto x : _meshes)
-				x->transform.rotate(glm::vec3(1, 0, 0), -dt);
+
+			transform.rotate(glm::vec3(1, 0, 0), -dt);
 
 		if (isEvent(Events::E))
-			for (auto x : _meshes)
-				x->transform.rotate(glm::vec3(1, 0, 0), dt);
+
+			transform.rotate(glm::vec3(1, 0, 0), dt);
 
 		if (isEvent(Events::C))
-			for (auto x : _meshes)
-				x->transform.rotate(glm::vec3(0, 0, 1), -dt);
+
+			transform.rotate(glm::vec3(0, 0, 1), -dt);
 
 		if (isEvent(Events::Z))
-			for (auto x : _meshes)
-				x->transform.rotate(glm::vec3(0, 0, 1), dt);
+
+			transform.rotate(glm::vec3(0, 0, 1), dt);
 	}
 }

@@ -10,6 +10,9 @@ namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
+		for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
+			GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
+		}
 #if CUBETEST
 		float vertices2[] = {
 			// positions          // normals           // texture coords
@@ -168,7 +171,22 @@ namespace Cappuccino {
 			camPos -= 2.5f * dt * defaultCamera->getFront();
 
 		defaultCamera->setPosition(camPos);
-		//defaultCamera->lookAt(_f16._f16Pos);
-		//defaultCamera->setPosition(glm::vec3(_f16._f16Pos) + glm::vec3(-5, 5, 0));
+	}
+	void TestScene::mouseFunction(double xpos, double ypos)
+	{
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		GLfloat xOffset = xpos - lastX;
+		GLfloat yOffset = lastY - ypos;
+		lastX = xpos;
+		lastY = ypos;
+
+		Scene::defaultCamera->doMouseMovement(xOffset, yOffset);
+		glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 }

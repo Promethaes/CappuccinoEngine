@@ -1,8 +1,18 @@
 #include "Cappuccino/Scene Manager.h"
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/Application.h"
 #include <string>
-#define Scenes Scene::scenes
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#define Scenes Cappuccino::Scene::scenes
+
+
 namespace Cappuccino {
+	void internalMouseCallback(GLFWwindow* window, double xpos, double ypos) {
+		for (auto x : Scenes)
+			if (x->isActive())
+				x->mouseFunction(xpos, ypos);
+	}
 	std::vector<Scene*> Scene::scenes = {};
 	Camera* Scene::defaultCamera = new Camera();
 	Scene::Scene(bool firstScene) {
@@ -13,12 +23,13 @@ namespace Cappuccino {
 	void Scene::baseUpdate(float dt) {
 		for (int i = 0; i < scenes.size(); i++) {
 			if (scenes[i]->isActive()) {
-				scenes[i]->childUpdate(dt);
 				for (int j = 0; j < scenes.size(); j++) {
 					if (i == j)
 						continue;
 					scenes[j]->_active = false;
 				}
+				glfwSetCursorPosCallback(glfwGetCurrentContext(), internalMouseCallback);
+				scenes[i]->childUpdate(dt);
 				break;
 			}
 		}

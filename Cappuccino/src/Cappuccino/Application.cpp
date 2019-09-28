@@ -1,7 +1,6 @@
 #include "Cappuccino/Application.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
-#include "Cappuccino/Scene Manager.h"
 #include "Cappuccino/Test Scene.h"
 
 #define GameObjects GameObject::gameObjects
@@ -9,16 +8,9 @@ using string = std::string;
 
 namespace Cappuccino {
 
-	#if SCENETEST
-	void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-	float lastX = 400, lastY = 300;
-	float yaw = -90.0f;
-	float pitch = 0.0f;
-	bool firstMouse = true;
-
-	#endif
 	
 	bool Application::_instantiated = false;
+	GLFWwindow* Application::_window = nullptr;
 
 	Application::Application() : Application(10, 10, "Cappuccino Engine", 4u, 2u) {}
 
@@ -51,7 +43,10 @@ namespace Cappuccino {
 		glEnable(GL_DEPTH_TEST);
 
 		static GLfloat lastFrame;
-		
+
+		/*
+		Render Loop
+		*/
 		while (!glfwWindowShouldClose(_window)) {
 			const GLfloat currentFrame = glfwGetTime();
 			const GLfloat deltaTime = currentFrame - lastFrame;
@@ -65,6 +60,8 @@ namespace Cappuccino {
 			glfwSwapBuffers(_window);
 			
 		}
+
+
 	}
 
 	void Application::init() {
@@ -96,28 +93,6 @@ namespace Cappuccino {
 		glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
 
 
-	#if SCENETEST
-		glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos) {
-			if (firstMouse)
-			{
-				lastX = xpos;
-				lastY = ypos;
-				firstMouse = false;
-			}
-
-			GLfloat xOffset = xpos - lastX;
-			GLfloat yOffset = lastY - ypos;
-			lastX = xpos;
-			lastY = ypos;
-
-			Scene::defaultCamera->doMouseMovement(xOffset, yOffset);
-		});
-		
-		glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	#endif
-
-
-
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			glfwTerminate();
 
@@ -133,8 +108,8 @@ namespace Cappuccino {
 	}
 
 	void Application::update(GLfloat dt) {
-		SceneManager::updateScenes(dt);
 
+		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
 			x->baseUpdate(dt);
 	}

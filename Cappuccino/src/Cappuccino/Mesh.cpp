@@ -117,11 +117,13 @@ namespace Cappuccino {
 
 		input.close();
 
-		return true;
+		return loaded = true;
 	}
 
 	bool Mesh::loadMesh()
 	{
+		if (loaded)
+			return true;
 		char inputString[128];
 
 		std::vector<glm::vec3> vertexData;
@@ -220,6 +222,7 @@ namespace Cappuccino {
 		glBindVertexArray(0);
 
 		input.close();
+		return loaded = true;
 	}
 
 	void Mesh::unload()

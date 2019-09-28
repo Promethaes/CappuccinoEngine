@@ -22,6 +22,7 @@ namespace Cappuccino {
 		static bool isInstantiated();
 		void run();
 
+		static GLFWwindow* _window;
 	private:
 
 		void init();
@@ -31,7 +32,6 @@ namespace Cappuccino {
 		void draw(GLfloat dt);
 
 
-		GLFWwindow* _window;
 		GLuint _width, _height;
 		std::string _title;
 		GLuint _contextVersionMajor, _contextVersionMinor;
