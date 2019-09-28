@@ -4,10 +4,13 @@
 namespace Cappuccino {
 	class F16 :public GameObject {
 	public:
-		F16(const Mesh& MESH, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex);
+		F16(const std::string& path,const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex);
 
 		void childUpdate(float dt) override;
+
+		
 	private:
 		Sedna::XinputController* _controller = nullptr;
 	};
+
 }

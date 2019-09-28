@@ -6,6 +6,8 @@ namespace Cappuccino {
 	{
 		//mesh = new Mesh(MESH);
 
+		_state = new State();
+
 		this->_textures = _textures;
 		this->_meshes = _meshs;
 

@@ -8,6 +8,27 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 namespace Cappuccino {
+
+	/*
+	Purp: state machine, override virtual functions to get most out of this
+	*/
+	class GameObject;
+	class State {
+	public:
+
+		//some example states...
+		/*enum States {
+			JUMP,
+			SHOOT,
+			HURT
+		};*/
+
+		virtual void update(float dt) {};
+		virtual void onEnter(float dt, const GameObject& go) {};
+		virtual void onExit(float dt, const GameObject& go) {};
+
+	};
+
 	class GameObject {
 	public:
 		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs);
@@ -27,15 +48,20 @@ namespace Cappuccino {
 
 		std::string id;
 
+
+		//these functions might need to be deleted... see f16 file
 		void setPosition(const glm::vec3& newPos);
 
 		void scaleX(const float sizeScalar);
 		void scaleY(const float sizeScalar);
 		void scaleZ(const float sizeScalar);
+
+		void changeState(const State& newState);
 	protected:
 		/*
 		Purp: draw the game object
 		*/
+		State* _state;
 		void draw();
 		glm::vec3 position;
 		std::vector<Texture*> _textures;

@@ -3,9 +3,10 @@
 #include "Cappuccino/Input.h"
 
 namespace Cappuccino {
-	F16::F16(const Mesh& MESH, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex)
+
+	F16::F16(const std::string& path, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex)
 		:GameObject(SHADER, std::vector<Texture*>{new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/Metal_specmap.png", TextureType::SpecularMap), new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/container2.png", TextureType::SpecularMap)},
-			std::vector<Mesh*>	 {new Mesh(MESH)})
+			std::vector<Mesh*>{new Mesh(path)})
 	{
 		id = "F16";
 		if (manager != nullptr)

@@ -10,6 +10,7 @@ namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
+		_f162.setPosition(glm::vec3(5, 5, 5));
 #if CUBETEST
 		float vertices2[] = {
 			// positions          // normals           // texture coords
@@ -168,8 +169,6 @@ namespace Cappuccino {
 			camPos -= 2.5f * dt * defaultCamera->getFront();
 
 		defaultCamera->setPosition(camPos);
-		//defaultCamera->lookAt(_f16._f16Pos);
-		//defaultCamera->setPosition(glm::vec3(_f16._f16Pos) + glm::vec3(-5, 5, 0));
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
