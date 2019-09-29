@@ -58,16 +58,63 @@ namespace Cappuccino {
 			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
 			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 		};
+		float vertices3[] = {
+			// positions          // normals           // texture coords
+			-1.0f, -0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+			 1.0f, -0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			 1.0f,  0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			-1.0f,  0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+			-1.0f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+			 1.0f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			-1.0f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+			-1.0f,  0.5f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			-1.0f,  0.5f, -1.0f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			-1.0f, -0.5f, -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f, -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			-1.0f,  0.5f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+			 1.0f,  0.5f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			 1.0f, -0.5f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f, -0.5f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f, -0.5f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			 1.0f,  0.5f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+			-1.0f, -0.5f, -1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f, -0.5f, -1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+			 1.0f, -0.5f,  1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			 1.0f, -0.5f,  1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			-1.0f, -0.5f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+			-1.0f, -0.5f, -1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+			-1.0f,  0.5f, -1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f,  0.5f, -1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			-1.0f,  0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+			-1.0f,  0.5f, -1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+		};
 		specularMap = Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\Metal_specmap.png", TextureType::SpecularMap);
 		for (int i = 0; i < 4; i++) {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
+		cubes.push_back(Cube(vertices3, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png",TextureType::DiffuseMap), true));
 
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 #endif
+
+
 	}
 
 	bool Cappuccino::TestScene::init()
@@ -99,11 +146,13 @@ namespace Cappuccino {
 		glBindTexture(GL_TEXTURE_2D, cubes.back().getTexture().getTextureId());
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap.getTextureId());
-		for (unsigned int i = 0; i < cubes.size(); i++)
+		for (unsigned int i = 0; i < cubes.size() - 1; i++)
 		{
 			_lightingShader.loadModelMatrix(pointLightPositions[i] + glm::vec3(3, 3, 3), std::nullopt, glm::vec3(i, i, i), rotate);
 			cubes[i].draw();
 		}
+		_lightingShader.loadModelMatrix(glm::vec3(0,-7,0), 10, std::nullopt, std::nullopt);
+		cubes.back().draw();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glActiveTexture(GL_TEXTURE1);

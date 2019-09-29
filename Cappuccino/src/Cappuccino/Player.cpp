@@ -37,15 +37,20 @@ namespace Cappuccino {
 
 	void Player::childUpdate(float dt)
 	{
+		if(_input.keyboard->keyPressed(Events::Shift))
+			speed = 7.0f;
+		else
+			speed = 3.5f;
+
 		if (_input.keyboard->keyPressed(Events::W))
-			setPosition(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * 2.5f * dt);
+			setPosition(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
 		if (_input.keyboard->keyPressed(Events::S))
-			setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * 2.5f * dt);
+			setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
 
 		if (_input.keyboard->keyPressed(Events::A))
-			setPosition(-_playerCamera->getRight() * 2.5f * dt);
+			setPosition(-_playerCamera->getRight() * speed * dt);
 		if (_input.keyboard->keyPressed(Events::D))
-			setPosition(_playerCamera->getRight() * 2.5f * dt);
+			setPosition(_playerCamera->getRight() * speed * dt);
 
 		_playerCamera->setPosition(position);
 	}

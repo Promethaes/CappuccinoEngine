@@ -82,6 +82,7 @@ namespace Cappuccino {
 		//gameplay stuff
 		float hp;
 		glm::vec3 position;
+		float speed = 3.5f;
 
 	private:
 		void checkChangeState(float dt, const State& newState);
