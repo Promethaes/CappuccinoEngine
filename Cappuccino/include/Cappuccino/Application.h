@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <string>
 
+#include "Cappuccino/XinputManager.h"
 
 namespace Cappuccino {
 	class Application {
@@ -23,6 +24,7 @@ namespace Cappuccino {
 		void run();
 
 		static GLFWwindow* _window;
+		static Sedna::XinputManager* _xinputManager;
 	private:
 
 		void init();

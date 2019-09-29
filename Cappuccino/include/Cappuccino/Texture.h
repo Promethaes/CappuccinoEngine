@@ -22,6 +22,8 @@ namespace Cappuccino {
 		*/
 		bool load();
 
+		bool unload();
+
 		unsigned getTextureId() const { return _texture; }
 
 		/*
@@ -40,6 +42,8 @@ namespace Cappuccino {
 		}
 		TextureType type;
 	private:
+		unsigned char* _data;
+
 		std::string _path;
 		unsigned _texture;
 	};

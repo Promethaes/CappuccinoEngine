@@ -1,7 +1,9 @@
 #include "Cappuccino/Application.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
-#include "Cappuccino/Test Scene.h"
+#ifdef _DEBUG
+#include "Cappuccino/Testing/Test Scene.h"
+#endif
 #include "Cappuccino/Input.h"
 #include "Cappuccino/Events.h"
 
@@ -10,7 +12,8 @@ using string = std::string;
 
 namespace Cappuccino {
 
-	
+
+	Sedna::XinputManager* Application::_xinputManager = nullptr;
 	bool Application::_instantiated = false;
 	GLFWwindow* Application::_window = nullptr;
 
@@ -21,10 +24,13 @@ namespace Cappuccino {
 		_width = WIDTH; _height = HEIGHT;
 		_title = TITLE;
 		_contextVersionMajor = contextVersionMajor; _contextVersionMinor = contextVersionMinor;
-		
+
 		_clearColour = glm::vec4(0.2f, 0.3f, 0.3f, 1.0f);
 
 		_instantiated = true;
+
+		if (_xinputManager == nullptr)
+			_xinputManager = new Sedna::XinputManager();
 	}
 
 	bool Application::isInstantiated() { return _instantiated; }
@@ -36,11 +42,11 @@ namespace Cappuccino {
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
-		#if SCENETEST
+#if SCENETEST
 
 		TestScene* testScene = new TestScene(true);
 
-		#endif
+#endif
 
 		glEnable(GL_DEPTH_TEST);
 
@@ -52,7 +58,7 @@ namespace Cappuccino {
 		while (!glfwWindowShouldClose(_window)) {
 			const GLfloat currentFrame = glfwGetTime();
 			const GLfloat deltaTime = currentFrame - lastFrame;
-			
+
 			draw(deltaTime);
 			update(deltaTime);
 
@@ -60,7 +66,7 @@ namespace Cappuccino {
 			lastFrame = currentFrame;
 			glfwPollEvents();
 			glfwSwapBuffers(_window);
-			
+
 		}
 
 
@@ -114,6 +120,9 @@ namespace Cappuccino {
 		if (isEvent(Events::Escape))
 			exit(0);
 #endif
+		if (_xinputManager->controllerConnected(0) || _xinputManager->controllerConnected(1)
+		 || _xinputManager->controllerConnected(2) || _xinputManager->controllerConnected(3))
+			_xinputManager->update();
 
 		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
@@ -125,6 +134,6 @@ namespace Cappuccino {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// TODO: RENDER HERE
-		
+
 	}
 }
