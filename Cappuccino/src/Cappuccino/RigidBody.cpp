@@ -2,8 +2,13 @@
 
 void Cappuccino::RigidBody::update(float dt)
 {
-	_acceleration.x += _force.x / _mass;
-	_acceleration.y += _force.y / _mass;
-	_acceleration.z += _force.z / _mass;
+	
 
+}
+
+void Cappuccino::RigidBody::addForce(glm::vec3 force)
+{
+	_acceleration.x += force.x / _mass;
+	_acceleration.y += force.y / _mass;
+	_acceleration.z += force.z / _mass;
 }

@@ -63,6 +63,7 @@ namespace Cappuccino {
 
 
 		Transform _transform;
+		RigidBody _rigidBody;
 
 		void setStateChange(const State& newState);
 	protected:
@@ -82,10 +83,8 @@ namespace Cappuccino {
 
 		//gameplay stuff
 		float hp;
-		glm::vec3 position;
 		float speed = 3.5f;
-
-		RigidBody _rigidBody;
+		
 	private:
 		void checkChangeState(float dt, const State& newState);
 
