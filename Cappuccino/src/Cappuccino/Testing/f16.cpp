@@ -1,4 +1,4 @@
-#include "Cappuccino/f16.h"
+#include "Cappuccino/Testing/f16.h"
 #include "Cappuccino/Events.h"
 #include "Cappuccino/Input.h"
 
@@ -19,29 +19,29 @@ namespace Cappuccino {
 	{
 		if (isEvent(Events::Alt))
 
-			position = transform.translate(transform._transformMat[0] * 2.5f * dt);
+			position = _transform.translate(_transform._transformMat[0] * 2.5f * dt);
 
 		if (isEvent(Events::A))
-			transform.rotate(glm::vec3(0, 1, 0), -dt);
+			_transform.rotate(glm::vec3(0, 1, 0), -dt);
 
 		if (isEvent(Events::D))
 
-			transform.rotate(glm::vec3(0, 1, 0), dt);
+			_transform.rotate(glm::vec3(0, 1, 0), dt);
 
 		if (isEvent(Events::Q))
 
-			transform.rotate(glm::vec3(1, 0, 0), -dt);
+			_transform.rotate(glm::vec3(1, 0, 0), -dt);
 
 		if (isEvent(Events::E))
 
-			transform.rotate(glm::vec3(1, 0, 0), dt);
+			_transform.rotate(glm::vec3(1, 0, 0), dt);
 
 		if (isEvent(Events::C))
 
-			transform.rotate(glm::vec3(0, 0, 1), -dt);
+			_transform.rotate(glm::vec3(0, 0, 1), -dt);
 
 		if (isEvent(Events::Z))
 
-			transform.rotate(glm::vec3(0, 0, 1), dt);
+			_transform.rotate(glm::vec3(0, 0, 1), dt);
 	}
 }

@@ -8,10 +8,10 @@
 
 #define CAPP_PATH						std::string(std::getenv("CappuccinoPath"))
 
-#if _DEBUG
+#ifdef _DEBUG
 
 #define SOUNDTEST true
-#define CUBETEST false
+#define CUBETEST true
 #define SCENETEST true
 #define NETWORKTEST false
 
@@ -28,6 +28,11 @@
 #define SYS_EXIT(code)					system("pause"); exit(code)
 
 #else
+
+#define SOUNDTEST __noop
+#define CUBETEST __noop
+#define SCENETEST __noop
+#define NETWORKTEST __noop
 
 #define CAPP_PRINT						__noop
 #define CAPP_PRINT_N					__noop

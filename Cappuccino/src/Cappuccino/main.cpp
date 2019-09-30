@@ -1,6 +1,10 @@
 #include "Cappuccino/Application.h"
 #include "Cappuccino/Scene Manager.h"
-#include "Cappuccino/Test Scene.h"
+#include "Cappuccino/CappMacros.h"
+
+#if SCENETEST
+#include "Cappuccino/Testing/Test Scene.h"
+#endif
 
 using Application = Cappuccino::Application;
 using SceneManager = Cappuccino::SceneManager;

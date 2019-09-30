@@ -1,4 +1,4 @@
-#include "Cappuccino/Test Scene.h"
+#include "Cappuccino/Testing/Test Scene.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,9 +10,9 @@ namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
-		for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
-			GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
-		}
+		///for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
+		///	GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
+		///}
 #if CUBETEST
 		float vertices2[] = {
 			// positions          // normals           // texture coords
@@ -58,16 +58,63 @@ namespace Cappuccino {
 			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
 			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 		};
+		float vertices3[] = {
+			// positions          // normals           // texture coords
+			-1.0f, -0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+			 1.0f, -0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			 1.0f,  0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			-1.0f,  0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+			-1.0f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+			 1.0f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			-1.0f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+			-1.0f,  0.5f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			-1.0f,  0.5f, -1.0f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			-1.0f, -0.5f, -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f, -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-1.0f, -0.5f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			-1.0f,  0.5f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+			 1.0f,  0.5f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			 1.0f, -0.5f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f, -0.5f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f, -0.5f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			 1.0f,  0.5f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+			-1.0f, -0.5f, -1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f, -0.5f, -1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+			 1.0f, -0.5f,  1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			 1.0f, -0.5f,  1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			-1.0f, -0.5f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+			-1.0f, -0.5f, -1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+			-1.0f,  0.5f, -1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+			 1.0f,  0.5f, -1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			 1.0f,  0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			-1.0f,  0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+			-1.0f,  0.5f, -1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+		};
 		specularMap = Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\Metal_specmap.png", TextureType::SpecularMap);
 		for (int i = 0; i < 4; i++) {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
+		cubes.push_back(Cube(vertices3, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png",TextureType::DiffuseMap), true));
 
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 #endif
+
+
 	}
 
 	bool Cappuccino::TestScene::init()
@@ -99,11 +146,13 @@ namespace Cappuccino {
 		glBindTexture(GL_TEXTURE_2D, cubes.back().getTexture().getTextureId());
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap.getTextureId());
-		for (unsigned int i = 0; i < cubes.size(); i++)
+		for (unsigned int i = 0; i < cubes.size() - 1; i++)
 		{
 			_lightingShader.loadModelMatrix(pointLightPositions[i] + glm::vec3(3, 3, 3), std::nullopt, glm::vec3(i, i, i), rotate);
 			cubes[i].draw();
 		}
+		_lightingShader.loadModelMatrix(glm::vec3(0,-7,0), 10, std::nullopt, std::nullopt);
+		cubes.back().draw();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glActiveTexture(GL_TEXTURE1);
@@ -111,18 +160,17 @@ namespace Cappuccino {
 
 		_lightcubeShader.use();
 
-		_lightcubeShader.setUniform("Colour", lightColor);
 		for (unsigned i = 0; i < lightCubes.size(); i++) {
 			_lightcubeShader.loadModelMatrix(pointLightPositions[i], 0.5f, std::nullopt, std::nullopt);
 			lightCubes[i].draw();
 		}
 
-		_lightcubeShader.loadViewMatrix(*Scene::defaultCamera);
+		_lightcubeShader.loadViewMatrix(/**Scene::defaultCamera*/*testPlayer->getCamera());
 		_lightcubeShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
 
 		_lightingShader.use();
 #endif
-		_lightingShader.loadViewMatrix(*Scene::defaultCamera);
+		_lightingShader.loadViewMatrix(/**Scene::defaultCamera*/*testPlayer->getCamera());
 		_lightingShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
 		_lightingShader.setUniform("material.diffuse", (int)0);
 		_lightingShader.setUniform("material.specular", (int)1);
@@ -151,7 +199,7 @@ namespace Cappuccino {
 		_lightingShader.setUniform("light.diffuse", diffuseColor);
 		_lightingShader.setUniform("light.specular", 1.0f, 1.0f, 1.0f);
 
-		_lightingShader.setUniform("viewPos", Scene::defaultCamera->getPosition());
+		_lightingShader.setUniform("viewPos", /*Scene::defaultCamera->getPosition()*/testPlayer->getCamera()->getPosition());
 
 #if NETWORKTEST
 		if (isEvent(Events::Up)) {
@@ -164,13 +212,13 @@ namespace Cappuccino {
 		if (std::stoi(info) == 1)
 			_f16._f16Pos += _f16._f16ModelMat[0] * 2.5f * dt;
 #endif
-		glm::vec3 camPos = defaultCamera->getPosition();
-		if (isEvent(Events::Up))
-			camPos += 2.5f * dt * defaultCamera->getFront();
-		if (isEvent(Events::Down))
-			camPos -= 2.5f * dt * defaultCamera->getFront();
-
-		defaultCamera->setPosition(camPos);
+		///glm::vec3 camPos = defaultCamera->getPosition();
+		///if (isEvent(Events::Up))
+		///	camPos += 2.5f * dt * defaultCamera->getFront();
+		///if (isEvent(Events::Down))
+		///	camPos -= 2.5f * dt * defaultCamera->getFront();
+		///
+		///defaultCamera->setPosition(camPos);
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
@@ -186,7 +234,12 @@ namespace Cappuccino {
 		lastX = xpos;
 		lastY = ypos;
 
-		Scene::defaultCamera->doMouseMovement(xOffset, yOffset);
-		glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		if (testPlayer->_input.keyboard->keyPressed(Events::Alt)) 
+			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		else {
+
+			/*Scene::defaultCamera*/testPlayer->getCamera()->doMouseMovement(xOffset, yOffset);
+			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
 	}
 }

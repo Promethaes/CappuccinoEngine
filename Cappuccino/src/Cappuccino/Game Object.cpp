@@ -6,7 +6,9 @@ namespace Cappuccino {
 	{
 		//mesh = new Mesh(MESH);
 
-		_state = new State();
+		//set the state manually
+		_state = nullptr;
+		_tempState = new State();
 
 		this->_textures = _textures;
 		this->_meshes = _meshs;
@@ -16,33 +18,93 @@ namespace Cappuccino {
 
 		gameObjects.push_back(this);
 	}
+	GameObject::~GameObject()
+	{
+		for (unsigned i = 0; i < _meshes.size(); i++) {
+			_meshes[i]->unload();
+			delete _meshes[i];
+			i--;
+		}
+		for (unsigned i = 0; i < _textures.size(); i++) {
+			if (_textures[i]->type == TextureType::DiffuseMap)
+				_textures[i]->unbind(0);
+			else if (_textures[i]->type == TextureType::SpecularMap)
+				_textures[i]->unbind(1);
+
+			delete _textures[i];
+			i--;
+		}
+
+		delete _state;
+
+	}
 	void GameObject::baseUpdate(float dt)
 	{
 		childUpdate(dt);
-		
-		transform.update();
-		_rigidBody.update(dt);
+
+		checkChangeState(dt, *_tempState);
+		_state->update(dt,this);
+		_transform.update();
+        _rigidBody.update(dt);
+
 		draw();
 	}
+
+
 	void GameObject::setPosition(const glm::vec3& newPos)
 	{
-		
-			position = transform.translate(newPos);
+		position = _transform.translate(newPos);
+	}
+	void GameObject::rotateX(const float rotateBy)
+	{
+		_transform.rotate(glm::vec3(1, 0, 0), rotateBy);
+	}
+	void GameObject::rotateY(const float rotateBy)
+	{
+		_transform.rotate(glm::vec3(0, 1, 0), rotateBy);
+	}
+	void GameObject::rotateZ(const float rotateBy)
+	{
+		_transform.rotate(glm::vec3(0, 0, 1), rotateBy);
 	}
 	void GameObject::scaleX(const float sizeScalar)
 	{
-		
-			transform.scale(glm::vec3(1, 0, 0), sizeScalar);
+		_transform.scale(glm::vec3(1, 0, 0), sizeScalar);
 	}
 	void GameObject::scaleY(const float sizeScalar)
 	{
-		
-			transform.scale(glm::vec3(0, 1, 0), sizeScalar);
+		_transform.scale(glm::vec3(0, 1, 0), sizeScalar);
 	}
 	void GameObject::scaleZ(const float sizeScalar)
 	{
+		_transform.scale(glm::vec3(0, 0, 1), sizeScalar);
+	}
+
+
+
+	void GameObject::setStateChange(const State& newState)
+	{
+		stateChangeFlag = true;
+		if (_tempState != nullptr) {
+			delete _tempState;
+			_tempState = nullptr;
+		}
+		*_tempState = newState;
+	}
+	void GameObject::checkChangeState(float dt, const State& newState)
+	{
+		if (stateChangeFlag == false)
+			return;
+
+		_state->onExit(dt, this);
+		delete _state;
+		_state = nullptr;
+		*_state = newState;
+		_state->onEnter(dt, this);
 		
-			transform.scale(glm::vec3(0, 0, 1), sizeScalar);
+		delete _tempState;
+		_tempState = nullptr;
+		stateChangeFlag = false;
 	}
 	void GameObject::draw()
 	{
@@ -57,7 +119,7 @@ namespace Cappuccino {
 				x->bind(1);
 		}
 
-			transform._transformMat = _shader.loadModelMatrix(transform._transformMat);
+		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
 		for (auto x : _meshes) {
 			x->draw();
 		}

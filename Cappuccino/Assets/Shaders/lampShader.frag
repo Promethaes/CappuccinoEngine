@@ -5,5 +5,5 @@ uniform vec4 Colour;
 
 void main()
 {
-    FragColor = Colour; // set all 4 vector values to 1.0
+    FragColor = vec4(1.0,1.0,1.0,1.0).xyzw; // set all 4 vector values to 1.0
 }

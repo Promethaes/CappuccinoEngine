@@ -24,16 +24,16 @@ namespace Cappuccino {
 			HURT
 		};*/
 
-		virtual void update(float dt) {};
-		virtual void onEnter(float dt, const GameObject& go) {};
-		virtual void onExit(float dt, const GameObject& go) {};
+		virtual void update(float dt, GameObject* go) {};
+		virtual void onEnter(float dt, GameObject* go) {};
+		virtual void onExit(float dt, GameObject* go) {};
 
 	};
 
 	class GameObject {
 	public:
 		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs);
-
+		virtual ~GameObject();
 		/*
 		Purp: wrapper class to call child update
 		Req: delta time, to update things properly
@@ -53,26 +53,42 @@ namespace Cappuccino {
 		//these functions might need to be deleted... see f16 file
 		void setPosition(const glm::vec3& newPos);
 
+		void rotateX(const float rotateBy);
+		void rotateY(const float rotateBy);
+		void rotateZ(const float rotateBy);
+
 		void scaleX(const float sizeScalar);
 		void scaleY(const float sizeScalar);
 		void scaleZ(const float sizeScalar);
 
-		void changeState(const State& newState);
 
-		Transform transform;
+		Transform _transform;
+
+		void setStateChange(const State& newState);
 	protected:
 		/*
 		Purp: draw the game object
 		*/
-		State* _state;
 		void draw();
-		glm::vec3 position;
+
+		State* _state;
+		//a temporary state variable to store a state before the checkChangeState can be called
+		State* _tempState;
+		bool stateChangeFlag = false;
+
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;
 		Shader _shader;
+
+		//gameplay stuff
+		float hp;
+		glm::vec3 position;
+		float speed = 3.5f;
+
 		RigidBody _rigidBody;
-		//	glm::vec3 _position;
 	private:
+		void checkChangeState(float dt, const State& newState);
+
 		/*
 		Purp: pure virtual function that calls the appropriate child update definition
 		Req: delta time to update properly
