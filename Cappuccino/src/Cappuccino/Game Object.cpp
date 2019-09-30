@@ -20,8 +20,8 @@ namespace Cappuccino {
 	{
 		childUpdate(dt);
 		
-			transform.update();
-		
+		transform.update();
+		_rigidBody.update(dt);
 		draw();
 	}
 	void GameObject::setPosition(const glm::vec3& newPos)

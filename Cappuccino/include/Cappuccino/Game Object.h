@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
+#include "Cappuccino/RigidBody.h"
 namespace Cappuccino {
 
 	/*
@@ -69,6 +70,7 @@ namespace Cappuccino {
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;
 		Shader _shader;
+		RigidBody _rigidBody;
 		//	glm::vec3 _position;
 	private:
 		/*
