@@ -1,8 +1,18 @@
 #include "Cappuccino/Application.h"
-#include "Cappuccino/Camera.h"
-#include "Cappuccino/Game Object.h"
-#include "Cappuccino/Scene Manager.h"
+#include "Cappuccino/CappMacros.h"
+
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+#include "Cappuccino/Input.h"
+
+#if SCENETEST
+
 #include "Cappuccino/Test Scene.h"
+
+#endif
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;
@@ -10,7 +20,7 @@ using string = std::string;
 namespace Cappuccino {
 
 	#if SCENETEST
-	void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+	
 	float lastX = 400, lastY = 300;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
@@ -33,20 +43,19 @@ namespace Cappuccino {
 		_instantiated = true;
 	}
 
+	Application::~Application() {}
+
 	bool Application::isInstantiated() { return _instantiated; }
 
 	void Application::run() {
 
 		init();
-
-		CAPP_PRINT_N("----------STARTING RENDER LOOP----------");
+		
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
 		#if SCENETEST
-
 		TestScene* testScene = new TestScene(true);
-
 		#endif
 
 		glEnable(GL_DEPTH_TEST);
@@ -59,6 +68,7 @@ namespace Cappuccino {
 			
 			update(deltaTime);
 			draw(deltaTime);
+			drawImGui(deltaTime);
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
@@ -66,22 +76,20 @@ namespace Cappuccino {
 			glfwSwapBuffers(_window);
 			
 		}
+
+		cleanup();
 	}
 
 	void Application::init() {
-		CAPP_PRINT_N("----------INITIALIZING GLFW----------");
-		CAPP_PRINT_N("Initializing...");
 		if (!glfwInit()) {
 			CAPP_PRINT_ERROR("Error initializing GLFW! Exiting...\n");
 			SYS_EXIT(-1);
 		}
-
-		CAPP_PRINT_N("Setting GLFW window hints...");
+		
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-		CAPP_PRINT_N("Creating window...");
+		
 		_window = glfwCreateWindow(_width, _height, _title.c_str(), NULL, NULL);
 
 		if (_window == NULL) {
@@ -92,16 +100,14 @@ namespace Cappuccino {
 			glfwGetError(&error);
 			CAPP_PRINT_ERROR(error);
 
-			CAPP_PRINT_ERROR("Exiting...\n");
 			SYS_EXIT(-2);
 		}
-
-		CAPP_PRINT_N("Setting window settings...\n");
+		
 		glfwMakeContextCurrent(_window);
 		glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
 
 
-	#if SCENETEST
+		#if SCENETEST
 		glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos) {
 			if (firstMouse)
 			{
@@ -119,11 +125,8 @@ namespace Cappuccino {
 		});
 		
 		glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	#endif
+		#endif
 
-
-
-		CAPP_PRINT_N("----------INITIALIZING GLAD----------");
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			glfwTerminate();
 
@@ -131,18 +134,40 @@ namespace Cappuccino {
 			SYS_EXIT(-3);
 		}
 
-		CAPP_PRINT_N("OpenGL function pointers loaded.\n");
+		#if _DEBUG
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_TransparentBackbuffers;
+
+		ImGui_ImplGlfw_InitForOpenGL(_window, true);
+		ImGui_ImplOpenGL3_Init("#version 420");
+
+		ImGui::StyleColorsDark();
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
+		}
+		#endif
 	}
 
 	void Application::cleanup() {
-		CAPP_PRINT_N("----------CLEANING UP AND EXITING----------");
+		// Shutdown imGui
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 
+		// Shutdown GLFW
 		glfwTerminate();
-		CAPP_PRINT_N("GLFW Terminated.\n");
 
-#if _DEBUG
+		#if _DEBUG
 		system("pause");
-#endif
+		#endif
 	}
 
 	void Application::update(GLfloat dt) {
@@ -158,5 +183,33 @@ namespace Cappuccino {
 
 		// TODO: RENDER HERE
 		
+	}
+
+	void Application::drawImGui(GLfloat dt) {
+		// Start new ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Begin("Imgui window");
+
+		// TODO: DRAW IMGUI STUFF HERE
+
+		
+		// End the ImGui frame
+		ImGui::End();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.DisplaySize = ImVec2(_width, _height);
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+
+			glfwMakeContextCurrent(_window);
+		}
 	}
 }

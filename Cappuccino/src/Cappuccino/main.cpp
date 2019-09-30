@@ -1,9 +1,6 @@
 #include "Cappuccino/Application.h"
-#include "Cappuccino/Scene Manager.h"
-#include "Cappuccino/Test Scene.h"
 
 using Application = Cappuccino::Application;
-using SceneManager = Cappuccino::SceneManager;
 
 #pragma region PROGRAM SETTINGS
 
