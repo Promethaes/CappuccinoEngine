@@ -4,7 +4,7 @@
 #include "stb_image.h"
 #include <string>
 namespace Cappuccino {
-	enum TextureType {
+	enum class TextureType {
 		DiffuseMap = 0,
 		SpecularMap
 	};
@@ -21,6 +21,8 @@ namespace Cappuccino {
 		returns: bool if it was successful or not
 		*/
 		bool load();
+
+		bool unload();
 
 		unsigned getTextureId() const { return _texture; }
 
@@ -40,6 +42,8 @@ namespace Cappuccino {
 		}
 		TextureType type;
 	private:
+		unsigned char* _data;
+
 		std::string _path;
 		unsigned _texture;
 	};

@@ -1,5 +1,7 @@
 #include "Cappuccino/Application.h"
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/Camera.h"
+#include "Cappuccino/Game Object.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
@@ -9,9 +11,7 @@
 #include "Cappuccino/Input.h"
 
 #if SCENETEST
-
-#include "Cappuccino/Test Scene.h"
-
+#include "Cappuccino/Testing/Test Scene.h"
 #endif
 
 #define GameObjects GameObject::gameObjects
@@ -19,16 +19,10 @@ using string = std::string;
 
 namespace Cappuccino {
 
-	#if SCENETEST
-	
-	float lastX = 400, lastY = 300;
-	float yaw = -90.0f;
-	float pitch = 0.0f;
-	bool firstMouse = true;
 
-	#endif
-	
+	Sedna::XinputManager* Application::_xinputManager = nullptr;
 	bool Application::_instantiated = false;
+	GLFWwindow* Application::_window = nullptr;
 
 	Application::Application() : Application(10, 10, "Cappuccino Engine", 4u, 2u) {}
 
@@ -37,10 +31,13 @@ namespace Cappuccino {
 		_width = WIDTH; _height = HEIGHT;
 		_title = TITLE;
 		_contextVersionMajor = contextVersionMajor; _contextVersionMinor = contextVersionMinor;
-		
+
 		_clearColour = glm::vec4(0.2f, 0.3f, 0.3f, 1.0f);
 
 		_instantiated = true;
+
+		if (_xinputManager == nullptr)
+			_xinputManager = new Sedna::XinputManager();
 	}
 
 	Application::~Application() {}
@@ -50,7 +47,7 @@ namespace Cappuccino {
 	void Application::run() {
 
 		init();
-		
+
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
@@ -61,20 +58,23 @@ namespace Cappuccino {
 		glEnable(GL_DEPTH_TEST);
 
 		static GLfloat lastFrame;
-		
+
+		/*
+		Render Loop
+		*/
 		while (!glfwWindowShouldClose(_window)) {
 			const GLfloat currentFrame = glfwGetTime();
 			const GLfloat deltaTime = currentFrame - lastFrame;
-			
-			update(deltaTime);
+
 			draw(deltaTime);
+			update(deltaTime);
 			drawImGui(deltaTime);
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
 			glfwPollEvents();
 			glfwSwapBuffers(_window);
-			
+
 		}
 
 		cleanup();
@@ -85,11 +85,11 @@ namespace Cappuccino {
 			CAPP_PRINT_ERROR("Error initializing GLFW! Exiting...\n");
 			SYS_EXIT(-1);
 		}
-		
+
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		
+
 		_window = glfwCreateWindow(_width, _height, _title.c_str(), NULL, NULL);
 
 		if (_window == NULL) {
@@ -100,32 +100,14 @@ namespace Cappuccino {
 			glfwGetError(&error);
 			CAPP_PRINT_ERROR(error);
 
+			CAPP_PRINT_ERROR("Exiting...\n");
+			std::cin.get();
 			SYS_EXIT(-2);
 		}
-		
+
 		glfwMakeContextCurrent(_window);
 		glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
 
-
-		#if SCENETEST
-		glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos) {
-			if (firstMouse)
-			{
-				lastX = xpos;
-				lastY = ypos;
-				firstMouse = false;
-			}
-
-			GLfloat xOffset = xpos - lastX;
-			GLfloat yOffset = lastY - ypos;
-			lastX = xpos;
-			lastY = ypos;
-
-			Scene::defaultCamera->doMouseMovement(xOffset, yOffset);
-		});
-		
-		glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		#endif
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			glfwTerminate();
@@ -164,15 +146,18 @@ namespace Cappuccino {
 
 		// Shutdown GLFW
 		glfwTerminate();
-
-		#if _DEBUG
-		system("pause");
-		#endif
 	}
 
 	void Application::update(GLfloat dt) {
-		SceneManager::updateScenes(dt);
+#ifdef _DEBUG
+		if (isEvent(Events::Escape))
+			exit(0);
+#endif
+		if (_xinputManager->controllerConnected(0) || _xinputManager->controllerConnected(1)
+		 || _xinputManager->controllerConnected(2) || _xinputManager->controllerConnected(3))
+			_xinputManager->update();
 
+		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
 			x->baseUpdate(dt);
 	}
@@ -182,7 +167,7 @@ namespace Cappuccino {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// TODO: RENDER HERE
-		
+
 	}
 
 	void Application::drawImGui(GLfloat dt) {

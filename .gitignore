@@ -332,7 +332,8 @@ ASALocalRun/
 */[Bb]uild/
 !*/[Ll]ibs/**/*
 Cappuccino/Assets/source/
-
+Cappuccino/libs/x64/Debug/capp.lib
+Cappuccino/libs/x64/Release/capp.lib
 Cappuccino/test game project/
 
 *.bsc

@@ -1,5 +1,9 @@
 #include "Cappuccino/Application.h"
 
+#if SCENETEST
+#include "Cappuccino/Testing/Test Scene.h"
+#endif
+
 using Application = Cappuccino::Application;
 
 #pragma region PROGRAM SETTINGS
