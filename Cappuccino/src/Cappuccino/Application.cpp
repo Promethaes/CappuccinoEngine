@@ -1,11 +1,18 @@
 #include "Cappuccino/Application.h"
+#include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
-#ifdef _DEBUG
+
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+#include "Cappuccino/Input.h"
+
+#if SCENETEST
 #include "Cappuccino/Testing/Test Scene.h"
 #endif
-#include "Cappuccino/Input.h"
-#include "Cappuccino/Events.h"
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;
@@ -33,6 +40,8 @@ namespace Cappuccino {
 			_xinputManager = new Sedna::XinputManager();
 	}
 
+	Application::~Application() {}
+
 	bool Application::isInstantiated() { return _instantiated; }
 
 	void Application::run() {
@@ -42,11 +51,9 @@ namespace Cappuccino {
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
-#if SCENETEST
-
+		#if SCENETEST
 		TestScene* testScene = new TestScene(true);
-
-#endif
+		#endif
 
 		glEnable(GL_DEPTH_TEST);
 
@@ -61,6 +68,7 @@ namespace Cappuccino {
 
 			draw(deltaTime);
 			update(deltaTime);
+			drawImGui(deltaTime);
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
@@ -69,7 +77,7 @@ namespace Cappuccino {
 
 		}
 
-
+		cleanup();
 	}
 
 	void Application::init() {
@@ -108,10 +116,35 @@ namespace Cappuccino {
 			SYS_EXIT(-3);
 		}
 
+		#if _DEBUG
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_TransparentBackbuffers;
+
+		ImGui_ImplGlfw_InitForOpenGL(_window, true);
+		ImGui_ImplOpenGL3_Init("#version 420");
+
+		ImGui::StyleColorsDark();
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
+		}
+		#endif
 	}
 
 	void Application::cleanup() {
+		// Shutdown imGui
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 
+		// Shutdown GLFW
 		glfwTerminate();
 	}
 
@@ -135,5 +168,33 @@ namespace Cappuccino {
 
 		// TODO: RENDER HERE
 
+	}
+
+	void Application::drawImGui(GLfloat dt) {
+		// Start new ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Begin("Imgui window");
+
+		// TODO: DRAW IMGUI STUFF HERE
+
+		
+		// End the ImGui frame
+		ImGui::End();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.DisplaySize = ImVec2(_width, _height);
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+
+			glfwMakeContextCurrent(_window);
+		}
 	}
 }

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <glad/glad.h>
+#include <glad/glad.h>;
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
 #include <string>
 
 #include "Cappuccino/XinputManager.h"
@@ -19,6 +20,7 @@ namespace Cappuccino {
 			GLuint       contextVersionMajor = 4u,
 			GLuint       contextVersionMinor = 2u
 		);
+		~Application();
 
 		static bool isInstantiated();
 		void run();
@@ -32,6 +34,7 @@ namespace Cappuccino {
 
 		void update(GLfloat dt);
 		void draw(GLfloat dt);
+		void drawImGui(GLfloat dt);
 
 
 		GLuint _width, _height;

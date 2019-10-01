@@ -1,4 +1,3 @@
-
 local solutionDir = "build/"
 workspace "Cappuccino - Built"
    defines{"_CRT_SECURE_NO_WARNINGS"}
@@ -8,17 +7,23 @@ workspace "Cappuccino - Built"
    language "C++"
    cppdialect "C++17"
    files{
+	  "src/**.h",
       "src/**.cpp",
       "src/**.c",
+	  
       "include/Cappuccino/**.h",
       "include/Cappuccino/**.hpp",
       "include/Cappuccino/**.cs",
+	  
+	  "include/imgui/**.h",
+	  "include/imgui/**.cpp",
+	  
       "Assets/Mesh/**.obj",
       "Assets/Textures/**.png",
       "Assets/Shaders/**.vert",
       "Assets/Shaders/**.frag"
    }
-   includedirs{"include/"}
+   includedirs{"include/","imgui/"}
 
 local arch = " "
 local config = " "

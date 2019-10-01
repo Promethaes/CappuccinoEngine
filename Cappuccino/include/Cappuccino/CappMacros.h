@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Cappuccino/HighPerformanceSwitch.h"
-
 #include <windows.h>
 #include <iostream>
 

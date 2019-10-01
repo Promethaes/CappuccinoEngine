@@ -1,6 +1,12 @@
 os.execute("ECHO Enter Project Directory")
 local solutionDir = io.read()
-workspace "Cappuccino Game"
+os.execute("ECHO.");
+os.execute("ECHO Enter Project Name")
+local s = io.read();
+os.execute("ECHO.");
+os.execute("ECHO Creating Project...")
+
+workspace (s)
    defines{"_CRT_SECURE_NO_WARNINGS"}
    configurations { "Debug", "Release" }
    platforms {"x64"}
@@ -34,11 +40,6 @@ local arch = " "
 
 
    filter {}
-	  os.execute("ECHO.");      
-	  os.execute("ECHO Enter Project Name")
-      local s = io.read();
-	  os.execute("ECHO.");
-      os.execute("ECHO Creating Project...")
       os.execute("mkdir " ..solutionDir.."\\src")
       os.execute("XCOPY %CappuccinoPath%\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
       os.execute("XCOPY %CappuccinoPath%\\libs\\x64\\Release\\Fmod\\fmod.dll " .. solutionDir .. "\\build\\x64\\Debug")
