@@ -100,8 +100,6 @@ namespace Cappuccino {
 			glfwGetError(&error);
 			CAPP_PRINT_ERROR(error);
 
-			CAPP_PRINT_ERROR("Exiting...\n");
-			std::cin.get();
 			SYS_EXIT(-2);
 		}
 
@@ -168,6 +166,34 @@ namespace Cappuccino {
 
 		// TODO: RENDER HERE
 
+	}
+
+	void Application::drawImGui(GLfloat dt) {
+		// Start new ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Begin("Imgui window");
+
+		// TODO: DRAW IMGUI STUFF HERE
+
+		
+		// End the ImGui frame
+		ImGui::End();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.DisplaySize = ImVec2(_width, _height);
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+
+			glfwMakeContextCurrent(_window);
+		}
 	}
 
 	void Application::drawImGui(GLfloat dt) {
