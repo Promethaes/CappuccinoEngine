@@ -8,15 +8,10 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#ifdef _DEBUG
-#include "Cappuccino/Testing/Test Scene.h"
-#endif
-
 #include "Cappuccino/Input.h"
+
 #if SCENETEST
-
-#include "Cappuccino/Test Scene.h"
-
+#include "Cappuccino/Testing/Test Scene.h"
 #endif
 
 #define GameObjects GameObject::gameObjects
@@ -121,6 +116,26 @@ namespace Cappuccino {
 			SYS_EXIT(-3);
 		}
 
+		#if _DEBUG
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_TransparentBackbuffers;
+
+		ImGui_ImplGlfw_InitForOpenGL(_window, true);
+		ImGui_ImplOpenGL3_Init("#version 420");
+
+		ImGui::StyleColorsDark();
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
+		}
+		#endif
 	}
 
 	void Application::cleanup() {
