@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <vector>
 namespace Cappuccino {
 	class RigidBody	{
 	public:
@@ -42,10 +43,10 @@ namespace Cappuccino {
 		void addForce(glm::vec3 force);
 
 
-        bool GJK(std::vector<glm::vec3> shapeOne, std::vector<glm::vec3> shapeTwo);
-		bool containsOrigin(std::vector<glm::vec3> shapeOne, std::vector<glm::vec3> shapeTwo, std::vector<glm::vec3> vertices);
-		glm::vec3 getSupport(std::vector<glm::vec3> shapeOne, std::vector<glm::vec3> shapeTwo, glm::vec3 direction);
-		glm::vec3 getFarthest(std::vector<glm::vec3> shapeOne, glm::vec3 direction);
+        bool GJK(std::vector<glm::vec3>& shapeOne, std::vector<glm::vec3>& shapeTwo);
+		bool containsOrigin(std::vector<glm::vec3>& shapeOne, std::vector<glm::vec3>& shapeTwo, std::vector<glm::vec3>& vertices);
+		glm::vec3 getSupport(std::vector<glm::vec3>& shapeOne, std::vector<glm::vec3>& shapeTwo, glm::vec3& direction);
+		glm::vec3 getFarthest(std::vector<glm::vec3>& shapeOne, glm::vec3& direction);
         
 		glm::vec3 getPosition() { return _position;}
 		glm::mat4 getRotation() { return _rotateMat;}

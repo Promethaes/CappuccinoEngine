@@ -22,7 +22,7 @@ Cappuccino::RigidBody::RigidBody(std::vector<glm::vec3> s1, std::vector<glm::vec
 	shapeOne = s1;
 	shapeTwo = s2;
 }
-bool Cappuccino::RigidBody::GJK(std::vector<glm::vec3> shapeOne, std::vector<glm::vec3> shapeTwo)
+bool Cappuccino::RigidBody::GJK(std::vector<glm::vec3>& shapeOne, std::vector<glm::vec3>& shapeTwo)
 {
 	// setting arbitrary direction to start with
 	glm::vec3 direction = { 1,0,0 };
@@ -41,7 +41,7 @@ bool Cappuccino::RigidBody::GJK(std::vector<glm::vec3> shapeOne, std::vector<glm
 
 	// checking if the third simplice is in the direction of the origin
 	// removes and replaces it with a simplice in the opposite direction if it is not in the right direction
-	if (glm::dot(simplices[-1], direction) <= 0)
+	if (glm::dot(simplices.back(), direction) <= 0)
 	{
 		direction = -direction;
 		simplices.pop_back();
@@ -54,7 +54,7 @@ bool Cappuccino::RigidBody::GJK(std::vector<glm::vec3> shapeOne, std::vector<glm
 
 	// checking if the fourth simplice is in the direction of the origin
 	// removes and replaces it with a simplice in the opposite direction if it is not in the right direction
-	if (glm::dot(simplices[-1], direction) <= 0)
+	if (glm::dot(simplices.back(), direction) <= 0)
 	{
 		direction = -direction;
 		simplices.pop_back();
@@ -73,7 +73,7 @@ bool Cappuccino::RigidBody::GJK(std::vector<glm::vec3> shapeOne, std::vector<glm
 }
 
 // recursive function used to determine if the origin is within the simplice
-bool Cappuccino::RigidBody::containsOrigin(std::vector<glm::vec3> shapeOne, std::vector<glm::vec3> shapeTwo, std::vector<glm::vec3> vertices)
+bool Cappuccino::RigidBody::containsOrigin(std::vector<glm::vec3>& shapeOne, std::vector<glm::vec3>& shapeTwo, std::vector<glm::vec3>&vertices)
 {
 	// Indices 0, 1, 2, and 3 are relative to the vertices A, B, C, and D
 	// define a variable to hold the farthest index and value
@@ -143,7 +143,7 @@ bool Cappuccino::RigidBody::containsOrigin(std::vector<glm::vec3> shapeOne, std:
 }
 
 // returns the simplice (vertex of the tetrahedron being built)
-glm::vec3 Cappuccino::RigidBody::getSupport(std::vector<glm::vec3> shapeOne, std::vector<glm::vec3> shapeTwo, glm::vec3 direction)
+glm::vec3 Cappuccino::RigidBody::getSupport(std::vector<glm::vec3> &shapeOne, std::vector<glm::vec3>& shapeTwo, glm::vec3& direction)
 {
 	glm::vec3 s1 = getFarthest(shapeOne, direction);
 	glm::vec3 s2 = getFarthest(shapeTwo, -direction);
@@ -151,7 +151,7 @@ glm::vec3 Cappuccino::RigidBody::getSupport(std::vector<glm::vec3> shapeOne, std
 	return s3;
 }
 
-glm::vec3 Cappuccino::RigidBody::getFarthest(std::vector<glm::vec3> shapeOne, glm::vec3 direction)
+glm::vec3 Cappuccino::RigidBody::getFarthest(std::vector<glm::vec3> &shapeOne, glm::vec3& direction)
 {
 	int farthestIndex = 0;
 	float farthestDistance = 0.0f;
