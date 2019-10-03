@@ -1,14 +1,26 @@
 #include "Cappuccino/Application.h"
+#include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
-#include "Cappuccino/Test Scene.h"
+
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+#include "Cappuccino/Input.h"
+
+#if SCENETEST
+#include "Cappuccino/Testing/Test Scene.h"
+#endif
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;
 
 namespace Cappuccino {
 
-	
+
+	Sedna::XinputManager* Application::_xinputManager = nullptr;
 	bool Application::_instantiated = false;
 	GLFWwindow* Application::_window = nullptr;
 
@@ -19,25 +31,27 @@ namespace Cappuccino {
 		_width = WIDTH; _height = HEIGHT;
 		_title = TITLE;
 		_contextVersionMajor = contextVersionMajor; _contextVersionMinor = contextVersionMinor;
-		
+
 		_clearColour = glm::vec4(0.2f, 0.3f, 0.3f, 1.0f);
 
 		_instantiated = true;
+
+		if (_xinputManager == nullptr)
+			_xinputManager = new Sedna::XinputManager();
 	}
+
+	Application::~Application() {}
 
 	bool Application::isInstantiated() { return _instantiated; }
 
 	void Application::run() {
 
-		init();
+		//init();
 
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
 		#if SCENETEST
-
-		TestScene* testScene = new TestScene(true);
-
 		#endif
 
 		glEnable(GL_DEPTH_TEST);
@@ -50,18 +64,19 @@ namespace Cappuccino {
 		while (!glfwWindowShouldClose(_window)) {
 			const GLfloat currentFrame = glfwGetTime();
 			const GLfloat deltaTime = currentFrame - lastFrame;
-			
+
 			draw(deltaTime);
 			update(deltaTime);
+			drawImGui(deltaTime);
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
 			glfwPollEvents();
 			glfwSwapBuffers(_window);
-			
+
 		}
 
-
+		cleanup();
 	}
 
 	void Application::init() {
@@ -100,14 +115,46 @@ namespace Cappuccino {
 			SYS_EXIT(-3);
 		}
 
+		#if _DEBUG
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_TransparentBackbuffers;
+
+		ImGui_ImplGlfw_InitForOpenGL(_window, true);
+		ImGui_ImplOpenGL3_Init("#version 420");
+
+		ImGui::StyleColorsDark();
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
+		}
+		#endif
 	}
 
 	void Application::cleanup() {
+		// Shutdown imGui
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 
+		// Shutdown GLFW
 		glfwTerminate();
 	}
 
 	void Application::update(GLfloat dt) {
+#ifdef _DEBUG
+		if (isEvent(Events::Escape))
+			exit(0);
+#endif
+		if (_xinputManager->controllerConnected(0) || _xinputManager->controllerConnected(1)
+		 || _xinputManager->controllerConnected(2) || _xinputManager->controllerConnected(3))
+			_xinputManager->update();
 
 		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
@@ -119,6 +166,34 @@ namespace Cappuccino {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// TODO: RENDER HERE
+
+	}
+
+	void Application::drawImGui(GLfloat dt) {
+		// Start new ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Begin("Imgui window");
+
+		// TODO: DRAW IMGUI STUFF HERE
+
 		
+		// End the ImGui frame
+		ImGui::End();
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.DisplaySize = ImVec2(_width, _height);
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+
+			glfwMakeContextCurrent(_window);
+		}
 	}
 }

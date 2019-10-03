@@ -32,10 +32,8 @@ namespace Cappuccino {
 		Returns: None
 		*/
 		void draw();
-		unsigned VBOverts = 0;
-		unsigned VBOuvs = 0;
-		unsigned VBOnormals = 0;
-		unsigned VAO = 0;
+		unsigned _VAO = 0;
+		unsigned _VBO = 0;
 
 		unsigned getFaces() const { return _numFaces; }
 		unsigned getVerts() const { return _numVerts; }

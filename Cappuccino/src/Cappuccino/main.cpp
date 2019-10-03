@@ -1,9 +1,10 @@
 #include "Cappuccino/Application.h"
-#include "Cappuccino/Scene Manager.h"
-#include "Cappuccino/Test Scene.h"
+
+#if SCENETEST
+#endif
+#include "Cappuccino/Testing/Test Scene.h"
 
 using Application = Cappuccino::Application;
-using SceneManager = Cappuccino::SceneManager;
 
 #pragma region PROGRAM SETTINGS
 
@@ -24,6 +25,9 @@ extern "C" {
 int main() {
 	if (!Application::isInstantiated()) {
 		Application* application = new Application(SCR_WIDTH, SCR_HEIGHT, SCR_TITLE);
+		application->init();
+		Cappuccino::TestScene* e = new Cappuccino::TestScene(true);
+
 		application->run();
 		delete application;
 	}
