@@ -7,14 +7,14 @@ namespace Cappuccino {
 	public:
 		RigidBody();
 		/*
-		Purp: The update function is called each update to update all parts of the rigidBody
-		Pre: A float of the time between frames,
+		Purp:This update function is called each update and will update the position,scale, and rotation of the rigid body
+		Pre:a float of the time between frames, a vec3 of the position of the rigidbody, a mat4 quanternion of its rotation, and a vec3 of its scale
 		Post: None
 		*/
 		void update(float dt,glm::vec3 &pos,glm::mat4 &rotation,glm::vec3 &scale);
 		/*
-		Purp:This update function is called each update and will update the position,scale, and rotation of the rigid body 
-		Pre:a float of the time between frames, a vec3 of the position of the rigidbody, a mat4 quanternion of its rotation, and a vec3 of its scale
+		Purp: The update function is called each update to update all parts of the rigidBody
+		Pre: A float of the time between frames,
 		Post: None
 		*/
 		void update(float dt);
