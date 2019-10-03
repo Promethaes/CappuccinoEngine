@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
+#include "Cappuccino/RigidBody.h"
 namespace Cappuccino {
 
 	/*
@@ -62,6 +63,7 @@ namespace Cappuccino {
 
 
 		Transform _transform;
+		RigidBody _rigidBody;
 
 		void setStateChange(const State& newState);
 	protected:
@@ -74,6 +76,7 @@ namespace Cappuccino {
 		//a temporary state variable to store a state before the checkChangeState can be called
 		State* _tempState;
 		bool stateChangeFlag = false;
+		glm::vec3 position;
 
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;
@@ -81,9 +84,8 @@ namespace Cappuccino {
 
 		//gameplay stuff
 		float hp;
-		glm::vec3 position;
 		float speed = 3.5f;
-
+		
 	private:
 		void checkChangeState(float dt, const State& newState);
 
@@ -95,6 +97,8 @@ namespace Cappuccino {
 
 		bool _loadedTextures = false;
 		bool _loadedMesh = false;
+		
+		
 
 		/*
 		Purp: load the textures, make sure this is only called once

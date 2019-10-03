@@ -44,8 +44,8 @@ namespace Cappuccino {
 
 		checkChangeState(dt, *_tempState);
 		_state->update(dt,this);
-
 		_transform.update();
+        _rigidBody.update(dt);
 
 		draw();
 	}
@@ -53,7 +53,7 @@ namespace Cappuccino {
 
 	void GameObject::setPosition(const glm::vec3& newPos)
 	{
-		position = _transform.translate(newPos);
+		_rigidBody.updatePosition(position = _transform.translate(newPos));
 	}
 	void GameObject::rotateX(const float rotateBy)
 	{
