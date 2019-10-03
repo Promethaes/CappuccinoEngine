@@ -27,9 +27,9 @@ namespace Cappuccino {
 
 		static GLFWwindow* _window;
 		static Sedna::XinputManager* _xinputManager;
+		void init();
 	private:
 
-		void init();
 		void cleanup();
 
 		void update(GLfloat dt);

@@ -1,8 +1,8 @@
 #include "Cappuccino/Application.h"
 
 #if SCENETEST
-#include "Cappuccino/Testing/Test Scene.h"
 #endif
+#include "Cappuccino/Testing/Test Scene.h"
 
 using Application = Cappuccino::Application;
 
@@ -25,6 +25,9 @@ extern "C" {
 int main() {
 	if (!Application::isInstantiated()) {
 		Application* application = new Application(SCR_WIDTH, SCR_HEIGHT, SCR_TITLE);
+		application->init();
+		Cappuccino::TestScene* e = new Cappuccino::TestScene(true);
+
 		application->run();
 		delete application;
 	}

@@ -11,6 +11,7 @@ namespace Cappuccino {
 		:GameObject(SHADER, std::vector<Texture*>{text1 == nullptr ? text1 = new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/Metal_specmap.png", TextureType::SpecularMap) : text1, text2 == nullptr ? text2 = new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/container2.png", TextureType::SpecularMap) : text2},
 			std::vector<Mesh*>{mesh == nullptr ? mesh = new Mesh(path) : mesh})
 	{
+		_state = new State();
 		id = "F16";
 		if (manager != nullptr)
 			_controller = manager->getController(controllerIndex);

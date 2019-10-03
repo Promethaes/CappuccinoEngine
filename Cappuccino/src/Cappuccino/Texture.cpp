@@ -17,6 +17,7 @@ namespace Cappuccino {
 
 		int width, height, nrComponents;
 		_data = stbi_load(_path.c_str(), &width, &height, &nrComponents, 0);
+		//stbi_set_flip_vertically_on_load(true);
 		if (_data)
 		{
 			GLenum format;

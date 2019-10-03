@@ -46,13 +46,12 @@ namespace Cappuccino {
 
 	void Application::run() {
 
-		init();
+		//init();
 
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
 		#if SCENETEST
-		TestScene* testScene = new TestScene(true);
 		#endif
 
 		glEnable(GL_DEPTH_TEST);
