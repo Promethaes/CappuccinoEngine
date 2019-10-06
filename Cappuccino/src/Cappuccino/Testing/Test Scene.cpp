@@ -107,7 +107,7 @@ namespace Cappuccino {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
-		cubes.push_back(Cube(vertices3, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png",TextureType::DiffuseMap), true));
+		cubes.push_back(Cube(vertices3, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
@@ -119,12 +119,22 @@ namespace Cappuccino {
 
 	bool Cappuccino::TestScene::init()
 	{
-		return _initialized = true;
+		_f16.setActive(true);
+		testPlayer->setActive(true);
+
+		_shouldExit = false;
+		_initialized = true;
+		return _initialized;
 	}
 
 	bool Cappuccino::TestScene::exit()
 	{
-		return _shouldExit = true;
+		_f16.setActive(false);
+		testPlayer->setActive(false);
+
+		_initialized = false;
+		_shouldExit = true;
+		return _shouldExit;
 	}
 
 	void Cappuccino::TestScene::childUpdate(float dt)
@@ -151,7 +161,7 @@ namespace Cappuccino {
 			_lightingShader.loadModelMatrix(pointLightPositions[i] + glm::vec3(3, 3, 3), std::nullopt, glm::vec3(i, i, i), rotate);
 			cubes[i].draw();
 		}
-		_lightingShader.loadModelMatrix(glm::vec3(0,-7,0), 10, std::nullopt, std::nullopt);
+		_lightingShader.loadModelMatrix(glm::vec3(0, -7, 0), 10, std::nullopt, std::nullopt);
 		cubes.back().draw();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -219,6 +229,12 @@ namespace Cappuccino {
 		///	camPos -= 2.5f * dt * defaultCamera->getFront();
 		///
 		///defaultCamera->setPosition(camPos);
+
+		if (testPlayer->_input.keyboard->keyPressed(Events::T))
+			_f16.setActive(false);
+		if (testPlayer->_input.keyboard->keyPressed(Events::R))
+			_f16.setActive(true);
+
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
@@ -234,7 +250,7 @@ namespace Cappuccino {
 		lastX = xpos;
 		lastY = ypos;
 
-		if (testPlayer->_input.keyboard->keyPressed(Events::Alt)) 
+		if (testPlayer->_input.keyboard->keyPressed(Events::Alt))
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		else {
 

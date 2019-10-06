@@ -24,7 +24,8 @@ namespace Cappuccino {
 		void sendString(const std::string& info);
 
 		bool isActive() const { return _active; }
-		bool isInit() const { return _initialized; }
+		bool isInit() const { return 
+			_initialized; }
 		bool ShouldExit() const { return _shouldExit; }
 
 		/*
@@ -34,6 +35,7 @@ namespace Cappuccino {
 		*/
 		virtual void mouseFunction(double xpos, double ypos) = 0;
 
+		void setActive(bool yn) { _active = yn; }
 	protected:
 		std::string info;
 		bool _active = false;
@@ -54,7 +56,7 @@ namespace Cappuccino {
 
 		static void updateScenes(float dt);
 
-		static void changeScene(unsigned index);
+		static void changeScene(unsigned changeToIndex);
 
 	private:
 		SceneManager();

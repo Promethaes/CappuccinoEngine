@@ -47,4 +47,20 @@ namespace Cappuccino {
 				Scenes[i]->baseUpdate(dt);
 		}
 	}
+	void SceneManager::changeScene(unsigned changeToIndex)
+	{
+		for (unsigned i = 0; i < Scene::scenes.size(); i++) {
+			if (Scenes[i]->isActive()) {
+				Scenes[i]->setActive(false);
+				Scenes[i]->exit();
+				break;
+			}
+		}
+
+		Scenes[changeToIndex]->init();
+
+		Scenes[changeToIndex]->setActive(true);
+
+
+	}
 }
