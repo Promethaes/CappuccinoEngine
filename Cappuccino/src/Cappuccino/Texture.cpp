@@ -3,7 +3,7 @@
 
 #include <iostream>
 namespace Cappuccino {
-	Texture::Texture(std::string PATH, const TextureType& ID)
+	Texture::Texture(std::string& PATH, const TextureType& ID)
 	{
 		_path = PATH;
 		type = ID;

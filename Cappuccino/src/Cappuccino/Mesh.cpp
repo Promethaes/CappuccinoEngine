@@ -9,9 +9,9 @@
 
 namespace Cappuccino {
 	struct FaceData {
-		unsigned vertexData[3];
-		unsigned textureData[3];
-		unsigned normalData[3];
+		unsigned vertexData[3]{};
+		unsigned textureData[3]{};
+		unsigned normalData[3]{};
 	};
 
 
@@ -21,15 +21,15 @@ namespace Cappuccino {
 			return true;
 		char inputString[128];
 
-		std::vector<glm::vec3> vertexData;
-		std::vector<glm::vec2> textureData;
-		std::vector<glm::vec3> normalData;
-		std::vector<FaceData> faces;
-		std::vector<float> unPvertexData;
-		std::vector<float> unPtextureData;
-		std::vector<float> unPnormalData;
+		std::vector<glm::vec3> vertexData{};
+		std::vector<glm::vec2> textureData{};
+		std::vector<glm::vec3> normalData{};
+		std::vector<FaceData> faces{};
+		std::vector<float> unPvertexData{};
+		std::vector<float> unPtextureData{};
+		std::vector<float> unPnormalData{};
 		//load the file
-		std::ifstream input;
+		std::ifstream input{};
 		input.open(_path);
 
 		if (!input.good()) {
@@ -42,31 +42,31 @@ namespace Cappuccino {
 
 			//vertex data
 			if (inputString[0] == 'v' && inputString[1] == ' ') {
-				glm::vec3 vertData;
+				glm::vec3 vertData{ 0,0,0 };
 
 				std::sscanf(inputString, "v %f %f %f", &vertData.x, &vertData.y, &vertData.z);
 				vertexData.push_back(vertData);
 			}//texture data
 			else if (inputString[0] == 'v' && inputString[1] == 't') {
-				glm::vec2 texCoord;
+				glm::vec2 texCoord{ 0,0 };
 
 				std::sscanf(inputString, "vt %f %f", &texCoord.x, &texCoord.y);
 				textureData.push_back(texCoord);
 			}//normal data
 			else if (inputString[0] == 'v' && inputString[1] == 'n') {
-				glm::vec3 normData;
+				glm::vec3 normData{ 0,0,0 };
 
 				std::sscanf(inputString, "vn %f %f %f", &normData.x, &normData.y, &normData.z);
 				normalData.push_back(normData);
 			}//face data
 			else if (inputString[0] == 'f' && inputString[1] == ' ') {
-				FaceData faceData;
+				faces.push_back(FaceData());
+
 
 				std::sscanf(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
-					&faceData.vertexData[0], &faceData.textureData[0], &faceData.normalData[0],
-					&faceData.vertexData[1], &faceData.textureData[1], &faceData.normalData[1],
-					&faceData.vertexData[2], &faceData.textureData[2], &faceData.normalData[2]);
-				faces.push_back(faceData);
+					&faces.back().vertexData[0], &faces.back().textureData[0], &faces.back().normalData[0],
+					&faces.back().vertexData[1], &faces.back().textureData[1], &faces.back().normalData[1],
+					&faces.back().vertexData[2], &faces.back().textureData[2], &faces.back().normalData[2]);
 			}
 			else
 				continue;
@@ -80,7 +80,7 @@ namespace Cappuccino {
 
 				unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].x);
 				unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].y);
-				
+
 
 				unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].x);
 				unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].y);
@@ -92,12 +92,12 @@ namespace Cappuccino {
 		_numVerts = _numFaces * 3;
 		std::vector<float> master;
 
-		for (auto x : unPvertexData)
-			master.push_back(x);
-		for (auto x : unPtextureData)
-			master.push_back(x);
-		for (auto x : unPnormalData)
-			master.push_back(x);
+		for (unsigned i = 0; i < unPvertexData.size(); i++)
+			master.push_back(unPvertexData[i]);
+		for (unsigned i = 0; i < unPtextureData.size(); i++)
+			master.push_back(unPtextureData[i]);
+		for (unsigned i = 0; i < unPnormalData.size(); i++)
+			master.push_back(unPnormalData[i]);
 
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);

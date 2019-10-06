@@ -231,10 +231,7 @@ namespace Cappuccino {
 		///defaultCamera->setPosition(camPos);
 
 		if (testPlayer->_input.keyboard->keyPressed(Events::T))
-			_f16.setActive(false);
-		if (testPlayer->_input.keyboard->keyPressed(Events::R))
-			_f16.setActive(true);
-
+			SceneManager::changeScene(0);
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{

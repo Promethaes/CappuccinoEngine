@@ -24,8 +24,7 @@ namespace Cappuccino {
 		void sendString(const std::string& info);
 
 		bool isActive() const { return _active; }
-		bool isInit() const { return 
-			_initialized; }
+		bool isInit() const { return _initialized; }
 		bool ShouldExit() const { return _shouldExit; }
 
 		/*

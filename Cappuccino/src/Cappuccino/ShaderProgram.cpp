@@ -69,7 +69,7 @@ namespace Cappuccino {
 	}
 
 	void Shader::compileShader(const string& shaderPath, const ShaderType& type, GLuint& shader) {
-		string shaderString;
+		string shaderString = "";
 		const GLchar* shaderSource;
 
 		if (!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
