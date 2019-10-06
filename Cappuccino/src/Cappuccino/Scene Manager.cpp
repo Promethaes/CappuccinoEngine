@@ -41,9 +41,7 @@ namespace Cappuccino {
 	void SceneManager::updateScenes(float dt)
 	{
 		for (unsigned i = 0; i < Scenes.size(); i++) {
-			if (!Scenes[i]->isInit())
-				Scenes[i]->init();
-			if (Scenes[i]->isInit())
+			if (Scenes[i]->isActive())
 				Scenes[i]->baseUpdate(dt);
 		}
 	}

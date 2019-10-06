@@ -36,7 +36,7 @@ namespace Cappuccino {
 
 		void setActive(bool yn) { _active = yn; }
 	protected:
-		std::string info;
+		std::string info = "";
 		bool _active = false;
 		bool _initialized = false;
 		bool _shouldExit = false;
