@@ -216,8 +216,7 @@ namespace Cappuccino {
 		///if (isEvent(Events::Up))
 		///	camPos += 2.5f * dt * defaultCamera->getFront();
 		///if (isEvent(Events::Down))
-		///	camPos -= 2.5f * dt * defaultCamera->getFront();
-		///
+		///	camPos -= 2.5f * dt * defaultCamera->getFront();B
 		///defaultCamera->setPosition(camPos);
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)

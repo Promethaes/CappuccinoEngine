@@ -53,7 +53,6 @@ namespace Cappuccino{
 	};
 		class Capsule
 	{
-	
 	public:
 		/*
 		Purp: This is the contructor for a capsule

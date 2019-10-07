@@ -5,7 +5,6 @@
 namespace Cappuccino {
 	class RigidBody	{
 	public:
-		RigidBody();
 		/*
 		Purp:This update function is called each update and will update the position,scale, and rotation of the rigid body
 		Pre:a float of the time between frames, a vec3 of the position of the rigidbody, a mat4 quanternion of its rotation, and a vec3 of its scale
@@ -47,6 +46,7 @@ namespace Cappuccino {
         
 		glm::vec3 getPosition() { return _position;}
 		glm::mat4 getRotation() { return _rotateMat;}
+		std::vector<HitBox> hitBox;
 	private:
 		unsigned _mass = 1;
 		bool _moveable = false;
@@ -57,7 +57,7 @@ namespace Cappuccino {
 		glm::vec3 _position{ 0 };
 		glm::vec3 _scale{ 0 };
 		glm::mat4 _rotateMat{ 1.0f };
-		std::vector<HitBox> hitBox;
+		
 
 
 	};

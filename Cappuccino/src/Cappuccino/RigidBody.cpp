@@ -2,10 +2,6 @@
 
 void Cappuccino::RigidBody::update(float dt)
 {
-	for (int i=0;i<hitBox.size();i++)
-	{
-		hitBox[i];
-	}
 
 }
 
