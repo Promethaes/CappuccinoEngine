@@ -15,6 +15,7 @@ namespace Cappuccino {
 	};
 
 
+
 	bool Mesh::loadMesh()
 	{
 		if (loaded)
@@ -78,13 +79,16 @@ namespace Cappuccino {
 				unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].y);
 				unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].z);
 
-				unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].x);
-				unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].y);
+				if (!textureData.empty()) {
+					unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].x);
+					unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].y);
+				}
 
-
-				unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].x);
-				unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].y);
-				unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].z);
+				if (!normalData.empty()) {
+					unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].x);
+					unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].y);
+					unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].z);
+				}
 			}
 		}
 

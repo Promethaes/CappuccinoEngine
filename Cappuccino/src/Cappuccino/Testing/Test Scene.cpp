@@ -10,6 +10,10 @@ namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
+		testPrim.loadMesh();
+		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
+		testPrim._transform.translate(glm::vec3(5, 0, 5));
+		testPrim._transform.update();
 		///for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
 		///	GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
 		///}
@@ -232,6 +236,11 @@ namespace Cappuccino {
 
 		if (testPlayer->_input.keyboard->keyPressed(Events::T))
 			SceneManager::changeScene(0);
+
+		_lightcubeShader.use();
+		testPrim._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim._transform._transformMat);
+		testPrim.draw();
+
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
