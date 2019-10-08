@@ -22,13 +22,13 @@ namespace Cappuccino {
 		Pre: A vec3 representing the position of the center of mass of the rigidbody
 		Post: None
 		*/
-		void updatePosition(glm::vec3 &newPos);
+		void setPosition(glm::vec3 &newPos);
 		/*
 		Purp: This function updates all parts of the collision boxes rotations
 		Pre:A vec3 representing the rotation of the center of mass of the rigidbody
 		Post: None
 		*/
-		void updateRotation(glm::vec3& newRot);
+		void setRotation(glm::vec3& newRot);
 		/*
 		Purp: This function will update the scale of the rigid body
 		Pre: A vec3 representing the scale in the 3 dimensions

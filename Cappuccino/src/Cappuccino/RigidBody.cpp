@@ -5,7 +5,7 @@ void Cappuccino::RigidBody::update(float dt)
 
 }
 
-void Cappuccino::RigidBody::updatePosition(glm::vec3& newPos)
+void Cappuccino::RigidBody::setPosition(glm::vec3& newPos)
 {
 	_position = newPos;
 }
