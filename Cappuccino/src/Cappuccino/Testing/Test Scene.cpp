@@ -254,7 +254,7 @@ namespace Cappuccino {
 		testPrim2._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim2._transform._transformMat);
 		testPrim2.draw();
 		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
-			CAPP_PRINT_N("HSAUIDHQWIU");
+			CAPP_PRINT_N("Colliding");
 
 
 	}
