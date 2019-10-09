@@ -191,7 +191,23 @@ namespace Cappuccino {
 		ImGui::Begin("Imgui window");
 
 		// TODO: DRAW IMGUI STUFF HERE
+		ImGui::DragFloat("Primitive 1 Position X", &(TestScene::testPrim._transform._translateMat[3].x));
+		ImGui::DragFloat("Primitive 1 Position Y", &(TestScene::testPrim._transform._translateMat[3].y));
+		ImGui::DragFloat("Primitive 1 Position Z", &(TestScene::testPrim._transform._translateMat[3].z));
 
+		TestScene::testPrim._body.hitBox.back()._position.x = (TestScene::testPrim._transform._translateMat[3].x);
+		TestScene::testPrim._body.hitBox.back()._position.y = (TestScene::testPrim._transform._translateMat[3].y);
+		TestScene::testPrim._body.hitBox.back()._position.z = (TestScene::testPrim._transform._translateMat[3].z);
+
+		ImGui::NewLine();
+
+		ImGui::DragFloat("Primitive 2 Position X", &(TestScene::testPrim2._transform._translateMat[3].x));
+		ImGui::DragFloat("Primitive 2 Position Y", &(TestScene::testPrim2._transform._translateMat[3].y));
+		ImGui::DragFloat("Primitive 2 Position Z", &(TestScene::testPrim2._transform._translateMat[3].z));
+
+		TestScene::testPrim2._body.hitBox.back()._position.x = (TestScene::testPrim2._transform._translateMat[3].x);
+		TestScene::testPrim2._body.hitBox.back()._position.y = (TestScene::testPrim2._transform._translateMat[3].y);
+		TestScene::testPrim2._body.hitBox.back()._position.z = (TestScene::testPrim2._transform._translateMat[3].z);
 
 		// End the ImGui frame
 		ImGui::End();

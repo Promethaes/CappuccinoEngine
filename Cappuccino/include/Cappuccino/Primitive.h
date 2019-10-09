@@ -1,6 +1,8 @@
 #pragma once
 #include "Cappuccino/Mesh.h"
 #include "Cappuccino/Transform.h"
+#include "Cappuccino/HitBox.h"
+#include "Cappuccino/RigidBody.h"
 namespace Cappuccino {
 
 	namespace Primitives {
@@ -10,6 +12,8 @@ namespace Cappuccino {
 			Cube();
 			void draw() override;
 			Transform _transform;
+
+			RigidBody _body;
 		};
 		class Sphere : public Mesh {
 		public:

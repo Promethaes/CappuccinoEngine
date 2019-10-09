@@ -14,6 +14,8 @@ namespace Cappuccino {
 	}
 	void Transform::update()
 	{
+		_position = glm::vec3(_translateMat[3].x, _translateMat[3].y, _translateMat[3].z);
+
 		_transformMat = _translateMat * _rotateMat * _scaleMat;
 	}
 	glm::vec3 Transform::translate(const glm::vec3& translateBy)

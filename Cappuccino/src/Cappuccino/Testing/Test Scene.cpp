@@ -7,13 +7,19 @@
 #include "Cappuccino/Events.h"
 
 namespace Cappuccino {
+	Primitives::Cube TestScene::testPrim;
+	Primitives::Cube TestScene::testPrim2;
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
 		testPrim.loadMesh();
 		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
-		testPrim._transform.translate(glm::vec3(5, 0, 5));
+		testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(0, 0, 0));
 		testPrim._transform.update();
+
+		testPrim2.loadMesh();
+		testPrim2._body.hitBox.back()._position = testPrim2._transform.translate(glm::vec3(5, 0, 0));
+		testPrim2._transform.update();
 		///for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
 		///	GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
 		///}
@@ -235,10 +241,21 @@ namespace Cappuccino {
 
 		if (testPlayer->_input.keyboard->keyPressed(Events::T))
 			SceneManager::changeScene(0);
+		if (testPlayer->_input.keyboard->keyPressed(Events::F))
+			_f16.setActive(false);
 
 		_lightcubeShader.use();
+
+		testPrim._transform.update();
+		testPrim2._transform.update();
+
 		testPrim._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim._transform._transformMat);
 		testPrim.draw();
+		testPrim2._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim2._transform._transformMat);
+		testPrim2.draw();
+		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
+			CAPP_PRINT_N("HSAUIDHQWIU");
+
 
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
