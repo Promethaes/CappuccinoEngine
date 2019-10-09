@@ -7,13 +7,22 @@ namespace Cappuccino {
 
 	namespace Primitives {
 
+
+		class Primitive : public Mesh {
+		public:
+			Primitive(const std::string& path);
+
+			void draw() override;
+		};
+
+
 		class Cube : public Mesh {
 		public:
 			Cube();
 			void draw() override;
 			Transform _transform;
 
-			RigidBody _body;
+			//RigidBody _body;
 		};
 		class Sphere : public Mesh {
 		public:

@@ -2,15 +2,26 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "Cappuccino/HitBox.h"
+#include <math.h>
+
+
 namespace Cappuccino {
+	
+	class Physics {
+	public:
+
+		//by default 9.8 m/s^2
+		static float gravity;
+		//by default 6.67x10^-11
+		static float UniversalG;
+
+
+	};
+	
 	class RigidBody	{
 	public:
-		/*
-		Purp:This update function is called each update and will update the position,scale, and rotation of the rigid body
-		Pre:a float of the time between frames, a vec3 of the position of the rigidbody, a mat4 quanternion of its rotation, and a vec3 of its scale
-		Post: None
-		*/
-		void update(float dt,glm::mat4 &rotation,glm::vec3 &scale);
+		RigidBody(const glm::vec3& transformPosition, const glm::vec3& dimensions, const glm::vec3& origin = glm::vec3(0.0f, 0.0f, 0.0f), const float mass = 1,bool gravity = true);
+		
 		/*
 		Purp: The update function is called each update to update all parts of the rigidBody
 		Pre: A float of the time between frames,
@@ -18,14 +29,8 @@ namespace Cappuccino {
 		*/
 		void update(float dt);
 		/*
-		Purp: This function updates all parts of the collision boxes positions
+		Purp: This function 
 		Pre: A vec3 representing the position of the center of mass of the rigidbody
-		Post: None
-		*/
-		void setPosition(glm::vec3 &newPos);
-		/*
-		Purp: This function updates all parts of the collision boxes rotations
-		Pre:A vec3 representing the rotation of the center of mass of the rigidbody
 		Post: None
 		*/
 		void setRotation(glm::vec3& newRot);
@@ -35,27 +40,26 @@ namespace Cappuccino {
 		Post: None
 		*/
 		void updateScale(glm::vec3 &newScale);
-		/*
-		Purp:
-		Pre:
-		Post: None
-		*/
-		void addForce(glm::vec3 force);
+
+		void addAccel(const glm::vec3& force,float dt);
+		void setAccel(const glm::vec3& force, float dt);
+		void setVelocity(const glm::vec3& force,float dt);
+
+		//bool checkAllCollision();
 
 		glm::mat4 getRotation() { return _rotateMat;}
 		std::vector<HitBox> hitBox;
+		glm::vec3 _position;
+		glm::vec3 _accel{0,0,0};
+		glm::vec3 _vel{ 0,0,0 };
 	private:
-		unsigned _mass = 1;
-		bool _moveable = false;
-		bool _gravity = false;
 		bool _collision = false;
-		glm::vec3 _acceleration{ 0 };
-		glm::vec3 _accelerationCap{ 0 };
 		glm::vec3 _scale{ 0 };
 		glm::mat4 _rotateMat{ 1.0f };
-		
-
-
+		float _mass = 1;
+		glm::vec3 _dimensions;
+		glm::vec3 _origin;
+		bool _grav = true;
 	};
 }
 

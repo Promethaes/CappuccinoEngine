@@ -27,8 +27,8 @@ namespace Cappuccino {
 
 		void mouseFunction(double xpos,double ypos) override;
 
-		static Primitives::Cube testPrim;
-		static Primitives::Cube testPrim2;
+	//	static Primitives::Cube testPrim;
+	//	static Primitives::Cube testPrim2;
 	private:
 		Shader _lightingShader{ "lightingShader.vert","lightingShader.frag" };
 		F16 _f16{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };

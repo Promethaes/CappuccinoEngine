@@ -22,8 +22,10 @@ namespace Cappuccino{
 		bool checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc);
 		glm::vec3 _position = glm::vec3(0, 0, 0);
 		float _radius = 0;
+		float _scale = 1;
 		glm::vec3 _size = glm::vec3(0, 0, 0);
-		glm::vec2 _rotationAround = glm::vec2(0,0);
+		glm::vec3 _rotationAround = glm::vec3(0,0,0);
+
 	protected:
 		
 	private:

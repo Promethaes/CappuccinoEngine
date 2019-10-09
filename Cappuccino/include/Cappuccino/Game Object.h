@@ -7,7 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
+#include "Cappuccino/Primitive.h"
 #include "Cappuccino/RigidBody.h"
+#include <optional>
 namespace Cappuccino {
 
 	/*
@@ -32,7 +34,8 @@ namespace Cappuccino {
 
 	class GameObject {
 	public:
-		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs);
+		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs,
+				   const std::optional<glm::vec3>& dimensions, const std::optional<std::string>& path,const std::optional<float>& mass = std::nullopt);
 		virtual ~GameObject();
 		/*
 		Purp: wrapper class to call child update
@@ -64,11 +67,16 @@ namespace Cappuccino {
 
 		Transform _transform;
 		RigidBody _rigidBody;
+		Primitives::Primitive _prim;
+
+		bool checkCollision(GameObject& other);
 
 		void setStateChange(const State& newState);
 
 		void setActive(bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
+
+		bool _drawHitbox = true;
 	protected:
 		/*
 		Purp: draw the game object

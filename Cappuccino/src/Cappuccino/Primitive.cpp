@@ -8,7 +8,7 @@ namespace Cappuccino {
 		Cube::Cube()
 			:Mesh(CAPP_PATH + "Assets/Mesh/Cube.obj")
 		{
-			_body.hitBox.push_back(HitBox(glm::vec3(0,0,0),glm::vec3(1,1,1)));
+			//_body.hitBox.push_back(HitBox(glm::vec3(0,0,0),glm::vec3(1,1,1)));
 		}
 		void Cube::draw() {
 			glBindVertexArray(_VAO);
@@ -28,6 +28,17 @@ namespace Cappuccino {
 			glBindVertexArray(_VAO);
 			glDrawArrays(GL_LINES, 0, _numVerts);
 			
+		}
+
+		Primitive::Primitive(const std::string& path)
+			:Mesh(path)
+		{
+		}
+
+		void Primitive::draw()
+		{
+			glBindVertexArray(_VAO);
+			glDrawArrays(GL_LINES, 0, _numVerts);
 		}
 
 	}

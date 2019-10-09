@@ -25,7 +25,7 @@ namespace Cappuccino {
 
 	}
 	Player::Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes)
-		:_input(true, std::nullopt), GameObject(SHADER, textures, meshes)
+		:_input(true, std::nullopt), GameObject(SHADER, textures, meshes, std::nullopt, std::nullopt)
 	{
 		_state = new PlayerStates::DefaultState();
 	}
@@ -37,13 +37,16 @@ namespace Cappuccino {
 
 	void Player::childUpdate(float dt)
 	{
-		if(_input.keyboard->keyPressed(Events::Shift))
+		if (_input.keyboard->keyPressed(Events::Shift))
 			speed = 7.0f;
 		else
 			speed = 3.5f;
 
 		if (_input.keyboard->keyPressed(Events::W))
-			setPosition(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
+			_rigidBody.addAccel(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z), dt);
+		else
+			_rigidBody.addAccel(_rigidBody._accel * -1.0f, dt);
+
 		if (_input.keyboard->keyPressed(Events::S))
 			setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
 
@@ -52,7 +55,7 @@ namespace Cappuccino {
 		if (_input.keyboard->keyPressed(Events::D))
 			setPosition(_playerCamera->getRight() * speed * dt);
 
-		_playerCamera->setPosition(position);
+		_playerCamera->setPosition(_rigidBody._position);
 	}
 
 

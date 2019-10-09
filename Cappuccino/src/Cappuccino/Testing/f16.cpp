@@ -1,6 +1,7 @@
 #include "Cappuccino/Testing/f16.h"
 #include "Cappuccino/Events.h"
 #include "Cappuccino/Input.h"
+#include "Cappuccino/CappMacros.h"
 
 namespace Cappuccino {
 
@@ -9,7 +10,7 @@ namespace Cappuccino {
 	Mesh* F16::mesh = nullptr;
 	F16::F16(const std::string& path, const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex)
 		:GameObject(SHADER, std::vector<Texture*>{text1 == nullptr ? text1 = new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/Metal_specmap.png", TextureType::SpecularMap) : text1, text2 == nullptr ? text2 = new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets/Textures/container2.png", TextureType::SpecularMap) : text2},
-			std::vector<Mesh*>{mesh == nullptr ? mesh = new Mesh(path) : mesh})
+			std::vector<Mesh*>{mesh == nullptr ? mesh = new Mesh(path) : mesh},std::nullopt,CAPP_PATH + "Assets/Mesh/Cube.obj",10)
 	{
 		_state = new State();
 		id = "F16";
@@ -19,7 +20,7 @@ namespace Cappuccino {
 	void F16::childUpdate(float dt)
 	{
 		if (isEvent(Events::Alt))
-			position = _transform.translate(_transform._transformMat[0] * 2.5f * dt);
+			_rigidBody.setAccel(_transform._transformMat[0] * 2.5f,dt);
 
 		if (isEvent(Events::A))
 			_transform.rotate(glm::vec3(0, 1, 0), -dt);
@@ -43,5 +44,6 @@ namespace Cappuccino {
 		if (isEvent(Events::Z))
 
 			_transform.rotate(glm::vec3(0, 0, 1), dt);
+
 	}
 }

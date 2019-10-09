@@ -1,8 +1,11 @@
 #include "Cappuccino/Game Object.h"
 namespace Cappuccino {
 	std::vector<GameObject*> GameObject::gameObjects = {};
-	GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& _textures, const std::vector<Mesh*>& _meshs)
-		:_shader(_shader)
+	GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& _textures, const std::vector<Mesh*>& _meshs,
+		const std::optional<glm::vec3>& dimensions, const std::optional<std::string>& path,const std::optional<float>& mass)
+
+		:_shader(_shader), _rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z),
+			dimensions.has_value() ? dimensions.value() : glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), mass.has_value() ? mass.value() : 1),_prim(path.has_value() ? path.value():"")
 	{
 		//mesh = new Mesh(MESH);
 
@@ -43,9 +46,10 @@ namespace Cappuccino {
 		childUpdate(dt);
 
 		checkChangeState(dt, *_tempState);
-		_state->update(dt,this);
+		_state->update(dt, this);
+		_rigidBody.update(dt);
+		_transform.translate(_rigidBody._position);
 		_transform.update();
-        _rigidBody.update(dt);
 
 		draw();
 	}
@@ -53,7 +57,7 @@ namespace Cappuccino {
 
 	void GameObject::setPosition(const glm::vec3& newPos)
 	{
-		_rigidBody.updatePosition(position = _transform.translate(newPos));
+		//_rigidBody.updatePosition(position = _transform.translate(newPos));
 	}
 	void GameObject::rotateX(const float rotateBy)
 	{
@@ -82,6 +86,18 @@ namespace Cappuccino {
 
 
 
+	bool GameObject::checkCollision(GameObject& other)
+	{
+		if (!_rigidBody.hitBox[0].checkCollision(other._rigidBody.hitBox[0], other._rigidBody._position, _rigidBody._position))
+			return false;
+		for (unsigned i = 1; i < _rigidBody.hitBox.size() - 1; i++)
+			for (unsigned n = 1; i < other._rigidBody.hitBox.size() - 1; n++)
+			{
+				if (_rigidBody.hitBox[i].checkCollision(other._rigidBody.hitBox[n], other._rigidBody._position, _rigidBody._position))
+					return true;
+			}
+	}
+
 	void GameObject::setStateChange(const State& newState)
 	{
 		stateChangeFlag = true;
@@ -101,7 +117,7 @@ namespace Cappuccino {
 		_state = nullptr;
 		*_state = newState;
 		_state->onEnter(dt, this);
-		
+
 		delete _tempState;
 		_tempState = nullptr;
 		stateChangeFlag = false;
@@ -131,6 +147,9 @@ namespace Cappuccino {
 			else if (x->type == TextureType::SpecularMap)
 				x->unbind(1);
 		}
+		//draw primitive
+
+		_prim.draw();
 	}
 	void GameObject::loadTextures()
 	{
@@ -147,6 +166,7 @@ namespace Cappuccino {
 	void GameObject::loadMesh()
 	{
 		if (!_loadedMesh) {
+			_prim.loadMesh();
 			for (unsigned i = 0; i < _meshes.size(); i++) {
 				if (_meshes[i]->loadMesh())
 					continue;
