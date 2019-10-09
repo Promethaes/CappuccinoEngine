@@ -1,6 +1,6 @@
 #include "Cappuccino/RigidBody.h"
 namespace Cappuccino {
-	float Physics::gravity = -1.8f;
+	float Physics::gravity = -0.08f;
 	float Physics::UniversalG = 6.67f * (pow(10, -11));
 	Cappuccino::RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& dimensions, const glm::vec3& origin, const float mass, bool gravity)
 		:_dimensions(dimensions), _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
@@ -12,8 +12,10 @@ namespace Cappuccino {
 			_vel += (glm::vec3(0, Physics::gravity, 0)) * dt;
 		_vel += _accel * dt;
 		_position += _vel * dt;
-		if (_position.y <= 0)
+		if (_position.y <= 0) {
+			_vel -= glm::vec3(0, Physics::gravity, 0) * dt;
 			_position.y = 0;
+		}
 
 
 	}
@@ -25,7 +27,7 @@ namespace Cappuccino {
 
 	void RigidBody::setAccel(const glm::vec3& force, float dt)
 	{
-		_accel += (force / _mass) * dt;
+		_accel = (force / _mass) * dt;
 	}
 
 	void RigidBody::setVelocity(const glm::vec3& force, float dt)

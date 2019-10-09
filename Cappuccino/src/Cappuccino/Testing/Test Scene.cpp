@@ -12,6 +12,15 @@ namespace Cappuccino {
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
+		testPlayer->_rigidBody._position = glm::vec3(0, 0, 3);
+
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0),0.1f));
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0),0.1f));
+
+		_f162._transform.rotate(glm::vec3(0, 0, 1), 90);
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 0.1f));
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 0.1f));
+		
 		//testPrim.loadMesh();
 		////testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
 		//testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(0, 0, 0));
@@ -130,6 +139,7 @@ namespace Cappuccino {
 	bool Cappuccino::TestScene::init()
 	{
 		_f16.setActive(true);
+		_f162.setActive(true);
 		testPlayer->setActive(true);
 
 		_shouldExit = false;
@@ -244,6 +254,7 @@ namespace Cappuccino {
 		if (testPlayer->_input.keyboard->keyPressed(Events::F))
 			_f16.setActive(false);
 
+
 		_lightcubeShader.use();
 
 		//testPrim._transform.update();
@@ -256,7 +267,8 @@ namespace Cappuccino {
 		//if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
 		//	CAPP_PRINT_N("HSAUIDHQWIU");
 
-
+		if (_f16.checkCollision(_f162))
+			CAPP_PRINT_N("Colliding");
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
