@@ -43,7 +43,7 @@ bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm:
 				return true;
 		}
 		else{//box box
-			if (checkSize((-_position.x + ourRigidLoc.x),_size.x ,(other._position.x + rigidLoc.x),other._size.x) && checkSize((_position.y + ourRigidLoc.y),_size.y, (other._position.y + rigidLoc.y),other._size.y) && checkSize((_position.z + ourRigidLoc.z),_size.z, (other._position.z + rigidLoc.z),other._size.z))
+			if (checkSize((_position.x + ourRigidLoc.x),_size.x ,(other._position.x + rigidLoc.x),other._size.x) && checkSize((_position.y + ourRigidLoc.y),_size.y, (other._position.y + rigidLoc.y),other._size.y) && checkSize((_position.z + ourRigidLoc.z),_size.z, (other._position.z + rigidLoc.z),other._size.z))
 				return true;
 		}
 	}
