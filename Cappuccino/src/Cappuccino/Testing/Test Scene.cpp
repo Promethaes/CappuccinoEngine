@@ -7,9 +7,19 @@
 #include "Cappuccino/Events.h"
 
 namespace Cappuccino {
+	Primitives::Cube TestScene::testPrim;
+	Primitives::Cube TestScene::testPrim2;
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 	{
+		testPrim.loadMesh();
+		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
+		testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(0, 0, 0));
+		testPrim._transform.update();
+
+		testPrim2.loadMesh();
+		testPrim2._body.hitBox.back()._position = testPrim2._transform.translate(glm::vec3(5, 0, 0));
+		testPrim2._transform.update();
 		///for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
 		///	GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
 		///}
@@ -107,7 +117,7 @@ namespace Cappuccino {
 			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
-		cubes.push_back(Cube(vertices3, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png",TextureType::DiffuseMap), true));
+		cubes.push_back(Cube(vertices3, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
@@ -119,12 +129,22 @@ namespace Cappuccino {
 
 	bool Cappuccino::TestScene::init()
 	{
-		return _initialized = true;
+		_f16.setActive(true);
+		testPlayer->setActive(true);
+
+		_shouldExit = false;
+		_initialized = true;
+		return _initialized;
 	}
 
 	bool Cappuccino::TestScene::exit()
 	{
-		return _shouldExit = true;
+		_f16.setActive(false);
+		testPlayer->setActive(false);
+
+		_initialized = false;
+		_shouldExit = true;
+		return _shouldExit;
 	}
 
 	void Cappuccino::TestScene::childUpdate(float dt)
@@ -151,7 +171,7 @@ namespace Cappuccino {
 			_lightingShader.loadModelMatrix(pointLightPositions[i] + glm::vec3(3, 3, 3), std::nullopt, glm::vec3(i, i, i), rotate);
 			cubes[i].draw();
 		}
-		_lightingShader.loadModelMatrix(glm::vec3(0,-7,0), 10, std::nullopt, std::nullopt);
+		_lightingShader.loadModelMatrix(glm::vec3(0, -7, 0), 10, std::nullopt, std::nullopt);
 		cubes.back().draw();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -218,6 +238,25 @@ namespace Cappuccino {
 		///if (isEvent(Events::Down))
 		///	camPos -= 2.5f * dt * defaultCamera->getFront();B
 		///defaultCamera->setPosition(camPos);
+
+		if (testPlayer->_input.keyboard->keyPressed(Events::T))
+			SceneManager::changeScene(0);
+		if (testPlayer->_input.keyboard->keyPressed(Events::F))
+			_f16.setActive(false);
+
+		_lightcubeShader.use();
+
+		testPrim._transform.update();
+		testPrim2._transform.update();
+
+		testPrim._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim._transform._transformMat);
+		testPrim.draw();
+		testPrim2._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim2._transform._transformMat);
+		testPrim2.draw();
+		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
+			CAPP_PRINT_N("HSAUIDHQWIU");
+
+
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
@@ -233,7 +272,7 @@ namespace Cappuccino {
 		lastX = xpos;
 		lastY = ypos;
 
-		if (testPlayer->_input.keyboard->keyPressed(Events::Alt)) 
+		if (testPlayer->_input.keyboard->keyPressed(Events::Alt))
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		else {
 

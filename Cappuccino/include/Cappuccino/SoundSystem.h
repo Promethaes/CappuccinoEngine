@@ -46,9 +46,9 @@ namespace Cappuccino {
 
 		static std::string _soundPath;
 		static bool _initialized;
-		static std::vector<FMOD::Sound*> sounds;
-		static std::vector<FMOD::ChannelGroup*>channelGroups;
-		static std::vector<FMOD::Channel*>channels;
+		static std::vector<FMOD::Sound*> _sounds;
+		static std::vector<FMOD::ChannelGroup*>_channelGroups;
+		static std::vector<FMOD::Channel*>_channels;
 		static FMOD::System* _system;
 		static FMOD_RESULT _result;
 	};

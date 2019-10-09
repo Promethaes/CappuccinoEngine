@@ -9,6 +9,7 @@
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Networking.h"
 #include "Cappuccino/Player.h"
+#include "Cappuccino/Primitive.h"
 
 #if NETWORKTEST
 #include "Cappuccino/Networking.h"
@@ -26,9 +27,11 @@ namespace Cappuccino {
 
 		void mouseFunction(double xpos,double ypos) override;
 
+		static Primitives::Cube testPrim;
+		static Primitives::Cube testPrim2;
 	private:
 		Shader _lightingShader{ "lightingShader.vert","lightingShader.frag" };
-		//F16 _f16{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
+		F16 _f16{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 		///F16 _f162{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 		Player* testPlayer = new Player(_lightingShader, std::vector<Texture*>{}, std::vector<Mesh*>{});
 

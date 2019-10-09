@@ -66,6 +66,9 @@ namespace Cappuccino {
 		RigidBody _rigidBody;
 
 		void setStateChange(const State& newState);
+
+		void setActive(bool yn) { _isActive = yn; }
+		bool isActive() const { return _isActive; }
 	protected:
 		/*
 		Purp: draw the game object
@@ -97,7 +100,7 @@ namespace Cappuccino {
 
 		bool _loadedTextures = false;
 		bool _loadedMesh = false;
-		
+		bool _isActive = true;
 		
 
 		/*

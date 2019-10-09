@@ -19,7 +19,6 @@ namespace Cappuccino {
 	void F16::childUpdate(float dt)
 	{
 		if (isEvent(Events::Alt))
-
 			position = _transform.translate(_transform._transformMat[0] * 2.5f * dt);
 
 		if (isEvent(Events::A))

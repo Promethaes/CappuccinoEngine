@@ -8,7 +8,7 @@
 
 #ifdef _DEBUG
 
-#define SOUNDTEST true
+#define SOUNDTEST false
 #define CUBETEST true
 #define SCENETEST true
 #define NETWORKTEST false
