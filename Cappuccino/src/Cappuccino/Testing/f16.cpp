@@ -20,7 +20,9 @@ namespace Cappuccino {
 	void F16::childUpdate(float dt)
 	{
 		if (isEvent(Events::Alt))
-			_rigidBody.addAccel(_transform._transformMat[0] * 20.5f,dt);
+			_rigidBody.setVelocity(_transform._transformMat[0] * 50.5f, dt);
+		else
+			_rigidBody.setVelocity(-_rigidBody._accel, dt);
 
 		if (isEvent(Events::A))
 			_transform.rotate(glm::vec3(0, 1, 0), -dt);
