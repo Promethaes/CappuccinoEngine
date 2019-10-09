@@ -10,7 +10,7 @@ namespace Cappuccino {
 		Pre:a float of the time between frames, a vec3 of the position of the rigidbody, a mat4 quanternion of its rotation, and a vec3 of its scale
 		Post: None
 		*/
-		void update(float dt,glm::vec3 &pos,glm::mat4 &rotation,glm::vec3 &scale);
+		void update(float dt,glm::mat4 &rotation,glm::vec3 &scale);
 		/*
 		Purp: The update function is called each update to update all parts of the rigidBody
 		Pre: A float of the time between frames,
@@ -42,9 +42,6 @@ namespace Cappuccino {
 		*/
 		void addForce(glm::vec3 force);
 
-
-        
-		glm::vec3 getPosition() { return _position;}
 		glm::mat4 getRotation() { return _rotateMat;}
 		std::vector<HitBox> hitBox;
 	private:
@@ -54,7 +51,6 @@ namespace Cappuccino {
 		bool _collision = false;
 		glm::vec3 _acceleration{ 0 };
 		glm::vec3 _accelerationCap{ 0 };
-		glm::vec3 _position{ 0 };
 		glm::vec3 _scale{ 0 };
 		glm::mat4 _rotateMat{ 1.0f };
 		

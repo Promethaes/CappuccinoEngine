@@ -5,11 +5,6 @@ void Cappuccino::RigidBody::update(float dt)
 
 }
 
-void Cappuccino::RigidBody::setPosition(glm::vec3& newPos)
-{
-	_position = newPos;
-}
-
 void Cappuccino::RigidBody::addForce(glm::vec3 force)
 {
 	_acceleration.x += force.x / _mass;
