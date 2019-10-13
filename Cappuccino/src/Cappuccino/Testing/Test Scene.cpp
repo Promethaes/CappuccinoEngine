@@ -14,7 +14,7 @@ namespace Cappuccino {
 	{
 		testPrim.loadMesh();
 		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
-		testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(0, 0, 0));
+		testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(1.0f, 0.0f, 0.0f));
 		testPrim._transform.update();
 
 		testPrim2.loadMesh();
@@ -256,10 +256,9 @@ namespace Cappuccino {
 		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
 			CAPP_PRINT_N("Colliding");
 
-		testRay.checkPointingAt(testPrim._body);
-		testRay.checkPointingAt(testPrim2._body);
-
-	}
+		if (testSection.intersecting(testRay))
+			CAPP_PRINT("Intersecting");
+}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
 		if (firstMouse)

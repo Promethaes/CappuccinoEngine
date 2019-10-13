@@ -1,22 +1,29 @@
 #pragma once
 #include "glm/common.hpp"
-#include "Cappuccino/RigidBody.h"
+#include <vector>
 
 namespace Cappuccino {
+
 	class Ray {
-		friend RigidBody;
-		friend HitBox;
 	public:
-		Ray(glm::vec3& camFrontVec, glm::vec3& camPosition);
+		Ray(glm::vec3& camFront, glm::vec3& camPos);
 
-
-		bool checkPointingAt(RigidBody& body);
-		glm::vec3* getRayVec() const { return _rayDir; }
-		void setRayVec(const glm::vec3& newRayVec) { *_rayDir = newRayVec; }
-	private:
-		std::vector<unsigned> _pointingAtIndex = {};
-		bool _pointingAtHitbox = false;
 		glm::vec3* _rayDir;
-		glm::vec3* _rayOrigin;
+		glm::vec3* _rayPos;
+	};
+	class RayBox {
+	public:
+		RayBox(const glm::vec3& min, const glm::vec3& max);
+
+		/*
+		Purp: check if a ray is intersecting the box
+		Req: A ray
+		returns: whether or not it is intersecting
+		*/
+		bool intersecting(const Ray& ray);
+
+	private:
+		std::vector<glm::vec3> _bounds;
+
 	};
 }

@@ -1,34 +1,47 @@
 #include "Cappuccino/Ray.h"
 #include "Cappuccino/CappMacros.h"
-#include <algorithm>
 
 namespace Cappuccino {
-	Ray::Ray(glm::vec3& camFrontVec,glm::vec3& camPosition)
+	RayBox::RayBox(const glm::vec3& min, const glm::vec3& max)
 	{
-		_rayDir = &camFrontVec;
-		_rayOrigin = &camPosition;
+		_bounds.push_back(min);
+		_bounds.push_back(max);
 	}
 
-	bool Ray::checkPointingAt(RigidBody& body)
+	bool RayBox::intersecting(const Ray& ray)
 	{
-		glm::vec3 tempVec = *_rayDir;
-		if (std::abs(tempVec.x) > std::abs(tempVec.y) && std::abs(tempVec.x) > std::abs(tempVec.z))
-			tempVec.x *= 100;
-		else if (std::abs(tempVec.y) > std::abs(tempVec.x) && std::abs(tempVec.y) > std::abs(tempVec.z))
-			tempVec.y *= 100;
-		else if (std::abs(tempVec.z) > std::abs(tempVec.x) && std::abs(tempVec.z) > std::abs(tempVec.y))
-			tempVec.z *= 100;
+	//	https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
+		float txMin, txMax, tyMin, tyMax, tzMin, tzMax;
+		auto inverseDir = 1.0f / (*ray._rayDir);
 
-		for (unsigned i = 0; i < body.hitBox.size(); i++) {
-			if ((tempVec.x <= (body.hitBox[i]._position.x + (body.hitBox[i]._size.x / 2.0f)) && tempVec.x >= (body.hitBox[i]._position.x - (body.hitBox[i]._size.x / 2.0f))) &&
-				(tempVec.y <= (body.hitBox[i]._position.y + (body.hitBox[i]._size.y / 2.0f)) && tempVec.y >= (body.hitBox[i]._position.y - (body.hitBox[i]._size.y / 2.0f))) &&
-				(tempVec.z <= (body.hitBox[i]._position.z + (body.hitBox[i]._size.z / 2.0f)) && tempVec.z >= (body.hitBox[i]._position.z - (body.hitBox[i]._size.z / 2.0f)))) {
-				_pointingAtHitbox = true;
-				CAPP_PRINT_N("POINTING");
-				_pointingAtIndex.push_back(i);
-			}
-		}
+		std::vector<int> sign;
 
-		return false;
+		sign.push_back((inverseDir.x < 0));
+		sign.push_back((inverseDir.y < 0));
+		sign.push_back((inverseDir.z < 0));
+
+		txMin = (_bounds[sign[0]].x     - ray._rayPos->x) * inverseDir.x;
+		txMax = (_bounds[1 - sign[0]].x - ray._rayPos->x) * inverseDir.x;
+		tyMin = (_bounds[sign[1]].y     - ray._rayPos->y) * inverseDir.y;
+		tyMax = (_bounds[1 - sign[1]].y - ray._rayPos->y) * inverseDir.y;
+		tzMin = (_bounds[sign[2]].z     - ray._rayPos->z) * inverseDir.z;
+		tzMax = (_bounds[1 - sign[2]].z - ray._rayPos->z) * inverseDir.z;
+
+		if ((txMin > tyMax) || (tyMin > txMax))
+			return false;
+		if (tyMin > txMin)
+			txMin = tyMin;
+		if (tyMax < txMax)
+			txMax = tyMax;
+		if ((txMin > tzMax) || (tzMin > txMax))
+			return false;
+
+		return true;
+	}
+
+	Ray::Ray(glm::vec3& camFront, glm::vec3& camPos)
+	{
+		_rayDir = &camFront;
+		_rayPos = &camPos;
 	}
 }

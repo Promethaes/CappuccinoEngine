@@ -26,16 +26,17 @@ namespace Cappuccino {
 
 		void childUpdate(float dt) override;
 
-		void mouseFunction(double xpos,double ypos) override;
+		void mouseFunction(double xpos, double ypos) override;
 
 		static Primitives::Cube testPrim;
 		static Primitives::Cube testPrim2;
 	private:
 		Shader _lightingShader{ "lightingShader.vert","lightingShader.frag" };
-		F16 _f16{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
+		F16 _f16{ std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 		///F16 _f162{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 		Player* testPlayer = new Player(_lightingShader, std::vector<Texture*>{}, std::vector<Mesh*>{});
 		Ray testRay;
+		RayBox testSection{ glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f,1.0f,1.0f) };
 		//networking test
 #if NETWORKTEST
 		//put your IP here

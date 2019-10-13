@@ -8,7 +8,7 @@ namespace Cappuccino {
 		Cube::Cube()
 			:Mesh(CAPP_PATH + "Assets/Mesh/Cube.obj")
 		{
-			_body.hitBox.push_back(HitBox(glm::vec3(0,0,0),glm::vec3(1,1,1)));
+			_body.hitBox.push_back(HitBox(glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f,1.0f,1.0f)));
 		}
 		void Cube::draw() {
 			glBindVertexArray(_VAO);
