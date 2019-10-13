@@ -60,7 +60,6 @@ namespace Cappuccino {
 
 		SoundSystem::playSound2D(soundRef, groupRef);
 #endif
-
 		glEnable(GL_DEPTH_TEST);
 
 		static GLfloat lastFrame;

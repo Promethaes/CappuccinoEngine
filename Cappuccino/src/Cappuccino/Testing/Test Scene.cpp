@@ -10,7 +10,7 @@ namespace Cappuccino {
 	Primitives::Cube TestScene::testPrim;
 	Primitives::Cube TestScene::testPrim2;
 	Cappuccino::TestScene::TestScene(bool firstScene)
-		:Scene(firstScene)
+		:Scene(firstScene),testRay(testPlayer->getCamera()->getFront(),testPlayer->getCamera()->getPosition())
 	{
 		testPrim.loadMesh();
 		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
@@ -256,6 +256,8 @@ namespace Cappuccino {
 		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
 			CAPP_PRINT_N("Colliding");
 
+		testRay.checkPointingAt(testPrim._body);
+		testRay.checkPointingAt(testPrim2._body);
 
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
