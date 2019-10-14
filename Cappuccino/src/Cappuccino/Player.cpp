@@ -22,11 +22,14 @@ namespace Cappuccino {
 		///if (player(go)->_input.keyboard->keyPressed(Events::D))
 		///	go->setPosition(player(go)->getCamera().getRight() * 2.5f * dt);
 	   ///
-
 	}
 	Player::Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes)
 		:_input(true, std::nullopt), GameObject(SHADER, textures, meshes)
 	{
+#if CROSSHAIRTEST
+		testMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Cube2.obj");
+		testMesh->loadMesh();
+#endif
 		_state = new PlayerStates::DefaultState();
 	}
 
@@ -37,7 +40,7 @@ namespace Cappuccino {
 
 	void Player::childUpdate(float dt)
 	{
-		if(_input.keyboard->keyPressed(Events::Shift))
+		if (_input.keyboard->keyPressed(Events::Shift))
 			speed = 7.0f;
 		else
 			speed = 3.5f;
@@ -53,8 +56,12 @@ namespace Cappuccino {
 			setPosition(_playerCamera->getRight() * speed * dt);
 
 		_playerCamera->setPosition(position);
+
+#if CROSSHAIRTEST
+		crosshairShader.use();
+		crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
+
+		testMesh->draw();
+#endif
 	}
-
-
 }
-

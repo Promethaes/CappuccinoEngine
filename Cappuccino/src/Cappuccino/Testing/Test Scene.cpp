@@ -10,7 +10,7 @@ namespace Cappuccino {
 	Primitives::Cube TestScene::testPrim;
 	Primitives::Cube TestScene::testPrim2;
 	Cappuccino::TestScene::TestScene(bool firstScene)
-		:Scene(firstScene),testRay(testPlayer->getCamera()->getFront(),testPlayer->getCamera()->getPosition())
+		:Scene(firstScene), testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
 	{
 		testPrim.loadMesh();
 		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
@@ -123,8 +123,6 @@ namespace Cappuccino {
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 #endif
-
-
 	}
 
 	bool Cappuccino::TestScene::init()
@@ -254,11 +252,18 @@ namespace Cappuccino {
 		testPrim2._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim2._transform._transformMat);
 		testPrim2.draw();
 		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
-			CAPP_PRINT_N("Colliding");
+			CAPP_PRINT("Colliding");
 
-		if (testSection.intersecting(testRay))
-			CAPP_PRINT("Intersecting");
-}
+#if CROSSHAIRTEST
+		testPlayer->crosshairShader.use();
+		if (testSection.intersecting(testRay)) {
+			//CAPP_PRINT_N("Intersecting");
+			testPlayer->crosshairShader.setUniform("colour", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		else
+			testPlayer->crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+#endif
+	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
 		if (firstMouse)
@@ -276,7 +281,6 @@ namespace Cappuccino {
 		if (testPlayer->_input.keyboard->keyPressed(Events::Alt))
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		else {
-
 			/*Scene::defaultCamera*/testPlayer->getCamera()->doMouseMovement(xOffset, yOffset);
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}

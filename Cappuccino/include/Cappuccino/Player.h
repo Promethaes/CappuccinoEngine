@@ -2,9 +2,9 @@
 #include "Cappuccino/Game Object.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/CappInput.h"
+#include "Cappuccino/CappMacros.h"
 
 namespace Cappuccino {
-
 	class Player : public GameObject {
 	public:
 		Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes);
@@ -15,18 +15,20 @@ namespace Cappuccino {
 		const CappInput _input;
 
 		Camera* getCamera() const { return _playerCamera; }
+#if CROSSHAIRTEST
+		Shader crosshairShader{ "crosshairShader.vert","crosshairShader.frag" };
+		Mesh* testMesh;
+		Transform testMeshTransform;
+#endif
 	protected:
 		Camera* _playerCamera = new Camera();
-
 	};
-
 
 	//leaving this in for discussion purposes
 	namespace PlayerStates {
 		class DefaultState : public State {
 		public:
 			void update(float dt, GameObject* go) override;
-
 		};
 		class MovementState : public State {
 		public:

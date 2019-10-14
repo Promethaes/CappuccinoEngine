@@ -29,9 +29,8 @@ namespace Cappuccino {
 		_programID = 0;
 		GLuint vertShader = 0, fragShader = 0, geoShader = 0;
 
-
 		compileShader(_vertexShaderPath.c_str(), ShaderType::VERTEX, vertShader);
-		compileShader(_fragmentShaderPath.c_str() , ShaderType::FRAGMENT, fragShader);
+		compileShader(_fragmentShaderPath.c_str(), ShaderType::FRAGMENT, fragShader);
 		if (!_geometryShaderPath.empty()) {
 			compileShader(_geometryShaderPath.c_str(), ShaderType::GEOMETRY, geoShader);
 		}
@@ -75,7 +74,6 @@ namespace Cappuccino {
 			CAPP_PRINT_ERROR("Failed to read shader from file!");
 			shaderString = "";
 		}
-
 
 		GLint success;
 		GLuint shaderType = NULL;
@@ -186,6 +184,13 @@ namespace Cappuccino {
 	void Shader::loadProjectionMatrix(float width, float height) {
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+		setUniform("projection", projection);
+	}
+
+	void Shader::loadOrthoProjectionMatrix(float width, float height)
+	{
+		glm::mat4 projection = glm::mat4(1.0f);
+		projection = glm::ortho(-width, width, -height, height, -0.1f, 100.0f);
 		setUniform("projection", projection);
 	}
 

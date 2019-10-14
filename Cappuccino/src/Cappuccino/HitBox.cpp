@@ -1,6 +1,5 @@
 #include "Cappuccino/HitBox.h"
 
-
 Cappuccino::HitBox::HitBox(glm::vec3& newPos, float newRadius)
 {
 	_position = newPos;
@@ -12,8 +11,6 @@ Cappuccino::HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 	_position = newPos;
 	_size = newSize;
 }
-
-
 
 bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc)
 {
@@ -100,7 +97,6 @@ Cappuccino::Capsule::Capsule(glm::vec3& pos, glm::vec2& size, angle orientation)
 		hitBox[1] = HitBox(glm::vec3(pos.x, pos.y, pos.z - (size.x / 2)), size.y / 2);
 		hitBox[2] = HitBox(glm::vec3(pos.x, pos.y, pos.z - (size.x / 2)), size.y / 2);
 	}
-
 }
 
 bool Cappuccino::Capsule::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc)

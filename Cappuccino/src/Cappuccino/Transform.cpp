@@ -27,7 +27,7 @@ namespace Cappuccino {
 
 	glm::mat4 Transform::rotate(const glm::vec3& rotateOn, float rotationAngle)
 	{
-		return _rotateMat = glm::rotate(_rotateMat, rotationAngle, glm::radians(rotateOn));	
+		return _rotateMat = glm::rotate(_rotateMat, rotationAngle, glm::radians(rotateOn));
 	}
 
 	glm::mat4 Transform::scale(const glm::vec3& scaleVec, float sizeScalar)
