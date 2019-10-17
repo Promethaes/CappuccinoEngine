@@ -11,7 +11,9 @@ namespace Cappuccino {
 		}
 		void Cube::draw() {
 			glBindVertexArray(_VAO);
-			glDrawArrays(GL_LINES, 0, _numVerts);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDrawArrays(GL_TRIANGLES, 0, _numVerts);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
 		Sphere::Sphere()

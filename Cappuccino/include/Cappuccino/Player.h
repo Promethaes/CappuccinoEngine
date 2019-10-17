@@ -16,7 +16,7 @@ namespace Cappuccino {
 
 		Camera* getCamera() const { return _playerCamera; }
 #if CROSSHAIRTEST
-		Shader crosshairShader{ "crosshairShader.vert","crosshairShader.frag" };
+		Shader crosshairShader{ "screenSpace.vert","screenSpace.frag" };
 		Mesh* testMesh;
 		Transform testMeshTransform;
 #endif

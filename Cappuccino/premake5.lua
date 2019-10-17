@@ -16,7 +16,10 @@ workspace "Cappuccino - Built"
       "include/Cappuccino/**.cs",
 	  
 	  "include/imgui/**.h",
-	  "include/imgui/**.cpp",
+     "include/imgui/**.cpp",
+     
+     --"include/ft2build.h"
+    -- "include/freetype/**.h"
 	  
       "Assets/Mesh/**.obj",
       "Assets/Textures/**.png",
@@ -56,4 +59,4 @@ project "Cappuccino Engine"
     configuration "windows"
         targetextension ".lib"
         targetname "capp"
-        links { "opengl32", "glfw3.lib","fmod_vc.lib"}
+        links { "opengl32", "glfw3.lib","fmod_vc.lib","freetype.lib"}

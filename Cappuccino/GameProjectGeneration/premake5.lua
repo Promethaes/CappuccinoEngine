@@ -44,6 +44,9 @@ local arch = " "
       os.execute("XCOPY %CappuccinoPath%\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
       os.execute("XCOPY %CappuccinoPath%\\libs\\x64\\Release\\Fmod\\fmod.dll " .. solutionDir .. "\\build\\x64\\Debug")
       os.execute("XCOPY %CappuccinoPath%\\libs\\x64\\Release\\Fmod\\fmod.dll " .. solutionDir .. "\\build\\x64\\Release")
+
+      os.execute("XCOPY %CappuccinoPath%\\libs\\x64\\Release\\freetype.dll " .. solutionDir .. "\\build\\x64\\Debug")
+      os.execute("XCOPY %CappuccinoPath%\\libs\\x64\\Release\\freetype.dll " .. solutionDir .. "\\build\\x64\\Release")
       files{solutionDir.."\\src\\**.cpp"}
       
 project (s)

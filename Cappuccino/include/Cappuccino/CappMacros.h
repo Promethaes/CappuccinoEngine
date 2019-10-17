@@ -12,6 +12,7 @@
 #define SCENETEST true
 #define NETWORKTEST false
 #define CROSSHAIRTEST true
+#define TEXTRENDERTEST true
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 

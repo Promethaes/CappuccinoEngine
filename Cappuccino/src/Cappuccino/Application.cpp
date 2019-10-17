@@ -3,6 +3,8 @@
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
 #include "Cappuccino/SoundSystem.h"
+#include "Cappuccino/Scene Manager.h"
+#include "Cappuccino/FontManager.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
@@ -60,8 +62,14 @@ namespace Cappuccino {
 
 		SoundSystem::playSound2D(soundRef, groupRef);
 #endif
-		glEnable(GL_DEPTH_TEST);
 
+		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
+
+		FontManager::loadTypeFace("arial.ttf");
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		static GLfloat lastFrame;
 
 		/*
@@ -189,6 +197,7 @@ namespace Cappuccino {
 		ImGui::NewFrame();
 		ImGui::Begin("Imgui window");
 
+#if CUBETEST
 		// TODO: DRAW IMGUI STUFF HERE
 		ImGui::DragFloat("Primitive 1 Position X", &(TestScene::testPrim._transform._translateMat[3].x));
 		ImGui::DragFloat("Primitive 1 Position Y", &(TestScene::testPrim._transform._translateMat[3].y));
@@ -207,7 +216,7 @@ namespace Cappuccino {
 		TestScene::testPrim2._body.hitBox.back()._position.x = (TestScene::testPrim2._transform._translateMat[3].x);
 		TestScene::testPrim2._body.hitBox.back()._position.y = (TestScene::testPrim2._transform._translateMat[3].y);
 		TestScene::testPrim2._body.hitBox.back()._position.z = (TestScene::testPrim2._transform._translateMat[3].z);
-
+#endif
 		// End the ImGui frame
 		ImGui::End();
 		ImGuiIO& io = ImGui::GetIO();

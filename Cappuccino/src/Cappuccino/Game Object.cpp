@@ -113,10 +113,16 @@ namespace Cappuccino {
 
 		//bind the textures to their proper slots
 		for (auto x : _textures) {
-			if (x->type == TextureType::DiffuseMap)
+			if (x->type == TextureType::DiffuseMap) {
+				//fix this later!!!!!
+				//TODO
 				x->bind(0);
-			else if (x->type == TextureType::SpecularMap)
+				glActiveTexture(GL_TEXTURE0);
+			}
+			else if (x->type == TextureType::SpecularMap) {
 				x->bind(1);
+				glActiveTexture(GL_TEXTURE1);
+			}
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);

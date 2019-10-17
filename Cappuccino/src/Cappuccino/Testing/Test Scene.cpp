@@ -241,7 +241,7 @@ namespace Cappuccino {
 			SceneManager::changeScene(0);
 		if (testPlayer->_input.keyboard->keyPressed(Events::F))
 			_f16.setActive(false);
-
+#if CUBETEST
 		_lightcubeShader.use();
 
 		testPrim._transform.update();
@@ -253,7 +253,7 @@ namespace Cappuccino {
 		testPrim2.draw();
 		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
 			CAPP_PRINT("Colliding");
-
+#endif
 #if CROSSHAIRTEST
 		testPlayer->crosshairShader.use();
 		if (testSection.intersecting(testRay)) {
@@ -263,6 +263,11 @@ namespace Cappuccino {
 		else
 			testPlayer->crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 #endif
+
+#if TEXTRENDERTEST
+		testText.draw();
+#endif
+
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
