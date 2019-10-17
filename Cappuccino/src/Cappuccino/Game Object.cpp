@@ -117,11 +117,9 @@ namespace Cappuccino {
 				//fix this later!!!!!
 				//TODO
 				x->bind(0);
-				glActiveTexture(GL_TEXTURE0);
 			}
 			else if (x->type == TextureType::SpecularMap) {
 				x->bind(1);
-				glActiveTexture(GL_TEXTURE1);
 			}
 		}
 
