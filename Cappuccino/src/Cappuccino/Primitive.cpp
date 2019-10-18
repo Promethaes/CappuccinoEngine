@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 namespace Cappuccino {
 	namespace Primitives {
-
 		Cube::Cube()
 			:Mesh(CAPP_PATH + "Assets/Mesh/Cube.obj")
 		{
@@ -12,7 +11,9 @@ namespace Cappuccino {
 		}
 		void Cube::draw() {
 			glBindVertexArray(_VAO);
-			glDrawArrays(GL_LINES, 0, _numVerts);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDrawArrays(GL_TRIANGLES, 0, _numVerts);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
 		Sphere::Sphere()
@@ -27,7 +28,6 @@ namespace Cappuccino {
 		void Cylinder::draw() {
 			glBindVertexArray(_VAO);
 			glDrawArrays(GL_LINES, 0, _numVerts);
-			
 		}
 
 		Primitive::Primitive(const std::string& path)

@@ -62,6 +62,3 @@ namespace Cappuccino {
 		bool _grav = true;
 	};
 }
-
-		
-		

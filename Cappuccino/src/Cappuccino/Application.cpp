@@ -3,6 +3,8 @@
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
 #include "Cappuccino/SoundSystem.h"
+#include "Cappuccino/Scene Manager.h"
+#include "Cappuccino/FontManager.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
@@ -61,8 +63,13 @@ namespace Cappuccino {
 		SoundSystem::playSound2D(soundRef, groupRef);
 #endif
 
-		glEnable(GL_DEPTH_TEST);
+		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
 
+		FontManager::loadTypeFace("arial.ttf");
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		static GLfloat lastFrame;
 
 		/*

@@ -1,6 +1,5 @@
 #include "Cappuccino/HitBox.h"
 
-
 Cappuccino::HitBox::HitBox(glm::vec3& newPos, float newRadius)
 {
 	_position = newPos;
@@ -13,13 +12,11 @@ Cappuccino::HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 	_size = newSize;
 }
 
-
-
 bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc)
 {
 	if (_radius) {
-		if (other._radius){//circle circle
-			float distanceMin = (_radius * other._radius)* (_radius * other._radius);
+		if (other._radius) {//circle circle
+			float distanceMin = (_radius * other._radius) * (_radius * other._radius);
 			float actualDistanceX = (ourRigidLoc.x + _position.x) - (rigidLoc.x + other._position.x);
 			float actualDistanceY = (ourRigidLoc.y + _position.y) - (rigidLoc.y + other._position.y);
 			float actualDistanceZ = (ourRigidLoc.z + _position.z) - (rigidLoc.z + other._position.z);
@@ -27,7 +24,7 @@ bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm:
 			if (totaldist < distanceMin)
 				return true;
 		}
-		else{
+		else {
 			//circle then box
 			float dist = checkCircleBox(ourRigidLoc+_position,rigidLoc+other._position,other._size);
 			if (dist <= _radius * _radius)
@@ -36,32 +33,32 @@ bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm:
 	}
 	else
 	{
-		if (other._radius)	{
+		if (other._radius) {
 			//box then circle
 			float dist = checkCircleBox(rigidLoc+other._position,ourRigidLoc+_position,_size);
 			if (dist <= (other._radius * other._radius))
 				return true;
 		}
-		else{//box box
-			if (checkSize((-_position.x + ourRigidLoc.x),_size.x ,(other._position.x + rigidLoc.x),other._size.x) && checkSize((_position.y + ourRigidLoc.y),_size.y, (other._position.y + rigidLoc.y),other._size.y) && checkSize((_position.z + ourRigidLoc.z),_size.z, (other._position.z + rigidLoc.z),other._size.z))
+		else {//box box
+			if (checkSize((_position.x + ourRigidLoc.x), _size.x, (other._position.x + rigidLoc.x), other._size.x) && checkSize((_position.y + ourRigidLoc.y), _size.y, (other._position.y + rigidLoc.y), other._size.y) && checkSize((_position.z + ourRigidLoc.z), _size.z, (other._position.z + rigidLoc.z), other._size.z))
 				return true;
 		}
 	}
 	return false;
 }
 
-float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ,glm::vec3& boxPos,glm::vec3& boxSize)
+float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ, glm::vec3& boxPos, glm::vec3& boxSize)
 {
 	float dist = 0.0f;
-	dist += (checkDist(circ.x,boxPos.x,boxSize.x));
+	dist += (checkDist(circ.x, boxPos.x, boxSize.x));
 	dist += (checkDist(circ.y, boxPos.y, boxSize.y));
 	dist += (checkDist(circ.z, boxPos.z, boxSize.z));
 	return dist;
 }
 
-bool Cappuccino::HitBox::checkSize(float pos1,float size1, float pos2,float size2)
+bool Cappuccino::HitBox::checkSize(float pos1, float size1, float pos2, float size2)
 {
-	if (pos1-(size1/2)<pos2+(size2/2)&&pos2-(size2/2)<pos1+(size1/2))
+	if (pos1 - (size1 / 2) < pos2 + (size2 / 2) && pos2 - (size2 / 2) < pos1 + (size1 / 2))
 		return true;
 	return false;
 }
@@ -69,11 +66,11 @@ bool Cappuccino::HitBox::checkSize(float pos1,float size1, float pos2,float size
 float Cappuccino::HitBox::checkDist(float circ, float boxPos, float boxSize)
 {
 	float dist = 0.0f;
-	if (circ < boxPos-(boxSize/2)) {
+	if (circ < boxPos - (boxSize / 2)) {
 		dist += (boxPos - (boxSize / 2) - circ) * (boxPos - (boxSize / 2) - circ);
 	}
-	if (circ > boxSize/2) {
-		dist += (circ - (boxSize/2)) * (circ - (boxSize/2));
+	if (circ > boxSize / 2) {
+		dist += (circ - (boxSize / 2)) * (circ - (boxSize / 2));
 	}
 	return dist;
 }
@@ -90,22 +87,21 @@ Cappuccino::Capsule::Capsule(glm::vec3& pos, glm::vec2& size, angle orientation)
 	}
 	else if (_orientation == angle::y)
 	{
-		hitBox[0] = HitBox(pos, glm::vec3(size.y,size.x, size.y));
+		hitBox[0] = HitBox(pos, glm::vec3(size.y, size.x, size.y));
 		hitBox[1] = HitBox(glm::vec3(pos.x, pos.y - (size.x / 2), pos.z), size.y / 2);
 		hitBox[2] = HitBox(glm::vec3(pos.x, pos.y + (size.x / 2), pos.z), size.y / 2);
 	}
 	else if (_orientation == angle::z)
 	{
-		hitBox[0] = HitBox(pos, glm::vec3(size.y, size.y,size.x));
+		hitBox[0] = HitBox(pos, glm::vec3(size.y, size.y, size.x));
 		hitBox[1] = HitBox(glm::vec3(pos.x, pos.y, pos.z - (size.x / 2)), size.y / 2);
 		hitBox[2] = HitBox(glm::vec3(pos.x, pos.y, pos.z - (size.x / 2)), size.y / 2);
 	}
-	
 }
 
 bool Cappuccino::Capsule::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc)
 {
-	for (unsigned i =0;i<3;i++)
+	for (unsigned i = 0; i < 3; i++)
 	{
 		if (hitBox[i].checkCollision(other, rigidLoc, ourRigidLoc))
 			return true;

@@ -10,7 +10,7 @@ namespace Cappuccino {
 	//Primitives::Cube TestScene::testPrim;
 	//Primitives::Cube TestScene::testPrim2;
 	Cappuccino::TestScene::TestScene(bool firstScene)
-		:Scene(firstScene)
+		:Scene(firstScene), testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
 	{
 		testPlayer->_rigidBody._position = glm::vec3(0, 0, 3);
 
@@ -132,8 +132,6 @@ namespace Cappuccino {
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 #endif
-
-
 	}
 
 	bool Cappuccino::TestScene::init()
@@ -287,7 +285,6 @@ namespace Cappuccino {
 		if (testPlayer->_input.keyboard->keyPressed(Events::Alt))
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		else {
-
 			/*Scene::defaultCamera*/testPlayer->getCamera()->doMouseMovement(xOffset, yOffset);
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}

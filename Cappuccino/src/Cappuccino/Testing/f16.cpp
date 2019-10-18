@@ -4,7 +4,6 @@
 #include "Cappuccino/CappMacros.h"
 
 namespace Cappuccino {
-
 	Texture* F16::text1 = nullptr;
 	Texture* F16::text2 = nullptr;
 	Mesh* F16::mesh = nullptr;
