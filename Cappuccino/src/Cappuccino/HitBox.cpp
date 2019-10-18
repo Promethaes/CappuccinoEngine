@@ -29,7 +29,7 @@ bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm:
 		}
 		else{
 			//circle then box
-			float dist = checkCircleBox(_position,other._position,other._size);
+			float dist = checkCircleBox(ourRigidLoc+_position,rigidLoc+other._position,other._size);
 			if (dist <= _radius * _radius)
 				return true;
 		}
@@ -38,7 +38,7 @@ bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm:
 	{
 		if (other._radius)	{
 			//box then circle
-			float dist = checkCircleBox(other._position,_position,_size);
+			float dist = checkCircleBox(rigidLoc+other._position,ourRigidLoc+_position,_size);
 			if (dist <= (other._radius * other._radius))
 				return true;
 		}
