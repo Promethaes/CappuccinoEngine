@@ -255,13 +255,13 @@ namespace Cappuccino {
 			CAPP_PRINT("Colliding");
 #endif
 #if CROSSHAIRTEST
-		testPlayer->crosshairShader.use();
+		testPlayer->_crosshairShader.use();
 		if (testSection.intersecting(testRay)) {
 			//CAPP_PRINT_N("Intersecting");
-			testPlayer->crosshairShader.setUniform("colour", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		}
 		else
-			testPlayer->crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 #endif
 
 #if TEXTRENDERTEST

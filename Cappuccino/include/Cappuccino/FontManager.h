@@ -40,16 +40,18 @@ namespace Cappuccino {
 
 		void draw();
 
+		void setText(const std::string& newText) { _text = newText; }
 		void changeTextShader(Shader& newShader) { _textShader = &newShader; }
 		void setTextColour(const glm::vec3& newColour) { _colour = newColour; }
 		void setTextPosition(const glm::vec2& newPosition) { _position = newPosition; }
 		void setScale(float newScale) { _scale = newScale; }
-	private:
+	protected:
 		float _scale;
 		glm::vec2 _position;
 		glm::vec3 _colour;
 		Shader* _textShader;
 		std::string _text;
-		unsigned VAO, VBO;
+	private:
+		unsigned _VAO, _VBO;
 	};
 }

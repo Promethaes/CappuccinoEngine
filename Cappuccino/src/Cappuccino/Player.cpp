@@ -26,10 +26,18 @@ namespace Cappuccino {
 	Player::Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes)
 		:_input(true, std::nullopt), GameObject(SHADER, textures, meshes)
 	{
+
 #if CROSSHAIRTEST
-		testMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Cube2.obj");
-		testMesh->loadMesh();
+		_testMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Cube2.obj");
+		_testMesh->loadMesh();
 #endif
+
+#if UITEST
+		_playerUI._uiComponents.push_back(new UIText("UI", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
+		_playerUI._uiComponents.push_back(new UIText("UI", _uiShader, glm::vec2(-1500.0f, 900.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
+#endif
+
+
 		_state = new PlayerStates::DefaultState();
 	}
 
@@ -58,10 +66,19 @@ namespace Cappuccino {
 		_playerCamera->setPosition(position);
 
 #if CROSSHAIRTEST
-		crosshairShader.use();
-		crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
+		_crosshairShader.use();
+		_crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
 
-		testMesh->draw();
+		_testMesh->draw();
 #endif
+
+#if UITEST
+		_uiFloat += dt;
+		static_cast<UIText*>(_playerUI._uiComponents.back())->setText("Runtime: " + std::to_string(_uiFloat));
+		_playerUI.update(dt);
+
+#endif
+
+
 	}
 }
