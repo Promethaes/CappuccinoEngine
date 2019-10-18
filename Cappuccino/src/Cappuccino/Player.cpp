@@ -62,10 +62,10 @@ namespace Cappuccino {
 	}
 
 #if CROSSHAIRTEST
-		crosshairShader.use();
-		crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
-
-		testMesh->draw();
+		//crosshairShader.use();
+		//crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
+		//
+		//testMesh->draw();
 #endif
-	}
+	
 }
