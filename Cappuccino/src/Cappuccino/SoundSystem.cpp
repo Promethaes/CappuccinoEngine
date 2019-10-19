@@ -13,7 +13,6 @@ namespace Cappuccino {
 	{
 		//i followed some documentation https://www.fmod.com/resources/documentation-api?version=2.0&page=white-papers-getting-started.html
 		if (!_initialized) {
-			CAPP_PRINT_N("----------INITIALIZING SOUND SYSTEM----------");
 			_soundPath = defaultFilePath;
 
 			_result = FMOD::System_Create(&_system);
@@ -22,8 +21,6 @@ namespace Cappuccino {
 			_result = _system->init(512, FMOD_INIT_NORMAL, 0);
 			checkFmodErrors(_result, "system initialization");
 			_initialized = true;
-
-			CAPP_PRINT_N("Sound System Initialized");
 		}
 	}
 

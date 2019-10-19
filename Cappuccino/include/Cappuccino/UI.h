@@ -6,7 +6,7 @@
 namespace Cappuccino {
 
 	class Mesh;
-	
+
 	/*
 	base class for your UI elements
 	*/
@@ -33,8 +33,8 @@ namespace Cappuccino {
 	};
 
 	//UI components
-	
-	class UIText : public UIComponent,public Text {
+
+	class UIText : public UIComponent, public Text {
 	public:
 		UIText(const std::string& text, Shader& defaultShader, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale);
 
@@ -43,7 +43,15 @@ namespace Cappuccino {
 
 	class UIBar : public UIComponent {
 	public:
-		UIBar(const glm::vec2& defaultPosition,const glm::vec4& defaultColour,bool scaleFromRight = true);
+
+		enum class OriginPoint{
+			Middle = 0,
+			BottomRight,
+			BottomLeft,
+		};
+
+
+		UIBar(const glm::vec2& defaultPosition, const glm::vec4& defaultColour, const glm::vec3& barDimensions, OriginPoint point);
 
 		void updateComponent(float dt) override;
 		void drawComponent() override;
@@ -51,12 +59,15 @@ namespace Cappuccino {
 		void setShader(const Shader& newShader) { _barShader = newShader; }
 		void setScaleFromRight(bool yn) { _scaleFromRight = yn; }
 		void setPosition(const glm::vec2& newPosition) { _position = newPosition; }
+		Transform _transform;
+
+		glm::vec3& getBarDimensions() { return _barDimensions; }
 	private:
+		glm::vec3 _barDimensions;
 		glm::vec2 _position;
 		glm::vec4 _colour;
 		Shader _barShader{ "screenSpaceModel.vert","screenSpace.frag" };
 		bool _scaleFromRight;
 		Mesh* _barMesh;
-		Transform _transform;
 	};
 }

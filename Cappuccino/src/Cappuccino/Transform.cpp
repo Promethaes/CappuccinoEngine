@@ -33,6 +33,6 @@ namespace Cappuccino {
 
 	glm::mat4 Transform::scale(const glm::vec3& scaleVec, float sizeScalar)
 	{
-		return _scaleMat = glm::scale(glm::mat4(sizeScalar), scaleVec);
+		return _scaleMat = glm::scale(_scaleMat, scaleVec*sizeScalar);
 	}
 }

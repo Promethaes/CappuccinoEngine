@@ -1,4 +1,5 @@
 #include "Cappuccino/Player.h"
+#include "Cappuccino/CappMath.h"
 #define player static_cast<Cappuccino::Player*>
 
 namespace Cappuccino {
@@ -34,7 +35,7 @@ namespace Cappuccino {
 
 #if UITEST
 		_playerUI._uiComponents.push_back(new UIText("UI", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
-		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(10.0f,10.0f), (glm::vec4(0.0f, 0.0f, 1.0f,1.0f))));
+		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(-75.0f, 40.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec3(20.0f, 1.0f, 1.0f), UIBar::OriginPoint::BottomLeft));
 #endif
 
 
@@ -73,7 +74,20 @@ namespace Cappuccino {
 #endif
 
 #if UITEST
-		_uiFloat += dt;
+		static bool reverse = false;
+
+		if (!reverse)
+			_uiFloat += dt / 5.0f;
+		else
+			_uiFloat -= dt / 5.0f;
+		if (_uiFloat >= 1.0f)
+			reverse = true;
+		else if (_uiFloat <= 0.0f)
+			reverse = false;
+
+		static_cast<UIBar*>(_playerUI._uiComponents[1])->_transform._scaleMat[0].x =
+			Math::lerp(static_cast<UIBar*>(_playerUI._uiComponents[1])->getBarDimensions().x, static_cast<UIBar*>(_playerUI._uiComponents[1])->getBarDimensions().x + 10.0f, _uiFloat);
+
 		_playerUI.update(dt);
 
 #endif

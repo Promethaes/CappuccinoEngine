@@ -10,9 +10,9 @@ namespace Cappuccino {
 	Primitives::Cube TestScene::testPrim;
 	Primitives::Cube TestScene::testPrim2;
 	Cappuccino::TestScene::TestScene(bool firstScene)
-		:Scene(firstScene) 
+		:Scene(firstScene)
 #if CROSSHAIRTEST
-		,testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
+		, testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
 #endif
 	{
 		testPrim.loadMesh();
@@ -259,10 +259,8 @@ namespace Cappuccino {
 #endif
 #if CROSSHAIRTEST
 		testPlayer->_crosshairShader.use();
-		if (testSection.intersecting(testRay)) {
-			//CAPP_PRINT_N("Intersecting");
+		if (testSection.intersecting(testRay))
 			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-		}
 		else
 			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 #endif
