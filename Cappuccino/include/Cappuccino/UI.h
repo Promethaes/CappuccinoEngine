@@ -1,9 +1,12 @@
 #pragma once
 #include "Cappuccino/FontManager.h"
+#include "Cappuccino/Transform.h"
 #include <vector>
 
 namespace Cappuccino {
 
+	class Mesh;
+	
 	/*
 	base class for your UI elements
 	*/
@@ -36,5 +39,24 @@ namespace Cappuccino {
 		UIText(const std::string& text, Shader& defaultShader, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale);
 
 		void drawComponent() override;
+	};
+
+	class UIBar : public UIComponent {
+	public:
+		UIBar(const glm::vec2& defaultPosition,const glm::vec3& defaultColour,bool scaleFromRight = true);
+
+		void updateComponent(float dt) override;
+		void drawComponent() override;
+
+		void setShader(const Shader& newShader) { _barShader = newShader; }
+		void setScaleFromRight(bool yn) { _scaleFromRight = yn; }
+		void setPosition(const glm::vec2& newPosition) { _position = newPosition; }
+	private:
+		glm::vec2 _position;
+		glm::vec3 _colour;
+		Shader _barShader{ "screenSpace.vert","screenSpace.frag" };
+		bool _scaleFromRight;
+		Mesh* _barMesh;
+		Transform _transform;
 	};
 }

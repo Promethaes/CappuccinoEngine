@@ -10,7 +10,10 @@ namespace Cappuccino {
 	Primitives::Cube TestScene::testPrim;
 	Primitives::Cube TestScene::testPrim2;
 	Cappuccino::TestScene::TestScene(bool firstScene)
-		:Scene(firstScene), testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
+		:Scene(firstScene) 
+#if CROSSHAIRTEST
+		,testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
+#endif
 	{
 		testPrim.loadMesh();
 		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);

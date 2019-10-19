@@ -19,7 +19,7 @@ namespace Cappuccino {
 
 
 #if CROSSHAIRTEST
-		Shader _crosshairShader{ "screenSpace.vert","screenSpace.frag" };
+		Shader _crosshairShader{ "screenSpaceModel.vert","screenSpace.frag" };
 		Mesh* _testMesh;
 		Transform _testMeshTransform;
 #endif

@@ -34,7 +34,7 @@ namespace Cappuccino {
 
 #if UITEST
 		_playerUI._uiComponents.push_back(new UIText("UI", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
-		_playerUI._uiComponents.push_back(new UIText("UI", _uiShader, glm::vec2(-1500.0f, 900.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
+		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(10.0f,10.0f), (glm::vec3(0.0f, 0.0f, 1.0f))));
 #endif
 
 
@@ -68,13 +68,12 @@ namespace Cappuccino {
 #if CROSSHAIRTEST
 		_crosshairShader.use();
 		_crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
-
+		_crosshairShader.loadModelMatrix(glm::mat4(1.0f));
 		_testMesh->draw();
 #endif
 
 #if UITEST
 		_uiFloat += dt;
-		static_cast<UIText*>(_playerUI._uiComponents.back())->setText("Runtime: " + std::to_string(_uiFloat));
 		_playerUI.update(dt);
 
 #endif
