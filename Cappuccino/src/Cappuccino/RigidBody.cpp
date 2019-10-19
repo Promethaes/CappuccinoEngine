@@ -6,7 +6,7 @@ namespace Cappuccino {
 	Cappuccino::RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& dimensions, const glm::vec3& origin, const float mass, bool gravity)
 		:_dimensions(dimensions), _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
 
-	void Cappuccino::RigidBody::update(float dt)
+	void Cappuccino::RigidBody::update(float dt,glm::mat4 model)
 	{
 		if (_grav && _position.y > 0)
 			_vel += (glm::vec3(0, Physics::gravity, 0)) * dt;
@@ -15,6 +15,17 @@ namespace Cappuccino {
 		_vel += _accel * dt;
 		_position += _vel * dt;
 
+		_shader.use();
+		_shader.setUniform("model", model);
+		_shader.setUniform("view", _view);
+		_shader.setUniform("projection", _projection);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		if(drawHitBox)
+			for (unsigned i=0;i<hitBox.size();i++)
+			{
+				hitBox[i].draw();
+			}
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void Cappuccino::RigidBody::addAccel(const glm::vec3& force, float dt)
@@ -33,3 +44,5 @@ namespace Cappuccino {
 	}
 
 }
+glm::vec3* Cappuccino::RigidBody::_projection =new glm::vec3(1);
+glm::mat4* Cappuccino::RigidBody::_view = new glm::mat4(1);

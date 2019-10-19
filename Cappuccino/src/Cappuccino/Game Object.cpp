@@ -47,7 +47,7 @@ namespace Cappuccino {
 
 		checkChangeState(dt, *_tempState);
 		_state->update(dt, this);
-		_rigidBody.update(dt);
+		_rigidBody.update(dt,_transform._translateMat);
 		_transform.translate(_rigidBody._position);
 		_transform.update();
 

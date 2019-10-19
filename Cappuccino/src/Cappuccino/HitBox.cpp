@@ -1,15 +1,118 @@
 #include "Cappuccino/HitBox.h"
-
+#include <vector>
 Cappuccino::HitBox::HitBox(glm::vec3& newPos, float newRadius)
 {
 	_position = newPos;
 	_radius = newRadius;
+
+	std::vector<glm::vec3> data;
+	glGenVertexArrays(1, &_VAO);
+	glBindVertexArray(_VAO);
+	glGenBuffers(1, &_VBO);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+
+	glm::vec3 d1 /*= new glm::vec3*/(newPos.x, newPos.y + newRadius, newPos.z);
+	glm::vec3 d2 /*= new glm::vec3*/(newPos.x, newPos.y, newPos.z - newRadius);
+	glm::vec3 d3 /*= new glm::vec3*/(newPos.x - newRadius, newPos.y, newPos.z);
+	glm::vec3 d4 /*= new glm::vec3*/(newPos.x, newPos.y, newPos.z + newRadius);
+	glm::vec3 d5 /*= new glm::vec3*/(newPos.x + newRadius, newPos.y, newPos.z);
+	glm::vec3 d6 /*= new glm::vec3*/(newPos.x, newPos.y - newRadius, newPos.z);
+
+	data.push_back(d1);
+	data.push_back(d4);
+	data.push_back(d5);
+	data.push_back(d1);
+	data.push_back(d2);
+	data.push_back(d5);
+	data.push_back(d1);
+	data.push_back(d2);
+	data.push_back(d3);
+	data.push_back(d1);
+	data.push_back(d3);
+	data.push_back(d4);
+	data.push_back(d6);
+	data.push_back(d4);
+	data.push_back(d5);
+	data.push_back(d6);
+	data.push_back(d2);
+	data.push_back(d5);
+	data.push_back(d6);
+	data.push_back(d2);
+	data.push_back(d3);
+	data.push_back(d6);
+	data.push_back(d3);
+	data.push_back(d4);
+
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float) * 3, &data[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 }
 
 Cappuccino::HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 {
 	_position = newPos;
 	_size = newSize;
+	std::vector<glm::vec3> data;
+	glGenVertexArrays(1, &_VAO);
+	glBindVertexArray(_VAO);
+	glGenBuffers(1, &_VBO);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+
+	glm::vec3 d1 /*= new glm::vec3*/(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 d2 /*= new glm::vec3*/(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 d3 /*= new glm::vec3*/(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 d4 /*= new glm::vec3*/(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 d5 /*= new glm::vec3*/(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 d6 /*= new glm::vec3*/(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 d7 /*= new glm::vec3*/(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 d8 /*= new glm::vec3*/(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
+				  
+	data.push_back(d1);
+	data.push_back(d2);
+	data.push_back(d4);
+	data.push_back(d1);
+	data.push_back(d3);
+	data.push_back(d4);
+	data.push_back(d5);
+	data.push_back(d6);
+	data.push_back(d8);
+	data.push_back(d5);
+	data.push_back(d7);
+	data.push_back(d8);
+	data.push_back(d5);
+	data.push_back(d6);
+	data.push_back(d2);
+	data.push_back(d5);
+	data.push_back(d1);
+	data.push_back(d2);
+	data.push_back(d3);
+	data.push_back(d7);
+	data.push_back(d8);
+	data.push_back(d3);
+	data.push_back(d4);
+	data.push_back(d8);
+	data.push_back(d1);
+	data.push_back(d5);
+	data.push_back(d7);
+	data.push_back(d1);
+	data.push_back(d3);
+	data.push_back(d7);
+	data.push_back(d2);
+	data.push_back(d6);
+	data.push_back(d8);
+	data.push_back(d2);
+	data.push_back(d4);
+	data.push_back(d8);
+	
+
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float) * 3, &data[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc)
@@ -45,6 +148,12 @@ bool Cappuccino::HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm:
 		}
 	}
 	return false;
+}
+
+void Cappuccino::HitBox::draw()
+{
+	glBindVertexArray(_VAO);
+	glDrawArrays(GL_TRIANGLES, 0, _numVerts);
 }
 
 float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ, glm::vec3& boxPos, glm::vec3& boxSize)

@@ -131,7 +131,8 @@ namespace Cappuccino {
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
-#endif
+#endif	
+		testBody.setViewProjMat(testPlayer->getCamera()->whereAreWeLooking(), testPlayer->getCamera()->getPosition());
 	}
 
 	bool Cappuccino::TestScene::init()
@@ -157,6 +158,8 @@ namespace Cappuccino {
 
 	void Cappuccino::TestScene::childUpdate(float dt)
 	{
+		
+
 		//centre cube
 
 		glm::vec3 pointLightPositions[] = {
@@ -165,7 +168,7 @@ namespace Cappuccino {
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
 		};
-
+		
 		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1);
 		//cubeeeee
 #if CUBETEST
@@ -228,7 +231,7 @@ namespace Cappuccino {
 		_lightingShader.setUniform("light.specular", 1.0f, 1.0f, 1.0f);
 
 		_lightingShader.setUniform("viewPos", /*Scene::defaultCamera->getPosition()*/testPlayer->getCamera()->getPosition());
-
+		
 #if NETWORKTEST
 		if (isEvent(Events::Up)) {
 			testNetwork.sendMessage("1", "192.168.0.101");

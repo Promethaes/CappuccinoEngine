@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glad/glad.h>
 namespace Cappuccino{
 	class HitBox{
 	public:
@@ -20,6 +21,12 @@ namespace Cappuccino{
 		Post: A boolean (True for collision)
 		*/
 		bool checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc);
+		/*
+		Purp: For drawing the hitBox
+		Pre: None
+		Post: None
+		*/
+		void draw();
 		glm::vec3 _position = glm::vec3(0, 0, 0);
 		float _radius = 0;
 		float _scale = 1;
@@ -27,7 +34,9 @@ namespace Cappuccino{
 		glm::vec3 _rotationAround = glm::vec3(0,0,0);
 
 	protected:
-		
+		unsigned _VAO = 0;
+		unsigned _VBO = 0;
+		unsigned int _numVerts = 0;
 	private:
 		/*
 		Purp: This function gathers the required distance data from a cube and sphere
@@ -53,7 +62,7 @@ namespace Cappuccino{
 	{
 		x, y, z
 	};
-		class Capsule
+	class Capsule
 	{
 	public:
 		/*
