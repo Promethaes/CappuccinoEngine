@@ -34,7 +34,7 @@ namespace Cappuccino {
 
 #if UITEST
 		_playerUI._uiComponents.push_back(new UIText("UI", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
-		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(10.0f,10.0f), (glm::vec3(0.0f, 0.0f, 1.0f))));
+		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(10.0f,10.0f), (glm::vec4(0.0f, 0.0f, 1.0f,1.0f))));
 #endif
 
 

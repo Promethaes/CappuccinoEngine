@@ -43,7 +43,7 @@ namespace Cappuccino {
 
 	class UIBar : public UIComponent {
 	public:
-		UIBar(const glm::vec2& defaultPosition,const glm::vec3& defaultColour,bool scaleFromRight = true);
+		UIBar(const glm::vec2& defaultPosition,const glm::vec4& defaultColour,bool scaleFromRight = true);
 
 		void updateComponent(float dt) override;
 		void drawComponent() override;
@@ -53,8 +53,8 @@ namespace Cappuccino {
 		void setPosition(const glm::vec2& newPosition) { _position = newPosition; }
 	private:
 		glm::vec2 _position;
-		glm::vec3 _colour;
-		Shader _barShader{ "screenSpace.vert","screenSpace.frag" };
+		glm::vec4 _colour;
+		Shader _barShader{ "screenSpaceModel.vert","screenSpace.frag" };
 		bool _scaleFromRight;
 		Mesh* _barMesh;
 		Transform _transform;
