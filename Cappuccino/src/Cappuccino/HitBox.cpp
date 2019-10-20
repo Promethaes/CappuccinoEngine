@@ -9,8 +9,8 @@ namespace Cappuccino {
 		
 		std::vector<glm::vec3> data;
 		glGenVertexArrays(1, &_VAO);
-		glBindVertexArray(_VAO);
 		glGenBuffers(1, &_VBO);
+		glBindVertexArray(_VAO);
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 
@@ -69,6 +69,7 @@ namespace Cappuccino {
 
 		glBufferData(GL_ARRAY_BUFFER, data2.size() * sizeof(float), &data2[0], GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
@@ -154,6 +155,7 @@ namespace Cappuccino {
 
 		glBufferData(GL_ARRAY_BUFFER, data2.size() * sizeof(float), &data2[0], GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}

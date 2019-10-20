@@ -16,6 +16,7 @@ namespace Cappuccino {
 		_vel += _accel * dt;
 		_position += _vel * dt;
 
+
 		glm::mat4 newModel(1.0f);
 		newModel[3].x = model[3].x;
 		newModel[3].y = model[3].y;
@@ -26,8 +27,8 @@ namespace Cappuccino {
 		_shader.setUniform("projection", _projection);
 		_shader.use();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		if(drawHitBox)
-			for (unsigned i=0;i<hitBox.size();i++)
+		if (drawHitBox)
+			for (unsigned i = 0; i < hitBox.size(); i++)
 			{
 				hitBox[i].draw();
 			}
