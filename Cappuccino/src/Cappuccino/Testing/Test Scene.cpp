@@ -9,18 +9,22 @@
 namespace Cappuccino {
 	//Primitives::Cube TestScene::testPrim;
 	//Primitives::Cube TestScene::testPrim2;
+
 	Cappuccino::TestScene::TestScene(bool firstScene)
 		:Scene(firstScene), testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
 	{
 		testPlayer->_rigidBody._position = glm::vec3(0, 0, 3);
 
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0),0.1f));
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0),0.1f));
+
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f, 0.1f)));
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f, 0.1f)));
 
 		_f162._transform.rotate(glm::vec3(0, 0, 1), 90);
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 0.1f));
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 0.1f));
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f,0.1f)));
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f,0.1f)));
 		
+
+		testBody.setViewProjMat(projMat, viewMat);
 		//testPrim.loadMesh();
 		////testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
 		//testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(0, 0, 0));
@@ -132,7 +136,7 @@ namespace Cappuccino {
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
 
 #endif	
-		testBody.setViewProjMat(testPlayer->getCamera()->whereAreWeLooking(), testPlayer->getCamera()->getPosition());
+		
 	}
 
 	bool Cappuccino::TestScene::init()
@@ -158,8 +162,9 @@ namespace Cappuccino {
 
 	void Cappuccino::TestScene::childUpdate(float dt)
 	{
+		viewMat = testPlayer->getCamera()->whereAreWeLooking();
+		projMat = glm::perspective(glm::radians(45.0f), 800.0f * 2/ 600.0f * 2, 0.1f, 100.0f);
 		
-
 		//centre cube
 
 		glm::vec3 pointLightPositions[] = {

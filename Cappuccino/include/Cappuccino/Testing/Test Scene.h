@@ -36,7 +36,13 @@ namespace Cappuccino {
 		F16 _f16{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 		F16 _f162{std::string(std::getenv("CappuccinoPath")) + "Assets\\Mesh\\f16.obj", _lightingShader,nullptr,0 };
 		Player* testPlayer = new Player(_lightingShader, std::vector<Texture*>{}, std::vector<Mesh*>{});
+
+
 		RigidBody testBody = RigidBody( glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0,0,0));
+		glm::mat4 viewMat = glm::mat4(1);
+		glm::mat4 projMat = glm::mat4(1);
+
+
 #if TEXTRENDERTEST
 		Shader fontShader{ "font.vert","font.frag" };
 		Text testText{"Test",fontShader,glm::vec2(20.0f,20.0f),glm::vec3(1.0f,1.0f,1.0f),0.5f};

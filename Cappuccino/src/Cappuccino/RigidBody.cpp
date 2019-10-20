@@ -6,6 +6,7 @@ namespace Cappuccino {
 	Cappuccino::RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& dimensions, const glm::vec3& origin, const float mass, bool gravity)
 		:_dimensions(dimensions), _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
 
+
 	void Cappuccino::RigidBody::update(float dt,glm::mat4 model)
 	{
 		if (_grav && _position.y > 0)
@@ -15,10 +16,15 @@ namespace Cappuccino {
 		_vel += _accel * dt;
 		_position += _vel * dt;
 
-		_shader.use();
-		_shader.setUniform("model", model);
+		glm::mat4 newModel(1.0f);
+		newModel[3].x = model[3].x;
+		newModel[3].y = model[3].y;
+		newModel[3].z = model[3].z;
+		
+		_shader.setUniform("model", newModel);
 		_shader.setUniform("view", _view);
 		_shader.setUniform("projection", _projection);
+		_shader.use();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if(drawHitBox)
 			for (unsigned i=0;i<hitBox.size();i++)
@@ -44,5 +50,5 @@ namespace Cappuccino {
 	}
 
 }
-glm::vec3* Cappuccino::RigidBody::_projection =new glm::vec3(1);
-glm::mat4* Cappuccino::RigidBody::_view = new glm::mat4(1);
+glm::mat4* Cappuccino::RigidBody::_projection =new glm::mat4();
+glm::mat4* Cappuccino::RigidBody::_view = new glm::mat4();
