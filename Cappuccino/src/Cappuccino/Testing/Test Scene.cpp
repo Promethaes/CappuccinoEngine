@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "Cappuccino/Input.h"
 #include "Cappuccino/Events.h"
+#include "Cappuccino/CappMath.h"
 
 namespace Cappuccino {
 	Primitives::Cube TestScene::testPrim;
@@ -258,11 +259,30 @@ namespace Cappuccino {
 			CAPP_PRINT("Colliding");
 #endif
 #if CROSSHAIRTEST
+		static float u = 0.0f;
+		static bool reverse = false;
+
+		if (!reverse)
+			u += dt;
+		else
+			u -= dt;
+
+		if (u >= 1.0f) {
+			u = 1.0f;
+			reverse = true;
+		}
+		else if (u <= 0.0f) {
+			u = 0.0f;
+			reverse = false;
+		}
+
+
+
 		testPlayer->_crosshairShader.use();
 		if (testSection.intersecting(testRay))
 			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		else
-			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, Math::lerp(0.0f, 1.0f, u)));
 #endif
 
 #if TEXTRENDERTEST
