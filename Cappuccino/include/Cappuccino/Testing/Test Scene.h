@@ -9,7 +9,6 @@
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Networking.h"
 #include "Cappuccino/Player.h"
-#include "Cappuccino/Primitive.h"
 #include "Cappuccino/Ray.h"
 #include "Cappuccino/FontManager.h"
 

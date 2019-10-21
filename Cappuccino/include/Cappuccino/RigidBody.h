@@ -43,8 +43,8 @@ namespace Cappuccino {
 		bool drawHitBox = true;
 		static glm::mat4* _view;
 		static glm::mat4* _projection;
-	private:
 		Shader _shader{ "hitBox.vert","hitBox.frag" };
+	private:
 		bool _collision = false;
 		glm::vec3 _scale{ 0 };
 		glm::mat4 _rotateMat{ 1.0f };

@@ -7,7 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
-#include "Cappuccino/Primitive.h"
 #include "Cappuccino/RigidBody.h"
 #include <optional>
 namespace Cappuccino {
@@ -67,7 +66,6 @@ namespace Cappuccino {
 
 		Transform _transform;
 		RigidBody _rigidBody;
-		Primitives::Primitive _prim;
 
 		bool checkCollision(GameObject& other);
 

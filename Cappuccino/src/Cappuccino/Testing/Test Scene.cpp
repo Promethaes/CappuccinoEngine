@@ -16,15 +16,15 @@ namespace Cappuccino {
 		testPlayer->_rigidBody._position = glm::vec3(0, 0, 3);
 
 
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f, 0.1f)));
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f, 0.1f)));
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
 
 		_f162._transform.rotate(glm::vec3(0, 0, 1), 90);
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f,0.1f)));
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(0.1f, 0.1f,0.1f)));
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
 		
 
-		testBody.setViewProjMat(projMat, viewMat);
+		testBody.setViewProjMat(viewMat, projMat);
 		//testPrim.loadMesh();
 		////testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
 		//testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(0, 0, 0));
@@ -162,8 +162,7 @@ namespace Cappuccino {
 
 	void Cappuccino::TestScene::childUpdate(float dt)
 	{
-		viewMat = testPlayer->getCamera()->whereAreWeLooking();
-		projMat = glm::perspective(glm::radians(45.0f), 800.0f * 2/ 600.0f * 2, 0.1f, 100.0f);
+		
 		
 		//centre cube
 
@@ -174,7 +173,7 @@ namespace Cappuccino {
 		glm::vec3(0.0f,  0.0f, -3.0f)
 		};
 		
-		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1);
+		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1.0f);
 		//cubeeeee
 #if CUBETEST
 		rotate += dt;
@@ -275,6 +274,14 @@ namespace Cappuccino {
 
 		if (_f16.checkCollision(_f162))
 			CAPP_PRINT_N("Colliding");
+
+		viewMat = testPlayer->getCamera()->whereAreWeLooking();
+		_f16._rigidBody._shader.use();
+		_f16._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
+		_f162._rigidBody._shader.use();
+		_f162._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
+
+		projMat = glm::perspective(glm::radians(45.0f), (800.0f * 2) / (600.0f * 2), 0.1f, 100.0f);
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{

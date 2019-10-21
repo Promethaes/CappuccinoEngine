@@ -53,16 +53,16 @@ namespace Cappuccino {
 			data2.push_back(data[i].x);
 			data2.push_back(data[i].y);
 			data2.push_back(data[i].z);
-			char buffer[64];
-			snprintf(buffer, sizeof buffer, "%f", data[i].x);
-			CAPP_PRINT(buffer);
-			CAPP_PRINT("|||");
-			snprintf(buffer, sizeof buffer, "%f", data[i].y);
-			CAPP_PRINT(buffer);
-			CAPP_PRINT("|||");
-			snprintf(buffer, sizeof buffer, "%f", data[i].z);
-			CAPP_PRINT(buffer);
-			CAPP_PRINT("\n");
+			//char buffer[64];
+			//snprintf(buffer, sizeof buffer, "%f", data[i].x);
+			//CAPP_PRINT(buffer);
+			//CAPP_PRINT("|||");
+			//snprintf(buffer, sizeof buffer, "%f", data[i].y);
+			//CAPP_PRINT(buffer);
+			//CAPP_PRINT("|||");
+			//snprintf(buffer, sizeof buffer, "%f", data[i].z);
+			//CAPP_PRINT(buffer);
+			//CAPP_PRINT("\n");
 		}
 
 		_numVerts = data2.size();
@@ -138,16 +138,16 @@ namespace Cappuccino {
 			data2.push_back(data[i].x);
 			data2.push_back(data[i].y);
 			data2.push_back(data[i].z);
-			char buffer[64];
-			snprintf(buffer, sizeof buffer, "%f", data[i].x);
-			CAPP_PRINT(buffer);
-			CAPP_PRINT("|||");
-			snprintf(buffer, sizeof buffer, "%f", data[i].y);
-			CAPP_PRINT(buffer);
-			CAPP_PRINT("|||");
-			snprintf(buffer, sizeof buffer, "%f", data[i].z);
-			CAPP_PRINT(buffer);
-			CAPP_PRINT("\n");
+			//char buffer[64];
+			//snprintf(buffer, sizeof buffer, "%f", data[i].x);
+			//CAPP_PRINT(buffer);
+			//CAPP_PRINT("|||");
+			//snprintf(buffer, sizeof buffer, "%f", data[i].y);
+			//CAPP_PRINT(buffer);
+			//CAPP_PRINT("|||");
+			//snprintf(buffer, sizeof buffer, "%f", data[i].z);
+			//CAPP_PRINT(buffer);
+			//CAPP_PRINT("\n");
 
 		}
 
@@ -198,7 +198,7 @@ namespace Cappuccino {
 	void Cappuccino::HitBox::draw()
 	{
 		glBindVertexArray(_VAO);
-		glDrawArrays(GL_TRIANGLES, 0, _numVerts);
+		glDrawArrays(GL_TRIANGLES, 0, _numVerts/3);
 	}
 
 	float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ, glm::vec3& boxPos, glm::vec3& boxSize)

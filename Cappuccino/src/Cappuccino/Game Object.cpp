@@ -5,7 +5,7 @@ namespace Cappuccino {
 		const std::optional<glm::vec3>& dimensions, const std::optional<std::string>& path,const std::optional<float>& mass)
 
 		:_shader(_shader), _rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z),
-			dimensions.has_value() ? dimensions.value() : glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), mass.has_value() ? mass.value() : 1),_prim(path.has_value() ? path.value():"")
+			dimensions.has_value() ? dimensions.value() : glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), mass.has_value() ? mass.value() : 1)
 	{
 		//mesh = new Mesh(MESH);
 
@@ -48,7 +48,9 @@ namespace Cappuccino {
 		checkChangeState(dt, *_tempState);
 		_state->update(dt, this);
 		_rigidBody.update(dt,_transform._transformMat);
-		_transform.translate(_rigidBody._position);
+		_transform._translateMat[3].x = _rigidBody._position.x;
+		_transform._translateMat[3].y = _rigidBody._position.y;
+		_transform._translateMat[3].z = _rigidBody._position.z;
 		_transform.update();
 
 		draw();
@@ -151,9 +153,6 @@ namespace Cappuccino {
 			else if (x->type == TextureType::SpecularMap)
 				x->unbind(1);
 		}
-		//draw primitive
-
-		_prim.draw();
 	}
 	void GameObject::loadTextures()
 	{
@@ -170,7 +169,6 @@ namespace Cappuccino {
 	void GameObject::loadMesh()
 	{
 		if (!_loadedMesh) {
-			_prim.loadMesh();
 			for (unsigned i = 0; i < _meshes.size(); i++) {
 				if (_meshes[i]->loadMesh())
 					continue;

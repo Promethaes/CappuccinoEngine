@@ -22,10 +22,14 @@ namespace Cappuccino {
 		newModel[3].y = model[3].y;
 		newModel[3].z = model[3].z;
 		
-		_shader.setUniform("model", newModel);
-		_shader.setUniform("view", _view);
-		_shader.setUniform("projection", _projection);
 		_shader.use();
+		_shader.loadModelMatrix(newModel);
+		_shader.loadProjectionMatrix((800 * 2), (600 * 2));
+		//_shader.loadViewMatrix(_view);
+		//_shader.setUniform("model", glm::mat4(1.0f));
+		//_shader.setUniform("view", _view);
+		//_shader.setUniform("projection", _projection);
+		
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (drawHitBox)
 			for (unsigned i = 0; i < hitBox.size(); i++)

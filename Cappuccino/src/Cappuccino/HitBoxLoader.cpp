@@ -25,8 +25,8 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 				tempBox = HitBox(findCenter(), findRadius());
 			}
 			//hitBox creation
-			boxes.push_back(tempBox);
-			tempVerts.clear();
+			_boxes.push_back(tempBox);
+			_tempVerts.clear();
 			moreFile ^= 1;
 		}
 		else if (strcmp(line, "o") == 0)
@@ -44,8 +44,8 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 					tempBox = HitBox(findCenter(),findRadius());
 				}
 				//hitBox creation
-				boxes.push_back(tempBox);
-				tempVerts.clear();
+				_boxes.push_back(tempBox);
+				_tempVerts.clear();
 			}
 			else
 			{
@@ -56,7 +56,7 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 		else if (strcmp(line, "v") == 0) {
 			glm::vec3 vertex;
 			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-			tempVerts.push_back(vertex);
+			_tempVerts.push_back(vertex);
 		}
 		
 
@@ -66,62 +66,62 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 
 float Cappuccino::HitBoxLoader::findRadius()
 {
-	float high = tempVerts[0].y;
-	float low = tempVerts[0].y;
-	for (unsigned int i = 0; i < tempVerts.size(); i++)
+	float high = _tempVerts[0].y;
+	float low = _tempVerts[0].y;
+	for (unsigned int i = 0; i < _tempVerts.size(); i++)
 	{
-		if (high < tempVerts[i].y)
-			high = tempVerts[i].y;
+		if (high < _tempVerts[i].y)
+			high = _tempVerts[i].y;
 
-		if (low > tempVerts[i].y)
-			low = tempVerts[i].y;
+		if (low > _tempVerts[i].y)
+			low = _tempVerts[i].y;
 	}
 	return (high-low)/2;
 }
 
 glm::vec3 Cappuccino::HitBoxLoader::findBox()
 {
-	glm::vec3 tempHigh = tempVerts[0];
-	glm::vec3 tempLow = tempVerts[0];
+	glm::vec3 tempHigh = _tempVerts[0];
+	glm::vec3 tempLow = _tempVerts[0];
 
-	for (unsigned int i = 0; i < tempVerts.size(); i++)
+	for (unsigned int i = 0; i < _tempVerts.size(); i++)
 	{
-		if (tempVerts[i].x > tempHigh.x)
-			tempHigh.x = tempVerts[i].x;
-		if (tempVerts[i].y > tempHigh.y)
-			tempHigh.y = tempVerts[i].y;
-		if (tempVerts[i].z > tempHigh.z)
-			tempHigh.z = tempVerts[i].z;
+		if (_tempVerts[i].x > tempHigh.x)
+			tempHigh.x = _tempVerts[i].x;
+		if (_tempVerts[i].y > tempHigh.y)
+			tempHigh.y = _tempVerts[i].y;
+		if (_tempVerts[i].z > tempHigh.z)
+			tempHigh.z = _tempVerts[i].z;
 
-		if (tempVerts[i].x < tempLow.x)
-			tempLow.x = tempVerts[i].x;
-		if (tempVerts[i].y < tempLow.y)
-			tempLow.y = tempVerts[i].y;
-		if (tempVerts[i].z < tempLow.z)
-			tempLow.z = tempVerts[i].z;
+		if (_tempVerts[i].x < tempLow.x)
+			tempLow.x = _tempVerts[i].x;
+		if (_tempVerts[i].y < tempLow.y)
+			tempLow.y = _tempVerts[i].y;
+		if (_tempVerts[i].z < tempLow.z)
+			tempLow.z = _tempVerts[i].z;
 	}
 	return glm::vec3(tempHigh - tempLow);
 }
 
 glm::vec3 Cappuccino::HitBoxLoader::findCenter()
 {
-	glm::vec3 tempHigh = tempVerts[0];
-	glm::vec3 tempLow = tempVerts[0];
-	for (unsigned int i = 0; i < tempVerts.size(); i++)
+	glm::vec3 tempHigh = _tempVerts[0];
+	glm::vec3 tempLow = _tempVerts[0];
+	for (unsigned int i = 0; i < _tempVerts.size(); i++)
 	{
-		if (tempVerts[i].x > tempHigh.x)
-			tempHigh.x = tempVerts[i].x;
-		if (tempVerts[i].y > tempHigh.y)
-			tempHigh.y = tempVerts[i].y;
-		if (tempVerts[i].z > tempHigh.z)
-			tempHigh.z = tempVerts[i].z;
+		if (_tempVerts[i].x > tempHigh.x)
+			tempHigh.x = _tempVerts[i].x;
+		if (_tempVerts[i].y > tempHigh.y)
+			tempHigh.y = _tempVerts[i].y;
+		if (_tempVerts[i].z > tempHigh.z)
+			tempHigh.z = _tempVerts[i].z;
 
-		if (tempVerts[i].x < tempLow.x)
-			tempLow.x = tempVerts[i].x;
-		if (tempVerts[i].y < tempLow.y)
-			tempLow.y = tempVerts[i].y;
-		if (tempVerts[i].z < tempLow.z)
-			tempLow.z = tempVerts[i].z;
+		if (_tempVerts[i].x < tempLow.x)
+			tempLow.x = _tempVerts[i].x;
+		if (_tempVerts[i].y < tempLow.y)
+			tempLow.y = _tempVerts[i].y;
+		if (_tempVerts[i].z < tempLow.z)
+			tempLow.z = _tempVerts[i].z;
 	}
 	return glm::vec3(
 		(tempHigh.x / 2) + (tempLow.x / 2),
