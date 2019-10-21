@@ -34,7 +34,7 @@ namespace Cappuccino {
 #endif
 
 #if UITEST
-		_playerUI._uiComponents.push_back(new UIText("CARTER IS JOE MAMA\n REEEEEEEEEEEEEEEEEEEEEEEEEEE", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
+		_playerUI._uiComponents.push_back(new UIText("UI Test", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
 		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(-75.0f, 40.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec3(20.0f, 1.0f, 1.0f), UIBar::OriginPoint::BottomLeft));
 #endif
 

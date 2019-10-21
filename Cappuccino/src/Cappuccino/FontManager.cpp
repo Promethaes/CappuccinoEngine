@@ -105,9 +105,7 @@ namespace Cappuccino {
 
 	void Text::draw()
 	{
-		_textShader->use();
-		_textShader->setUniform("textColour", _colour);
-		_textShader->loadOrthoProjectionMatrix(1600.0f, 1200.0f);
+		
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindVertexArray(_VAO);

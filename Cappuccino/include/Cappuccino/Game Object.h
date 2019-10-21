@@ -100,7 +100,7 @@ namespace Cappuccino {
 
 		bool _loadedTextures = false;
 		bool _loadedMesh = false;
-		bool _isActive = true;
+		bool _isActive = false;
 		
 
 		/*

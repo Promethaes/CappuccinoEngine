@@ -36,6 +36,9 @@ namespace Cappuccino {
 	};
 	class Text {
 	public:
+		/*
+		PASSING IN A SHADER WILL NOT DO ANYTHING
+		*/
 		Text(const std::string& text, Shader& defaultShader,const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale);
 
 		void draw();
