@@ -3,15 +3,17 @@
 #include <windows.h>
 #include <iostream>
 
-
 #define CAPP_PATH						std::string(std::getenv("CappuccinoPath"))
 
 #ifdef _DEBUG
 
-#define SOUNDTEST true
+#define SOUNDTEST false
 #define CUBETEST true
 #define SCENETEST true
 #define NETWORKTEST false
+#define CROSSHAIRTEST true
+#define TEXTRENDERTEST false
+#define UITEST true
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 

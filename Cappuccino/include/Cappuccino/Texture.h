@@ -14,7 +14,7 @@ namespace Cappuccino {
 	*/
 	class Texture {
 	public:
-		Texture(std::string PATH, const TextureType& type);
+		Texture(std::string& PATH, const TextureType& type);
 		Texture() = default;
 		/*
 		Purp: loads the texture into memory
@@ -30,7 +30,7 @@ namespace Cappuccino {
 		Purp: binds the texture in the proper slot
 		*/
 		void bind(unsigned textureSlot) {
-			glActiveTexture(GL_TEXTURE + textureSlot);
+			glActiveTexture(GL_TEXTURE0 + textureSlot);
 			glBindTexture(GL_TEXTURE_2D, _texture);
 		}
 		/*

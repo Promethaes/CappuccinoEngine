@@ -62,19 +62,19 @@ namespace Cappuccino {
 		void setUniform(const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLfloat w) const;
 		void setUniform(const std::string& name, const glm::mat4& value);
 
-		
 		GLuint getID() const;
 		glm::mat4 loadModelMatrix(const glm::mat4& modelMatrix);
 		glm::mat4 loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle);
 		void loadViewMatrix(Camera& defaultCamera);
 		void loadProjectionMatrix(float width, float height);
+		void loadOrthoProjectionMatrix(float width, float height);
 
 	private:
 
 		// Function to load files as strings (used for shader source code)
 		static bool loadFileAsString(const std::string& file, std::string& output);
 		// Function to compile shaders in the constructor
-		static void compileShader(const std::string& shaderPath, const ShaderType& type, GLuint& shader);
+		static void compileShader(const char* shaderPath, const ShaderType& type, GLuint& shader);
 		// Function to link shaders together after compilation
 		void createProgram(GLuint vertex, GLuint fragment, GLuint geometry);
 

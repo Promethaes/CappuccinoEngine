@@ -22,26 +22,20 @@ namespace Cappuccino {
 
 		/*
 		Purpose: This function will wipe all the data of the object
-		Reg.: None
-		Returns: None
 		*/
 		void unload();
 		/*
 		Purpose: This function will draw the object
-		Reg.: None
-		Returns: None
 		*/
-		void draw();
-		unsigned VBOverts = 0;
-		unsigned VBOuvs = 0;
-		unsigned VBOnormals = 0;
-		unsigned VAO = 0;
+		virtual void draw();
+		unsigned _VAO = 0;
+		unsigned _VBO = 0;
 
 		unsigned getFaces() const { return _numFaces; }
 		unsigned getVerts() const { return _numVerts; }
 
 		bool loaded = false;
-	private:
+	protected:
 		unsigned _numFaces = 0;
 		unsigned _numVerts = 0;
 		std::string _path;

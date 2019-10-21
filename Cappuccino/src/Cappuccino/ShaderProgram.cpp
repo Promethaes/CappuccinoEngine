@@ -29,11 +29,10 @@ namespace Cappuccino {
 		_programID = 0;
 		GLuint vertShader = 0, fragShader = 0, geoShader = 0;
 
-
-		compileShader(_vertexShaderPath, ShaderType::VERTEX, vertShader);
-		compileShader(_fragmentShaderPath, ShaderType::FRAGMENT, fragShader);
+		compileShader(_vertexShaderPath.c_str(), ShaderType::VERTEX, vertShader);
+		compileShader(_fragmentShaderPath.c_str(), ShaderType::FRAGMENT, fragShader);
 		if (!_geometryShaderPath.empty()) {
-			compileShader(_geometryShaderPath, ShaderType::GEOMETRY, geoShader);
+			compileShader(_geometryShaderPath.c_str(), ShaderType::GEOMETRY, geoShader);
 		}
 
 		createProgram(vertShader, fragShader, geoShader);
@@ -68,16 +67,13 @@ namespace Cappuccino {
 		return true;
 	}
 
-	void Shader::compileShader(const string& shaderPath, const ShaderType& type, GLuint& shader) {
-		string shaderString;
-		const GLchar* shaderSource;
+	void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuint& shader) {
+		std::string shaderString = "";
 
 		if (!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
 			CAPP_PRINT_ERROR("Failed to read shader from file!");
 			shaderString = "";
 		}
-
-		shaderSource = shaderString.c_str();
 
 		GLint success;
 		GLuint shaderType = NULL;
@@ -96,8 +92,10 @@ namespace Cappuccino {
 			break;
 		}
 
+		auto shaderFinal = shaderString.c_str();
+
 		shader = glCreateShader(shaderType);
-		glShaderSource(shader, 1, &shaderSource, NULL);
+		glShaderSource(shader, 1, &shaderFinal, NULL);
 		glCompileShader(shader);
 
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
@@ -171,7 +169,7 @@ namespace Cappuccino {
 			model = glm::scale(model, glm::vec3(scaleBy.value()));
 		if (rotateBy.has_value())
 			model = glm::rotate(model, rotateAngle.value(), rotateBy.value());
-		
+
 		setUniform("model", model);
 		return model;
 	}
@@ -186,6 +184,13 @@ namespace Cappuccino {
 	void Shader::loadProjectionMatrix(float width, float height) {
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+		setUniform("projection", projection);
+	}
+
+	void Shader::loadOrthoProjectionMatrix(float width, float height)
+	{
+		glm::mat4 projection = glm::mat4(1.0f);
+		projection = glm::ortho(-width, width, -height, height, -0.1f, 100.0f);
 		setUniform("projection", projection);
 	}
 

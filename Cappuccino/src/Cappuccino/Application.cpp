@@ -2,6 +2,9 @@
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/Game Object.h"
+#include "Cappuccino/SoundSystem.h"
+#include "Cappuccino/Scene Manager.h"
+#include "Cappuccino/FontManager.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
@@ -46,17 +49,27 @@ namespace Cappuccino {
 
 	void Application::run() {
 
-		init();
+		//init();
 
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
-		#if SCENETEST
-		TestScene* testScene = new TestScene(true);
-		#endif
+		SoundSystem::init(CAPP_PATH + "Assets\\Sounds\\");
+
+#if SOUNDTEST
+		auto soundRef = SoundSystem::load2DSound("testSound.mp3");
+		auto groupRef = SoundSystem::createChannelGroup("group1");
+
+		SoundSystem::playSound2D(soundRef, groupRef);
+#endif
+
+		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
+
+		FontManager::loadTypeFace("arial.ttf");
 
 		glEnable(GL_DEPTH_TEST);
-
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		static GLfloat lastFrame;
 
 		/*
@@ -114,7 +127,7 @@ namespace Cappuccino {
 			SYS_EXIT(-3);
 		}
 
-		#if _DEBUG
+#if _DEBUG
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -133,7 +146,7 @@ namespace Cappuccino {
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
 		}
-		#endif
+#endif
 	}
 
 	void Application::cleanup() {
@@ -146,18 +159,25 @@ namespace Cappuccino {
 		glfwTerminate();
 	}
 
+
+	/*
+	GAME LOOP
+	*/
 	void Application::update(GLfloat dt) {
 #ifdef _DEBUG
 		if (isEvent(Events::Escape))
 			exit(0);
 #endif
+
 		if (_xinputManager->controllerConnected(0) || _xinputManager->controllerConnected(1)
-		 || _xinputManager->controllerConnected(2) || _xinputManager->controllerConnected(3))
+			|| _xinputManager->controllerConnected(2) || _xinputManager->controllerConnected(3))
 			_xinputManager->update();
 
 		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
-			x->baseUpdate(dt);
+			if (x->isActive())
+				x->baseUpdate(dt);
+
 	}
 
 	void Application::draw(GLfloat dt) {
@@ -175,9 +195,26 @@ namespace Cappuccino {
 		ImGui::NewFrame();
 		ImGui::Begin("Imgui window");
 
+#if CUBETEST
 		// TODO: DRAW IMGUI STUFF HERE
+		ImGui::DragFloat("Primitive 1 Position X", &(TestScene::testPrim._transform._translateMat[3].x));
+		ImGui::DragFloat("Primitive 1 Position Y", &(TestScene::testPrim._transform._translateMat[3].y));
+		ImGui::DragFloat("Primitive 1 Position Z", &(TestScene::testPrim._transform._translateMat[3].z));
 
-		
+		TestScene::testPrim._body.hitBox.back()._position.x = (TestScene::testPrim._transform._translateMat[3].x);
+		TestScene::testPrim._body.hitBox.back()._position.y = (TestScene::testPrim._transform._translateMat[3].y);
+		TestScene::testPrim._body.hitBox.back()._position.z = (TestScene::testPrim._transform._translateMat[3].z);
+
+		ImGui::NewLine();
+
+		ImGui::DragFloat("Primitive 2 Position X", &(TestScene::testPrim2._transform._translateMat[3].x));
+		ImGui::DragFloat("Primitive 2 Position Y", &(TestScene::testPrim2._transform._translateMat[3].y));
+		ImGui::DragFloat("Primitive 2 Position Z", &(TestScene::testPrim2._transform._translateMat[3].z));
+
+		TestScene::testPrim2._body.hitBox.back()._position.x = (TestScene::testPrim2._transform._translateMat[3].x);
+		TestScene::testPrim2._body.hitBox.back()._position.y = (TestScene::testPrim2._transform._translateMat[3].y);
+		TestScene::testPrim2._body.hitBox.back()._position.z = (TestScene::testPrim2._transform._translateMat[3].z);
+#endif
 		// End the ImGui frame
 		ImGui::End();
 		ImGuiIO& io = ImGui::GetIO();

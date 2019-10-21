@@ -34,6 +34,7 @@ namespace Cappuccino {
 		glm::vec3& getPosition() { return _cameraPos; }
 		glm::vec3& getFront() { return _cameraFront; }
 		glm::vec3& getRight() { return _cameraRight; }
+		glm::vec3& getUp() { return _cameraUp; }
 
 		void setPosition(const glm::vec3& pos) { _cameraPos = pos; }
 	private:

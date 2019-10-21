@@ -3,7 +3,7 @@
 
 #include <iostream>
 namespace Cappuccino {
-	Texture::Texture(std::string PATH, const TextureType& ID)
+	Texture::Texture(std::string& PATH, const TextureType& ID)
 	{
 		_path = PATH;
 		type = ID;
@@ -17,6 +17,7 @@ namespace Cappuccino {
 
 		int width, height, nrComponents;
 		_data = stbi_load(_path.c_str(), &width, &height, &nrComponents, 0);
+		//stbi_set_flip_vertically_on_load(true);
 		if (_data)
 		{
 			GLenum format;

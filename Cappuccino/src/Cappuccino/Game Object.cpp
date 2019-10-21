@@ -44,8 +44,8 @@ namespace Cappuccino {
 
 		checkChangeState(dt, *_tempState);
 		_state->update(dt,this);
-
 		_transform.update();
+        _rigidBody.update(dt);
 
 		draw();
 	}
@@ -53,7 +53,7 @@ namespace Cappuccino {
 
 	void GameObject::setPosition(const glm::vec3& newPos)
 	{
-		position = _transform.translate(newPos);
+		_rigidBody.updatePosition(position = _transform.translate(newPos));
 	}
 	void GameObject::rotateX(const float rotateBy)
 	{
@@ -113,10 +113,14 @@ namespace Cappuccino {
 
 		//bind the textures to their proper slots
 		for (auto x : _textures) {
-			if (x->type == TextureType::DiffuseMap)
+			if (x->type == TextureType::DiffuseMap) {
+				//fix this later!!!!!
+				//TODO
 				x->bind(0);
-			else if (x->type == TextureType::SpecularMap)
+			}
+			else if (x->type == TextureType::SpecularMap) {
 				x->bind(1);
+			}
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
