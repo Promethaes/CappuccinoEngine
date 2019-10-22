@@ -334,7 +334,3 @@ ASALocalRun/
 Cappuccino/Assets/**
 
 *.bsc
-*.lnk
-*.sln
-*.vcxproj
-*.vcxproj.filters
