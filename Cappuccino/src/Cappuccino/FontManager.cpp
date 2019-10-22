@@ -110,6 +110,12 @@ namespace Cappuccino {
 		glActiveTexture(GL_TEXTURE0);
 		glBindVertexArray(_VAO);
 		
+#if UITEST
+		_textShader->use();
+		_textShader->loadOrthoProjectionMatrix(1600.0f, 1200.0f);
+		_textShader->setUniform("textColour", _colour);
+#endif
+		
 		auto tempPos = _position;
 		std::string::const_iterator c;
 		for (c = _text.begin(); c != _text.end(); c++) {

@@ -249,9 +249,6 @@ namespace Cappuccino {
 #if CUBETEST
 		_lightcubeShader.use();
 
-		if (_f16.checkCollision(_f162))
-			CAPP_PRINT_N("Colliding");
-
 		viewMat = testPlayer->getCamera()->whereAreWeLooking();
 		_f16._rigidBody._shader.use();
 		_f16._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
