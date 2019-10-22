@@ -1,10 +1,10 @@
 #pragma once
-#include "Cappuccino/Game Object.h"
-#include "Cappuccino/XinputManager.h"
+#include "Cappuccino/GameObject.h"
+#include "Cappuccino/XInputManager.h"
 namespace Cappuccino {
 	class F16 :public GameObject {
 	public:
-		F16(const std::string& path,const Shader& SHADER, const Sedna::XinputManager* manager, unsigned controllerIndex);
+		F16(const std::string& path,const Shader& SHADER, const Sedna::XInputManager* manager, unsigned controllerIndex);
 
 		void childUpdate(float dt) override;
 
@@ -12,7 +12,7 @@ namespace Cappuccino {
 		static Texture* text2;
 		static Mesh* mesh;
 	private:
-		Sedna::XinputController* _controller = nullptr;
+		Sedna::XInputController* _controller = nullptr;
 	};
 
 }

@@ -30,7 +30,7 @@ bld/
 #wwwroot/
 
 # Visual Studio 2017 auto generated files
-Generated\ Files/
+Generated/ Files/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -329,11 +329,12 @@ ASALocalRun/
 .mfractor/
 
 # Custom ignore conditions
-*/[Bb]uild/
+*/[Bb]uild/**
 !*/[Ll]ibs/**/*
-Cappuccino/Assets/source/
-Cappuccino/libs/x64/Debug/capp.lib
-Cappuccino/libs/x64/Release/capp.lib
-Cappuccino/test game project/
+Cappuccino/Assets/**
 
 *.bsc
+*.lnk
+*.sln
+*.vcxproj
+*.vcxproj.filters

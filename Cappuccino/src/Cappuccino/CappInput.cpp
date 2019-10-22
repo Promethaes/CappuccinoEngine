@@ -12,6 +12,6 @@ namespace Cappuccino {
 		if (createKeyboard)
 			keyboard = new Keyboard();
 		if (controllerIndex.has_value())
-			controller = Application::_xinputManager->getController(controllerIndex.value());
+			controller = Sedna::XInputManager::getController(controllerIndex.value());
 	}
 }

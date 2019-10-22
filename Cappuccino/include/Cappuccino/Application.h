@@ -1,14 +1,13 @@
 #pragma once
 
-#include <glad/glad.h>;
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 #include <glm/glm.hpp>
 
 #include <string>
 
-#include "Cappuccino/XinputManager.h"
-
 namespace Cappuccino {
+	
 	class Application {
 	public:
 
@@ -20,20 +19,20 @@ namespace Cappuccino {
 			GLuint       contextVersionMajor = 4u,
 			GLuint       contextVersionMinor = 2u
 		);
-		~Application();
+		~Application() = default;
 
-		static bool isInstantiated();
+		void init();
 		void run();
 
-		static GLFWwindow* _window;
-		static Sedna::XinputManager* _xinputManager;
-		void init();
+		static bool isInstantiated();
+
+		static GLFWwindow* window;
+
 	private:
 
 		void cleanup();
 
 		void update(GLfloat dt);
-		void draw(GLfloat dt);
 		void drawImGui(GLfloat dt);
 
 
@@ -45,4 +44,5 @@ namespace Cappuccino {
 
 		static bool _instantiated;
 	};
+	
 }

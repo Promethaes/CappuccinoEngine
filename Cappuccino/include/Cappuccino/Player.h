@@ -1,5 +1,5 @@
 #pragma once
-#include "Cappuccino/Game Object.h"
+#include "Cappuccino/GameObject.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/CappInput.h"
 #include "Cappuccino/CappMacros.h"

@@ -8,25 +8,26 @@
 #include "Cappuccino/CappMath.h"
 
 namespace Cappuccino {
-	Primitives::Cube TestScene::testPrim;
-	Primitives::Cube TestScene::testPrim2;
-	Cappuccino::TestScene::TestScene(bool firstScene)
+
+	TestScene::TestScene(bool firstScene)
 		:Scene(firstScene)
 #if CROSSHAIRTEST
 		, testRay(testPlayer->getCamera()->getFront(), testPlayer->getCamera()->getPosition())
 #endif
 	{
-		testPrim.loadMesh();
-		//testPrim._transform.scale(glm::vec3(1, 10, 1), 1.0f);
-		testPrim._body.hitBox.back()._position = testPrim._transform.translate(glm::vec3(1.0f, 0.0f, 0.0f));
-		testPrim._transform.update();
+		testPlayer->_rigidBody._position = glm::vec3(0, 0, 3);
 
-		testPrim2.loadMesh();
-		testPrim2._body.hitBox.back()._position = testPrim2._transform.translate(glm::vec3(5, 0, 0));
-		testPrim2._transform.update();
-		///for (unsigned i = 0; i < GameObject::gameObjects.size(); i++) {
-		///	GameObject::gameObjects[i]->setPosition(glm::vec3(i, i, i));
-		///}
+
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
+		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
+
+		_f162._transform.rotate(glm::vec3(0, 0, 1), 90);
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
+		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
+		
+
+		testBody.setViewProjMat(viewMat, projMat);
+		
 #if CUBETEST
 		float vertices2[] = {
 			// positions          // normals           // texture coords
@@ -116,15 +117,15 @@ namespace Cappuccino {
 			-1.0f,  0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
 			-1.0f,  0.5f, -1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 		};
-		specularMap = Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\Metal_specmap.png", TextureType::SpecularMap);
+		specularMap = Texture(CAPP_PATH + R"(Assets\Textures\Metal_specmap.png)", TextureType::SpecularMap);
 		for (int i = 0; i < 4; i++) {
-			cubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
+			cubes.push_back(Cube(vertices2, 288, new Texture(CAPP_PATH + R"(Assets\Textures\container2.png)", TextureType::DiffuseMap), true));
 			cubes.back().position = glm::vec3(i, i, i);
 		}
-		cubes.push_back(Cube(vertices3, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
+		cubes.push_back(Cube(vertices3, 288, new Texture(CAPP_PATH + R"(Assets\Textures\container2.png)", TextureType::DiffuseMap), true));
 
 		for (int i = 0; i < 4; i++)
-			lightCubes.push_back(Cube(vertices2, 288, new Texture(std::string(std::getenv("CappuccinoPath")) + "Assets\\Textures\\container2.png", TextureType::DiffuseMap), true));
+			lightCubes.push_back(Cube(vertices2, 288, new Texture(CAPP_PATH + R"(Assets\Textures\container2.png)", TextureType::DiffuseMap), true));
 
 #endif
 	}
@@ -187,12 +188,12 @@ namespace Cappuccino {
 			lightCubes[i].draw();
 		}
 
-		_lightcubeShader.loadViewMatrix(/**Scene::defaultCamera*/*testPlayer->getCamera());
+		_lightcubeShader.loadViewMatrix(*testPlayer->getCamera());
 		_lightcubeShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
 
 		_lightingShader.use();
 #endif
-		_lightingShader.loadViewMatrix(/**Scene::defaultCamera*/*testPlayer->getCamera());
+		_lightingShader.loadViewMatrix(*testPlayer->getCamera());
 		_lightingShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
 		_lightingShader.setUniform("material.diffuse", (int)0);
 		_lightingShader.setUniform("material.specular", (int)1);
@@ -221,7 +222,7 @@ namespace Cappuccino {
 		_lightingShader.setUniform("light.diffuse", diffuseColor);
 		_lightingShader.setUniform("light.specular", 1.0f, 1.0f, 1.0f);
 
-		_lightingShader.setUniform("viewPos", /*Scene::defaultCamera->getPosition()*/testPlayer->getCamera()->getPosition());
+		_lightingShader.setUniform("viewPos", testPlayer->getCamera()->getPosition());
 
 #if NETWORKTEST
 		if (isEvent(Events::Up)) {
@@ -248,15 +249,16 @@ namespace Cappuccino {
 #if CUBETEST
 		_lightcubeShader.use();
 
-		testPrim._transform.update();
-		testPrim2._transform.update();
+		if (_f16.checkCollision(_f162))
+			CAPP_PRINT_N("Colliding");
 
-		testPrim._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim._transform._transformMat);
-		testPrim.draw();
-		testPrim2._transform._transformMat = _lightcubeShader.loadModelMatrix(testPrim2._transform._transformMat);
-		testPrim2.draw();
-		if (testPrim._body.hitBox.back().checkCollision(testPrim2._body.hitBox.back(), testPrim._body.getPosition(), testPrim2._body.getPosition()))
-			CAPP_PRINT("Colliding");
+		viewMat = testPlayer->getCamera()->whereAreWeLooking();
+		_f16._rigidBody._shader.use();
+		_f16._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
+		_f162._rigidBody._shader.use();
+		_f162._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
+
+		projMat = glm::perspective(glm::radians(45.0f), (800.0f * 2) / (600.0f * 2), 0.1f, 100.0f);
 #endif
 #if CROSSHAIRTEST
 		static float u = 0.0f;
@@ -307,7 +309,7 @@ namespace Cappuccino {
 		if (testPlayer->_input.keyboard->keyPressed(Events::Alt))
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		else {
-			/*Scene::defaultCamera*/testPlayer->getCamera()->doMouseMovement(xOffset, yOffset);
+			testPlayer->getCamera()->doMouseMovement(xOffset, yOffset);
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
 	}

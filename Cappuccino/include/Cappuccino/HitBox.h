@@ -1,7 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
-namespace Cappuccino{
-	class HitBox{
+
+namespace Cappuccino {
+	class HitBox {
 	public:
 		HitBox() = default;
 		/*
@@ -13,19 +14,29 @@ namespace Cappuccino{
 		Purp:Constructor for Cube Collider
 		Pre: A Vec3 of where, relative to the rigidbody, the hitbox is and a vec3 of the size of the Cube
 		*/
-		HitBox(glm::vec3& newPos,glm::vec3& newSize);
+		HitBox(glm::vec3& newPos, glm::vec3& newSize);
 		/*
 		Purp: This function checks if the hitbox is colliding with another hitbox
 		Pre: Another hitbox object, a vec3 of its connected Rigid Body location, and our Rigid Body location
 		Post: A boolean (True for collision)
 		*/
 		bool checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc);
+		/*
+		Purp: For drawing the hitBox
+		Pre: None
+		Post: None
+		*/
+		void draw();
 		glm::vec3 _position = glm::vec3(0, 0, 0);
 		float _radius = 0;
+		float _scale = 1;
 		glm::vec3 _size = glm::vec3(0, 0, 0);
-		glm::vec2 _rotationAround = glm::vec2(0,0);
+		glm::vec3 _rotationAround = glm::vec3(0, 0, 0);
+
 	protected:
-		
+		unsigned _VAO = 0;
+		unsigned _VBO = 0;
+		unsigned int _numVerts = 0;
 	private:
 		/*
 		Purp: This function gathers the required distance data from a cube and sphere
@@ -47,11 +58,11 @@ namespace Cappuccino{
 		float checkDist(float circ, float boxPos, float boxSize);
 	};
 
-	 enum class angle
+	enum class angle
 	{
 		x, y, z
 	};
-		class Capsule
+	class Capsule
 	{
 	public:
 		/*
@@ -68,7 +79,6 @@ namespace Cappuccino{
 		bool checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc);
 	protected:
 		HitBox hitBox[3];
-		angle _orientation=angle::x;
-	private:
+		angle _orientation = angle::x;
 	};
 }

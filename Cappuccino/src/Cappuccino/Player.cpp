@@ -29,12 +29,12 @@ namespace Cappuccino {
 	{
 
 #if CROSSHAIRTEST
-		_testMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Crosshair.obj");
+		_testMesh = new Mesh(CAPP_PATH + R"(Assets\Mesh\Crosshair.obj)");
 		_testMesh->loadMesh();
 #endif
 
 #if UITEST
-		_playerUI._uiComponents.push_back(new UIText("CARTER IS JOE MAMA\n REEEEEEEEEEEEEEEEEEEEEEEEEEE", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
+		_playerUI._uiComponents.push_back(new UIText("UI Test", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
 		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(-75.0f, 40.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec3(20.0f, 1.0f, 1.0f), UIBar::OriginPoint::BottomLeft));
 #endif
 
@@ -55,7 +55,10 @@ namespace Cappuccino {
 			speed = 3.5f;
 
 		if (_input.keyboard->keyPressed(Events::W))
-			setPosition(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
+			_rigidBody.addAccel(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z));
+		else
+			_rigidBody.addAccel(_rigidBody._accel * -1.0f);
+
 		if (_input.keyboard->keyPressed(Events::S))
 			setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
 
@@ -64,7 +67,7 @@ namespace Cappuccino {
 		if (_input.keyboard->keyPressed(Events::D))
 			setPosition(_playerCamera->getRight() * speed * dt);
 
-		_playerCamera->setPosition(position);
+		_playerCamera->setPosition(_rigidBody._position);
 
 #if CROSSHAIRTEST
 		_crosshairShader.use();

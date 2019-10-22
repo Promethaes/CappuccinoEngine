@@ -1,7 +1,7 @@
 #pragma once
 #include "Cappuccino/Input.h"
 #include "Cappuccino/Events.h"
-#include "Cappuccino/XinputManager.h"
+#include "Cappuccino/XInputManager.h"
 
 #include <optional>
 
@@ -22,7 +22,7 @@ namespace Cappuccino {
 		
 
 		Keyboard* keyboard = nullptr;
-		Sedna::XinputController* controller = nullptr;
+		Sedna::XInputController* controller = nullptr;
 		//add in sticks and triggers when needed
 
 
