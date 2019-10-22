@@ -42,7 +42,7 @@ namespace Cappuccino {
 		}
 		else
 		{
-			CAPP_PRINT_ERROR("Problem loading Texture at %s", _path);
+			CAPP_PRINT_ERROR("Problem loading Texture at %s", _path.c_str());
 			stbi_image_free(_data);
 			SYS_EXIT(0);
 			return false;

@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <iostream>
 
-#define CAPP_PATH						std::string(std::getenv("CappuccinoPath"))
+#define CAPP_PATH						std::string(std::getenv("CappuccinoPath")) + "\\Cappuccino\\"
 
 #ifdef _DEBUG
 

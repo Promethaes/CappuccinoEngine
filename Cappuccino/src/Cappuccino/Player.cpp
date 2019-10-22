@@ -29,7 +29,7 @@ namespace Cappuccino {
 	{
 
 #if CROSSHAIRTEST
-		_testMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Crosshair.obj");
+		_testMesh = new Mesh(CAPP_PATH + R"(Assets\Mesh\Crosshair.obj)");
 		_testMesh->loadMesh();
 #endif
 
@@ -55,7 +55,10 @@ namespace Cappuccino {
 			speed = 3.5f;
 
 		if (_input.keyboard->keyPressed(Events::W))
-			setPosition(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
+			_rigidBody.addAccel(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z));
+		else
+			_rigidBody.addAccel(_rigidBody._accel * -1.0f);
+
 		if (_input.keyboard->keyPressed(Events::S))
 			setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
 
@@ -64,7 +67,7 @@ namespace Cappuccino {
 		if (_input.keyboard->keyPressed(Events::D))
 			setPosition(_playerCamera->getRight() * speed * dt);
 
-		_playerCamera->setPosition(position);
+		_playerCamera->setPosition(_rigidBody._position);
 
 #if CROSSHAIRTEST
 		_crosshairShader.use();

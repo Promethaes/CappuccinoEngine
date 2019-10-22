@@ -11,7 +11,7 @@ using ifstream = std::ifstream;
 using sstream = std::stringstream;
 
 namespace Cappuccino {
-	string Shader::_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
+	string Shader::_shaderDirectory = CAPP_PATH + R"(Assets\Shaders\)";
 
 	Shader::Shader() : _programID(0), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
 
@@ -72,6 +72,7 @@ namespace Cappuccino {
 
 		if (!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
 			CAPP_PRINT_ERROR("Failed to read shader from file!");
+			CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
 			shaderString = "";
 		}
 
@@ -104,6 +105,7 @@ namespace Cappuccino {
 			glGetShaderInfoLog(shader, 512, NULL, infoLog);
 
 			CAPP_PRINT_ERROR("Failed to compile shader!");
+			CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
 			CAPP_PRINT_ERROR(infoLog);
 		}
 	}

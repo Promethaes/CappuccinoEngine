@@ -1,15 +1,16 @@
-#include "Cappuccino/XinputManager.h"
+#include "Cappuccino/XInputManager.h"
+#include <cmath>
 
 
-Sedna::XinputController Sedna::XinputManager::controllers[4];
-Sedna::XinputManager::XinputManager() {
+Sedna::XInputController Sedna::XInputManager::controllers[4];
+void Sedna::XInputManager::init() {
 	//sets the index at the index
 	for (int index = 0; index < 4; index++) {
 		controllers[index].setControllerIndex(index);
 	}
 }
 
-bool Sedna::XinputManager::controllerConnected(int index) {
+bool Sedna::XInputManager::controllerConnected(int index) {
 	//prevent those pesky programmers from going out of bounds
 	if (index < 0 || index >= 4)
 		return false;
@@ -20,7 +21,7 @@ bool Sedna::XinputManager::controllerConnected(int index) {
 	return XInputGetState(index,&connected) == ERROR_SUCCESS;
 }
 
-Sedna::XinputController * Sedna::XinputManager::getController(int index) {
+Sedna::XInputController * Sedna::XInputManager::getController(int index) {
 	//if we're in index, return the controlelr at the index
 	if(index >=0 && index < 4)
 	return &controllers[index];
@@ -28,7 +29,7 @@ Sedna::XinputController * Sedna::XinputManager::getController(int index) {
 	return nullptr;
 }
 
-void Sedna::XinputManager::update() {
+void Sedna::XInputManager::update() {
 	//updates the controllers if they're plugged in
 	for (int index = 0; index < 4; index++) 
 		if (controllerConnected(index)) 
@@ -37,26 +38,26 @@ void Sedna::XinputManager::update() {
 
 }
 
-void Sedna::XinputController::setControllerIndex(int index) {
+void Sedna::XInputController::setControllerIndex(int index) {
 	this->index = index;
 }
 
-void Sedna::XinputController::update() {
+void Sedna::XInputController::update() {
 	//updates the state of the controller
 	if (index >= 0 && index < 4) 
 		XInputGetState(index, &state);
 }
 
-void Sedna::XinputController::deadZoneSticks(float dz) {
+void Sedna::XInputController::deadZoneSticks(float dz) {
 	deadZoneStick = dz;
 }
 
-void Sedna::XinputController::deadZoneTriggers(float dz) {
+void Sedna::XInputController::deadZoneTriggers(float dz) {
 	deadZoneTrigger = dz;
 }
 
 
-void Sedna::XinputController::updateSticks(Stick sticks[2]) {
+void Sedna::XInputController::updateSticks(Stick sticks[2]) {
 	//LEFT STICK
 	//the numbers that windows uses by default are very strange, so we divide these floats accordingly to get a value from -1 to 1
 	float x = (float)state.Gamepad.sThumbLX / 32768,
@@ -109,21 +110,21 @@ void Sedna::XinputController::updateSticks(Stick sticks[2]) {
 	}
 }
 
-void Sedna::XinputController::getTriggers(Triggers & triggers) {
+void Sedna::XInputController::getTriggers(Triggers & triggers) {
 	//get the converted float value of the triggers
 	float l = (float)state.Gamepad.bLeftTrigger / 255, r = (float)state.Gamepad.bRightTrigger / 255;
 	triggers = Triggers{ l < deadZoneTrigger ? 0 : l,r < deadZoneTrigger ? 0 : r };//converts byte to a number from 0 to 1
 }
 
-bool Sedna::XinputController::isButtonPressed(int button) {
+bool Sedna::XInputController::isButtonPressed(int button) {
 	return button & state.Gamepad.wButtons;//bitwise &, checks if button and wButtons are equal in terms of state of the memory
 }
 
-bool Sedna::XinputController::isButtonReleased(int button) {
+bool Sedna::XInputController::isButtonReleased(int button) {
 	return !isButtonPressed(button);
 }
 
-void Sedna::XinputController::setVibration(float left, float right) {
+void Sedna::XInputController::setVibration(float left, float right) {
 	///https://lcmccauley.wordpress.com/tag/xinput-vibration/
 
 	//reserve the memory for the vibration
@@ -136,7 +137,7 @@ void Sedna::XinputController::setVibration(float left, float right) {
 	XInputSetState(index, &vibration);
 }
 
-bool Sedna::XinputController::isVibrating() {
+bool Sedna::XInputController::isVibrating() {
 	if (vibration.wLeftMotorSpeed > 0.0f || vibration.wRightMotorSpeed > 0.0f)
 		return true;
 	return false;
