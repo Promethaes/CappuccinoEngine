@@ -331,6 +331,5 @@ ASALocalRun/
 # Custom ignore conditions
 */[Bb]uild/**
 !*/[Ll]ibs/**/*
-Cappuccino/Assets/**
 
 *.bsc
