@@ -1,10 +1,9 @@
 #pragma once
 #include <Windows.h>
 #include <Xinput.h>
-#include <cmath>
 
-//special command that needs to be used in order to include the xinput library
-#pragma comment(lib,"Xinput.lib")
+//special command that needs to be used in order to include the XInput library
+#pragma comment(lib, "Xinput.lib")
 
 namespace Sedna {
 	//Buttons used for the controllers
@@ -49,7 +48,7 @@ namespace Sedna {
 	/*
 	Desc: Sets and checks all data use for the controller
 	*/
-	class XinputController {
+	class XInputController {
 	public:
 
 		//sets the controller number to whatever number you pass in, such as changing player 2 to player 1
@@ -90,32 +89,32 @@ namespace Sedna {
 		//this is here so that if we initialize the controller improperly the program doesn't run
 		int index = -1;
 
-		//state that handles all of the xinput related things except for vibration
+		//state that handles all of the XInput related things except for vibration
 		XINPUT_STATE state;
 
-		//floats that keep track of the deadzones for sticks and triggers
+		//floats that keep track of the dead zones for sticks and triggers
 		float deadZoneStick, deadZoneTrigger;
 	};
 
 	/*
 	Desc:
 	*/
-	class XinputManager {
+	class XInputManager {
 	public:
 
-		XinputManager();
+		static void init();
 
 		//checks to see if the controller at the index passed in is connected
 		static bool controllerConnected(int index);
 
 		//gets the controller at the index passed in
-		static XinputController* getController(int index);
+		static XInputController* getController(int index);
 
 		//updates all the controllers
 		static void update();
 	private:
 
 		//setting controller to an index for player
-		static XinputController controllers[4];
+		static XInputController controllers[4];
 	};
 }

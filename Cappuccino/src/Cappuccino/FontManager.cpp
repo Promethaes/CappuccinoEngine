@@ -92,10 +92,10 @@ namespace Cappuccino {
 		_colour = defaultColour;
 		_scale = defaultScale;
 
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
-		glBindVertexArray(VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glGenVertexArrays(1, &_VAO);
+		glGenBuffers(1, &_VBO);
+		glBindVertexArray(_VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(GLfloat) * 6) * 4, NULL, GL_DYNAMIC_DRAW);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
@@ -105,14 +105,17 @@ namespace Cappuccino {
 
 	void Text::draw()
 	{
-		_textShader->use();
-		_textShader->setUniform("textColour", _colour);
-	//	_textShader->setUniform("projection", glm::ortho(0.0f, 1600.0f, 0.0f, 1200.0f));
-		_textShader->loadOrthoProjectionMatrix(1600.0f/20.0f, 1200.0f/20.0f);
+		
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindVertexArray(VAO);
-
+		glBindVertexArray(_VAO);
+		
+#if UITEST
+		_textShader->use();
+		_textShader->loadOrthoProjectionMatrix(1600.0f, 1200.0f);
+		_textShader->setUniform("textColour", _colour);
+#endif
+		
 		auto tempPos = _position;
 		std::string::const_iterator c;
 		for (c = _text.begin(); c != _text.end(); c++) {
@@ -135,7 +138,7 @@ namespace Cappuccino {
 			// Render glyph texture over quad
 			glBindTexture(GL_TEXTURE_2D, ch._textureId);
 			// Update content of VBO memory
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			// Render quad

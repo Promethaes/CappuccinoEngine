@@ -1,7 +1,4 @@
 #include "Cappuccino/Application.h"
-
-#if SCENETEST
-#endif
 #include "Cappuccino/Testing/Test Scene.h"
 
 using Application = Cappuccino::Application;
@@ -10,7 +7,7 @@ using Application = Cappuccino::Application;
 
 constexpr GLuint  SCR_WIDTH = 1600;
 constexpr GLuint  SCR_HEIGHT = 1200;
-constexpr GLchar* SCR_TITLE = "Cappuccino Engine v1.0";
+constexpr GLchar* SCR_TITLE = "Cappuccino Engine v1.1";
 
 #pragma endregion
 
@@ -23,15 +20,21 @@ extern "C" {
 }
 
 int main() {
+	
 	if (!Application::isInstantiated()) {
+		
 		Application* application = new Application(SCR_WIDTH, SCR_HEIGHT, SCR_TITLE);
 		application->init();
+
+		// Create your scenes here
 		Cappuccino::TestScene* e = new Cappuccino::TestScene(true);
+		e->init();
 
 		application->run();
 		delete application;
+		
 	}
 
 	return 0;
-
+	
 }

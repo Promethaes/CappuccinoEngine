@@ -1,8 +1,9 @@
 #pragma once
-#include "Cappuccino/Game Object.h"
+#include "Cappuccino/GameObject.h"
 #include "Cappuccino/Camera.h"
 #include "Cappuccino/CappInput.h"
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/UI.h"
 
 namespace Cappuccino {
 	class Player : public GameObject {
@@ -15,11 +16,20 @@ namespace Cappuccino {
 		const CappInput _input;
 
 		Camera* getCamera() const { return _playerCamera; }
+
+
 #if CROSSHAIRTEST
-		Shader crosshairShader{ "screenSpace.vert","screenSpace.frag" };
-		Mesh* testMesh;
-		Transform testMeshTransform;
+		Shader _crosshairShader{ "screenSpaceModel.vert","screenSpace.frag" };
+		Mesh* _testMesh;
+		Transform _testMeshTransform;
 #endif
+
+#if UITEST
+		UserInterface _playerUI;
+		Shader _uiShader{ "font.vert","font.frag" };
+		float _uiFloat = 0;
+#endif
+
 	protected:
 		Camera* _playerCamera = new Camera();
 	};

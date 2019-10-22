@@ -1,4 +1,4 @@
-#include "..\..\include\Cappuccino\HitBoxLoader.h"
+#include "Cappuccino/HitBoxLoader.h"
 
 Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 {

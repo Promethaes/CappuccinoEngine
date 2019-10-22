@@ -1,20 +1,32 @@
 #include "Cappuccino/RigidBody.h"
 #include "Cappuccino/CappMacros.h"
 namespace Cappuccino {
-	float Physics::gravity = -0.1f;
+	float Physics::gravity = -9.8f;
 	float Physics::UniversalG = 6.67f * (pow(10, -11));
-	Cappuccino::RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& dimensions, const glm::vec3& origin, const float mass, bool gravity)
-		:_dimensions(dimensions), _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
+	Cappuccino::RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& origin, const float mass, bool gravity)
+		: _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
 
 
 	void Cappuccino::RigidBody::update(float dt,glm::mat4 model)
 	{
-		if (_grav && _position.y > 0)
-			_vel += (glm::vec3(0, Physics::gravity, 0)) * dt;
-		else
-			_vel.y = 0;
-		_vel += _accel * dt;
-		_position += _vel * dt;
+		if (_grav && _position.y != 0)
+		//	if (_accel.y <= _accelCap.y)
+				addAccel(glm::vec3(0, Physics::gravity, 0));
+		//	else
+		//		setAccel(glm::vec3(_accel.x, _accelCap.y, _accel.x));
+		/*else
+		{
+			setAccel(glm::vec3(_accel.x, 0, _accel.z));
+			setVelocity(glm::vec3(_accel.x, 0, _accel.z), dt);
+		}
+		*/
+		
+		addVelocity(_accel, dt);
+		//if (_vel.y > _velCap.y)
+		//{
+		//	setVelocity(glm::vec3(_vel.x, _velCap.y, _vel.z), dt);
+		//}
+		addForce(_vel, dt);
 
 
 		glm::mat4 newModel(1.0f);
@@ -25,10 +37,6 @@ namespace Cappuccino {
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
 		_shader.loadProjectionMatrix((800 * 2), (600 * 2));
-		//_shader.loadViewMatrix(_view);
-		//_shader.setUniform("model", glm::mat4(1.0f));
-		//_shader.setUniform("view", _view);
-		//_shader.setUniform("projection", _projection);
 		
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (drawHitBox)
@@ -39,19 +47,29 @@ namespace Cappuccino {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	void Cappuccino::RigidBody::addAccel(const glm::vec3& force, float dt)
+	void Cappuccino::RigidBody::addAccel(const glm::vec3& force)
 	{
-		_accel += (force / _mass) * dt;
+		_accel += (force / _mass);
 	}
 
-	void RigidBody::setAccel(const glm::vec3& force, float dt)
+	void RigidBody::setAccel(const glm::vec3& force)
 	{
-		_accel = (force / _mass) * dt;
+		_accel = (force / _mass);
 	}
 
 	void RigidBody::setVelocity(const glm::vec3& force, float dt)
 	{
-		_vel = (force / _mass) * dt;
+		_vel = ((force / _mass) * dt);
+	}
+
+	void RigidBody::addVelocity(const glm::vec3& force, float dt)
+	{
+		_vel += ((force / _mass) * dt);
+	}
+
+	void RigidBody::addForce(const glm::vec3& force, float dt)
+	{
+		_position += ((force / _mass) * dt);
 	}
 
 }

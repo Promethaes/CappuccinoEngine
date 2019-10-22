@@ -1,4 +1,5 @@
 #include "Cappuccino/Player.h"
+#include "Cappuccino/CappMath.h"
 #define player static_cast<Cappuccino::Player*>
 
 namespace Cappuccino {
@@ -26,10 +27,18 @@ namespace Cappuccino {
 	Player::Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes)
 		:_input(true, std::nullopt), GameObject(SHADER, textures, meshes, std::nullopt, std::nullopt)
 	{
+
 #if CROSSHAIRTEST
-		testMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Cube2.obj");
-		testMesh->loadMesh();
+		_testMesh = new Mesh(CAPP_PATH + R"(Assets\Mesh\Crosshair.obj)");
+		_testMesh->loadMesh();
 #endif
+
+#if UITEST
+		_playerUI._uiComponents.push_back(new UIText("UI Test", _uiShader, glm::vec2(-1500.0f, 1000.0f), glm::vec3(1.0f, 0.0f, 1.0f), 1.0f));
+		_playerUI._uiComponents.push_back(new UIBar(glm::vec2(-75.0f, 40.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec3(20.0f, 1.0f, 1.0f), UIBar::OriginPoint::BottomLeft));
+#endif
+
+
 		_state = new PlayerStates::DefaultState();
 	}
 
@@ -46,9 +55,9 @@ namespace Cappuccino {
 			speed = 3.5f;
 
 		if (_input.keyboard->keyPressed(Events::W))
-			_rigidBody.addAccel(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z), dt);
+			_rigidBody.addAccel(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z));
 		else
-			_rigidBody.addAccel(_rigidBody._accel * -1.0f, dt);
+			_rigidBody.addAccel(_rigidBody._accel * -1.0f);
 
 		if (_input.keyboard->keyPressed(Events::S))
 			setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
@@ -59,13 +68,33 @@ namespace Cappuccino {
 			setPosition(_playerCamera->getRight() * speed * dt);
 
 		_playerCamera->setPosition(_rigidBody._position);
-	}
 
 #if CROSSHAIRTEST
-		//crosshairShader.use();
-		//crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
-		//
-		//testMesh->draw();
+		_crosshairShader.use();
+		_crosshairShader.loadOrthoProjectionMatrix(800.0f / 10, 600.0f / 10);
+		_crosshairShader.loadModelMatrix(glm::mat4(1.0f));
+		_testMesh->draw();
 #endif
-	
+
+#if UITEST
+		static bool reverse = false;
+
+		if (!reverse)
+			_uiFloat += dt / 5.0f;
+		else
+			_uiFloat -= dt / 5.0f;
+		if (_uiFloat >= 1.0f)
+			reverse = true;
+		else if (_uiFloat <= 0.0f)
+			reverse = false;
+
+		static_cast<UIBar*>(_playerUI._uiComponents[1])->_transform._scaleMat[0].x =
+			Math::lerp(static_cast<UIBar*>(_playerUI._uiComponents[1])->getBarDimensions().x, static_cast<UIBar*>(_playerUI._uiComponents[1])->getBarDimensions().x + 10.0f, _uiFloat);
+
+		_playerUI.update(dt);
+
+#endif
+
+
+	}
 }

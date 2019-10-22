@@ -1,12 +1,17 @@
 #include "Cappuccino/HitBox.h"
-#include <vector>
 #include "Cappuccino/CappMacros.h"
+
+#include <glad/glad.h>
+
+#include <vector>
+
+
 namespace Cappuccino {
 	Cappuccino::HitBox::HitBox(glm::vec3& newPos, float newRadius)
 	{
 		_position = newPos;
 		_radius = newRadius;
-		
+
 		std::vector<glm::vec3> data;
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);
@@ -198,7 +203,7 @@ namespace Cappuccino {
 	void Cappuccino::HitBox::draw()
 	{
 		glBindVertexArray(_VAO);
-		glDrawArrays(GL_TRIANGLES, 0, _numVerts/3);
+		glDrawArrays(GL_TRIANGLES, 0, _numVerts / 3);
 	}
 
 	float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ, glm::vec3& boxPos, glm::vec3& boxSize)
