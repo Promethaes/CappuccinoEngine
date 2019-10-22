@@ -333,3 +333,7 @@ ASALocalRun/
 !*/[Ll]ibs/**/*
 
 *.bsc
+*.lnk
+*.sln
+*.vcxproj
+*.vcxproj.filters
