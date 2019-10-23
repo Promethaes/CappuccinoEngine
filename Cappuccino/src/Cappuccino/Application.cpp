@@ -94,6 +94,8 @@ namespace Cappuccino {
 			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
 		}
 #endif
+		SoundSystem::init(CAPP_PATH + "Assets\\Sounds\\");
+		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
 	}
 	
 	void Application::run() {
@@ -101,7 +103,6 @@ namespace Cappuccino {
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
-		SoundSystem::init(CAPP_PATH + "Assets\\Sounds\\");
 
 #if SOUNDTEST
 		auto soundRef = SoundSystem::load2DSound("testSound.mp3");
@@ -110,7 +111,6 @@ namespace Cappuccino {
 		SoundSystem::playSound2D(soundRef, groupRef);
 #endif
 
-		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
 
 	//	FontManager::loadTypeFace("arial.ttf");
 

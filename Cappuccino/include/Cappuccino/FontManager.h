@@ -26,6 +26,8 @@ namespace Cappuccino {
 
 		static bool init(const std::string& defaultPath);
 
+		static void setDefaultPath(const std::string& defaultPath);
+
 		static void loadTypeFace(const std::string& relativePath);
 		static void exit();
 
