@@ -50,6 +50,8 @@ namespace Cappuccino {
 		void setTextColour(const glm::vec3& newColour) { _colour = newColour; }
 		void setTextPosition(const glm::vec2& newPosition) { _position = newPosition; }
 		void setScale(float newScale) { _scale = newScale; }
+
+		glm::vec3 getColour() const { return _colour; }
 	protected:
 		float _scale;
 		glm::vec2 _position;
