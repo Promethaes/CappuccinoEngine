@@ -8,7 +8,7 @@
 namespace Cappuccino {
 	class Player : public GameObject {
 	public:
-		Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes);
+		Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes,std::optional<float> _mass);
 		~Player();
 
 		void childUpdate(float dt) override;

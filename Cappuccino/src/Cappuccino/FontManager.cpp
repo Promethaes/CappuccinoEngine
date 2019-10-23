@@ -24,6 +24,11 @@ namespace Cappuccino {
 
 	}
 
+	void FontManager::setDefaultPath(const std::string& defaultPath)
+	{
+		_typefacePath = defaultPath;
+	}
+
 	void FontManager::loadTypeFace(const std::string& relativePath)
 	{
 		FT_Face face;
