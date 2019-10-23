@@ -112,7 +112,7 @@ namespace Cappuccino {
 
 		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
 
-		FontManager::loadTypeFace("arial.ttf");
+	//	FontManager::loadTypeFace("arial.ttf");
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
