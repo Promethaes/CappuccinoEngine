@@ -24,8 +24,8 @@ namespace Cappuccino {
 		///	go->setPosition(player(go)->getCamera().getRight() * 2.5f * dt);
 	   ///
 	}
-	Player::Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes)
-		:_input(true, std::nullopt), GameObject(SHADER, textures, meshes, std::nullopt, std::nullopt)
+	Player::Player(const Shader& SHADER, std::vector<Texture*>& textures, const std::vector<Mesh*>& meshes,std::optional<float>_mass)
+		:_input(true, std::nullopt), GameObject(SHADER, textures, meshes,_mass)
 	{
 
 #if CROSSHAIRTEST
@@ -49,25 +49,25 @@ namespace Cappuccino {
 
 	void Player::childUpdate(float dt)
 	{
-		if (_input.keyboard->keyPressed(Events::Shift))
-			speed = 7.0f;
-		else
-			speed = 3.5f;
-
-		if (_input.keyboard->keyPressed(Events::W))
-			_rigidBody.addAccel(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z));
-		else
-			_rigidBody.addAccel(_rigidBody._accel * -1.0f);
-
-		if (_input.keyboard->keyPressed(Events::S))
-			setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
-
-		if (_input.keyboard->keyPressed(Events::A))
-			setPosition(-_playerCamera->getRight() * speed * dt);
-		if (_input.keyboard->keyPressed(Events::D))
-			setPosition(_playerCamera->getRight() * speed * dt);
-
-		_playerCamera->setPosition(_rigidBody._position);
+		///if (_input.keyboard->keyPressed(Events::Shift))
+		///	speed = 7.0f;
+		///else
+		///	speed = 3.5f;
+		///
+		///if (_input.keyboard->keyPressed(Events::W))
+		///	_rigidBody.addAccel(glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z));
+		///else
+		///	_rigidBody.addAccel(_rigidBody._accel * -1.0f);
+		///
+		///if (_input.keyboard->keyPressed(Events::S))
+		///	setPosition(-glm::vec3(_playerCamera->getFront().x, 0, _playerCamera->getFront().z) * speed * dt);
+		///
+		///if (_input.keyboard->keyPressed(Events::A))
+		///	setPosition(-_playerCamera->getRight() * speed * dt);
+		///if (_input.keyboard->keyPressed(Events::D))
+		///	setPosition(_playerCamera->getRight() * speed * dt);
+		///
+		///_playerCamera->setPosition(_rigidBody._position);
 
 #if CROSSHAIRTEST
 		_crosshairShader.use();

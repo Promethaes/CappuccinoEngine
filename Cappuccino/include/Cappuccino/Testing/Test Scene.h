@@ -33,7 +33,7 @@ namespace Cappuccino {
 		Shader _lightingShader{ "lightingShader.vert","lightingShader.frag" };
 		F16 _f16{ CAPP_PATH + R"(Assets\Mesh\f16.obj)", _lightingShader, nullptr, 0 };
 		F16 _f162{ CAPP_PATH + R"(Assets\Mesh\f16.obj)", _lightingShader, nullptr, 0 };
-		Player* testPlayer = new Player(_lightingShader, std::vector<Texture*>{}, std::vector<Mesh*>{});
+		Player* testPlayer = new Player(_lightingShader, std::vector<Texture*>{}, std::vector<Mesh*>{},1.0f);
 		
 		RigidBody testBody = RigidBody( glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0, 0, 0));
 		glm::mat4 viewMat = glm::mat4(1.0f);

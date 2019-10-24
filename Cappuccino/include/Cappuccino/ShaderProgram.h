@@ -44,7 +44,7 @@ namespace Cappuccino {
 		 *     directory: the directory in which to look for, use "default" to look in default directory ( %CappuccinoPath%\Assets\Shaders\ )
 		 * Returns: Nothing
 		 */
-		void changeShaderDirectory(const std::string& directory) const;
+		static void setDefaultPath(const std::string& directory);
 
 		/*
 		 * Purp.: Looks for and sets uniform variables in a specific shader
