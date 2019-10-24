@@ -35,10 +35,15 @@ namespace Cappuccino {
 		void setVelocity(const glm::vec3& force, float dt);
 		void addVelocity(const glm::vec3& force, float dt);
 		void addForce(const glm::vec3& force, float dt);
-		
+		/*
+		Purp: check if a ray is intersecting with cube hitboxes
+		Req: A ray
+		returns: whether or not it is intersecting
+		*/
+		bool intersecting(const Ray& ray);
 
 		glm::mat4 getRotation() { return _rotateMat;}
-		std::vector<HitBox> hitBox;
+		std::vector<HitBox> _hitBoxes;
 		glm::vec3 _position;
 		glm::vec3 _accel{ 0,0,0 };
 		glm::vec3 _vel{ 0,0,0 };

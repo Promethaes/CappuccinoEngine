@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-
+#include "Ray.h"
 namespace Cappuccino {
 	class HitBox {
 	public:
@@ -27,6 +27,12 @@ namespace Cappuccino {
 		Post: None
 		*/
 		void draw();
+		/*
+		Purp: check if a ray is intersecting the hitbox
+		Req: A ray and a glm of the rigidbodies position
+		returns: whether or not it is intersecting
+		*/
+		bool intersecting(const Ray& ray,glm::vec3&);
 		glm::vec3 _position = glm::vec3(0, 0, 0);
 		float _radius = 0;
 		float _scale = 1;

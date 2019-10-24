@@ -11,9 +11,9 @@
 #define CUBETEST false
 #define SCENETEST false
 #define NETWORKTEST false
-#define CROSSHAIRTEST false
-#define TEXTRENDERTEST false
-#define UITEST false
+#define CROSSHAIRTEST true
+#define TEXTRENDERTEST true
+#define UITEST true
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 

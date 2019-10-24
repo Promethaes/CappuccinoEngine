@@ -18,12 +18,12 @@ namespace Cappuccino {
 		testPlayer->_rigidBody._position = glm::vec3(0, 0, 3);
 
 
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
+		_f16._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
+		_f16._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
 
 		_f162._transform.rotate(glm::vec3(0, 0, 1), 90);
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
+		_f162._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
+		_f162._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
 		
 
 		
@@ -278,8 +278,10 @@ namespace Cappuccino {
 
 
 		testPlayer->_crosshairShader.use();
-		if (testSection.intersecting(testRay))
+		if (testSection.intersecting(testRay)||_f162._rigidBody.intersecting(testRay))
+		{
 			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
 		else
 			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, Math::lerp(0.0f, 1.0f, u)));
 #endif

@@ -206,6 +206,44 @@ namespace Cappuccino {
 		glDrawArrays(GL_TRIANGLES, 0, _numVerts / 3);
 	}
 
+	bool HitBox::intersecting(const Ray& ray, glm::vec3& pos)
+	{
+	https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
+		if (!_radius)
+		{
+			float txMin, txMax, tyMin, tyMax, tzMin, tzMax;
+			auto inverseDir = 1.0f / (*ray._rayDir);
+
+			glm::vec3 bounds[2]{ pos + _position - _size / 2.0f,pos + _position + _size / 2.0f };
+			std::vector<int> sign;
+
+			sign.push_back((inverseDir.x < 0));
+			sign.push_back((inverseDir.y < 0));
+			sign.push_back((inverseDir.z < 0));
+
+			txMin = (bounds[sign[0]].x - ray._rayPos->x) * inverseDir.x;
+			txMax = (bounds[1 - sign[0]].x - ray._rayPos->x) * inverseDir.x;
+
+			tyMin = (bounds[sign[1]].y - ray._rayPos->y) * inverseDir.y;
+			tyMax = (bounds[1 - sign[1]].y - ray._rayPos->y) * inverseDir.y;
+
+			tzMin = (bounds[sign[2]].z - ray._rayPos->z) * inverseDir.z;
+			tzMax = (bounds[1 - sign[2]].z - ray._rayPos->z) * inverseDir.z;
+
+			if ((txMin > tyMax) || (tyMin > txMax))
+				return false;
+			if (tyMin > txMin)
+				txMin = tyMin;
+			if (tyMax < txMax)
+				txMax = tyMax;
+			if ((txMin > tzMax) || (tzMin > txMax))
+				return false;
+
+			return true;
+		}
+		return false;
+	}
+
 	float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ, glm::vec3& boxPos, glm::vec3& boxSize)
 	{
 		float dist = 0.0f;

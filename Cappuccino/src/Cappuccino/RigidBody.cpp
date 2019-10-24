@@ -41,9 +41,9 @@ namespace Cappuccino {
 		
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (drawHitBox)
-			for (unsigned i = 0; i < hitBox.size(); i++)
+			for (unsigned i = 0; i < _hitBoxes.size(); i++)
 			{
-				hitBox[i].draw();
+				_hitBoxes[i].draw();
 			}
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
@@ -71,6 +71,16 @@ namespace Cappuccino {
 	void RigidBody::addForce(const glm::vec3& force, float dt)
 	{
 		_position += ((force / _mass) * dt);
+	}
+
+	bool RigidBody::intersecting(const Ray& ray)
+	{
+		for (unsigned i=0;i<_hitBoxes.size();i++)
+		{
+			if (_hitBoxes[i].intersecting(ray, _position))
+				return true;
+		}
+		return false;
 	}
 
 }
