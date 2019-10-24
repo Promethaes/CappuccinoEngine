@@ -2,7 +2,7 @@
 
 Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 {
-	std::string tempName;
+	char tempName[256];
 	bool start = true;
 
 	FILE* file = fopen(filename, "r");
@@ -61,7 +61,7 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 		
 
 	}
-
+	
 }
 
 float Cappuccino::HitBoxLoader::findRadius()
