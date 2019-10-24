@@ -58,16 +58,6 @@ namespace Cappuccino {
 			data2.push_back(data[i].x);
 			data2.push_back(data[i].y);
 			data2.push_back(data[i].z);
-			//char buffer[64];
-			//snprintf(buffer, sizeof buffer, "%f", data[i].x);
-			//CAPP_PRINT(buffer);
-			//CAPP_PRINT("|||");
-			//snprintf(buffer, sizeof buffer, "%f", data[i].y);
-			//CAPP_PRINT(buffer);
-			//CAPP_PRINT("|||");
-			//snprintf(buffer, sizeof buffer, "%f", data[i].z);
-			//CAPP_PRINT(buffer);
-			//CAPP_PRINT("\n");
 		}
 
 		_numVerts = data2.size();
@@ -143,17 +133,6 @@ namespace Cappuccino {
 			data2.push_back(data[i].x);
 			data2.push_back(data[i].y);
 			data2.push_back(data[i].z);
-			//char buffer[64];
-			//snprintf(buffer, sizeof buffer, "%f", data[i].x);
-			//CAPP_PRINT(buffer);
-			//CAPP_PRINT("|||");
-			//snprintf(buffer, sizeof buffer, "%f", data[i].y);
-			//CAPP_PRINT(buffer);
-			//CAPP_PRINT("|||");
-			//snprintf(buffer, sizeof buffer, "%f", data[i].z);
-			//CAPP_PRINT(buffer);
-			//CAPP_PRINT("\n");
-
 		}
 
 		_numVerts = data2.size();
@@ -241,7 +220,11 @@ namespace Cappuccino {
 
 			return true;
 		}
-		return false;
+		else
+		{
+			//TODO RAY/SPHERE
+			return false;
+		}
 	}
 
 	float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ, glm::vec3& boxPos, glm::vec3& boxSize)
