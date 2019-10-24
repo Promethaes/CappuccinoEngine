@@ -252,8 +252,6 @@ namespace Cappuccino {
 			_f16.setActive(false);
 
 
-		_lightcubeShader.use();
-
 		viewMat = testPlayer->getCamera()->whereAreWeLooking();
 		_f16._rigidBody._shader.use();
 		_f16._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
@@ -261,7 +259,7 @@ namespace Cappuccino {
 		_f162._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
 
 		projMat = glm::perspective(glm::radians(45.0f), (800.0f * 2) / (600.0f * 2), 0.1f, 100.0f);
-#endif
+
 #if CROSSHAIRTEST
 		static float u = 0.0f;
 		static bool reverse = false;
