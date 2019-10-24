@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include "Fmod/fmod.hpp"
-#include "Fmod/fmod_errors.h"
+#include "fmod/fmod.hpp"
+#include "fmod/fmod_errors.h"
 
 namespace Cappuccino {
 	class SoundSystem {
