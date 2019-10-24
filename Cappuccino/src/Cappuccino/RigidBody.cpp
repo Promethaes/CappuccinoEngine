@@ -36,13 +36,14 @@ namespace Cappuccino {
 		
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
+		_shader.setUniform("view",_view);
 		_shader.loadProjectionMatrix((800 * 2), (600 * 2));
 		
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (drawHitBox)
-			for (unsigned i = 0; i < hitBox.size(); i++)
+			for (unsigned i = 0; i < _hitBoxes.size(); i++)
 			{
-				hitBox[i].draw();
+				_hitBoxes[i].draw();
 			}
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
@@ -72,6 +73,16 @@ namespace Cappuccino {
 		_position += ((force / _mass) * dt);
 	}
 
+	bool RigidBody::intersecting(const Ray& ray)
+	{
+		for (unsigned i=0;i<_hitBoxes.size();i++)
+		{
+			if (_hitBoxes[i].intersecting(ray, _position))
+				return true;
+		}
+		return false;
+	}
+
 }
-glm::mat4* Cappuccino::RigidBody::_projection =new glm::mat4();
-glm::mat4* Cappuccino::RigidBody::_view = new glm::mat4();
+glm::mat4 Cappuccino::RigidBody::_projection =glm::mat4();
+glm::mat4 Cappuccino::RigidBody::_view =  glm::mat4();

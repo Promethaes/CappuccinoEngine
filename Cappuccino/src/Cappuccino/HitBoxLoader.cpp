@@ -2,7 +2,7 @@
 
 Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 {
-	std::string tempName;
+	char tempName[256];
 	bool start = true;
 
 	FILE* file = fopen(filename, "r");
@@ -61,7 +61,7 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 		
 
 	}
-
+	
 }
 
 float Cappuccino::HitBoxLoader::findRadius()
@@ -76,7 +76,7 @@ float Cappuccino::HitBoxLoader::findRadius()
 		if (low > _tempVerts[i].y)
 			low = _tempVerts[i].y;
 	}
-	return (high-low)/2;
+	return (low+high)/2-low;
 }
 
 glm::vec3 Cappuccino::HitBoxLoader::findBox()
