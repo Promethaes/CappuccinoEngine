@@ -26,7 +26,7 @@ namespace Cappuccino {
 		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
 		
 
-		testBody.setViewProjMat(viewMat, projMat);
+		
 		
 #if CUBETEST
 		float vertices2[] = {
@@ -253,12 +253,9 @@ namespace Cappuccino {
 
 
 		viewMat = testPlayer->getCamera()->whereAreWeLooking();
-		_f16._rigidBody._shader.use();
-		_f16._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
-		_f162._rigidBody._shader.use();
-		_f162._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
-
+		
 		projMat = glm::perspective(glm::radians(45.0f), (800.0f * 2) / (600.0f * 2), 0.1f, 100.0f);
+		testBody.setViewProjMat(viewMat, projMat);
 
 #if CROSSHAIRTEST
 		static float u = 0.0f;

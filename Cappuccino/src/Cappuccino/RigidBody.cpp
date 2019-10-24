@@ -36,6 +36,7 @@ namespace Cappuccino {
 		
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
+		_shader.setUniform("view",_view);
 		_shader.loadProjectionMatrix((800 * 2), (600 * 2));
 		
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -73,5 +74,5 @@ namespace Cappuccino {
 	}
 
 }
-glm::mat4* Cappuccino::RigidBody::_projection =new glm::mat4();
-glm::mat4* Cappuccino::RigidBody::_view = new glm::mat4();
+glm::mat4 Cappuccino::RigidBody::_projection =glm::mat4();
+glm::mat4 Cappuccino::RigidBody::_view =  glm::mat4();
