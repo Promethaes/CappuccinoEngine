@@ -32,9 +32,9 @@ namespace Cappuccino {
 		void setViewProjMat(glm::mat4 &view, glm::mat4 &projection) { _view = &view; _projection = &projection; };
 		void setAccel(const glm::vec3& force);
 		void addAccel(const glm::vec3& force);
-		void setVelocity(const glm::vec3& force, float dt);
-		void addVelocity(const glm::vec3& force, float dt);
-		void addForce(const glm::vec3& force, float dt);
+		void setVelocity(const glm::vec3& force);
+		void addVelocity(const glm::vec3& force);
+		void addForce   (const glm::vec3& force, float dt);
 		
 
 		glm::mat4 getRotation() { return _rotateMat;}
