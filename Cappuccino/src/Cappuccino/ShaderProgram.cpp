@@ -1,6 +1,7 @@
 #include "Cappuccino/ShaderProgram.h"
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/Camera.h"
+#include "Cappuccino/ResourceManager.h"
 
 #include <fstream>
 #include <sstream>
@@ -23,6 +24,8 @@ namespace Cappuccino {
 		_geometryShaderPath = geoShaderPath;
 
 		createShader();
+
+		ResourceManager::_allShaders.push_back(this);
 	}
 
 	void Shader::createShader() {

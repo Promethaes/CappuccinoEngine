@@ -1,5 +1,6 @@
 #include "Cappuccino/Texture.h"
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/ResourceManager.h"
 
 #include <iostream>
 namespace Cappuccino {
@@ -8,6 +9,7 @@ namespace Cappuccino {
 		_path = PATH;
 		type = ID;
 		load();
+		ResourceManager::_allTextures.push_back(this);
 	}
 	bool Texture::load() {
 		//again, one hundred million % not mine
