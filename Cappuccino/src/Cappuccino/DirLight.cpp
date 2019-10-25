@@ -1,10 +1,11 @@
 #include "Cappuccino/DirLight.h"
 
 namespace Cappuccino {
-	Shader DirLight::_dirLightShader{ "lightingShader.vert","dirLight.frag" };
 
-	DirLight::DirLight(const glm::vec2& windowSize, const glm::vec3& direction,const glm::vec3& ambientColour,
-		const glm::vec3& diffuseColour, const glm::vec3& specularColour,float shininess)
+	DirLight::DirLight(const glm::vec2& windowSize, const glm::vec3& direction, const glm::vec3& ambientColour,
+		const glm::vec3& diffuseColour, const glm::vec3& specularColour, float shininess)
+
+		:_dirLightShader{ "lightingShader.vert","dirLight.frag" }
 	{
 		_dirLightShader.use();
 		_dirLightShader.loadProjectionMatrix(windowSize.x, windowSize.y);

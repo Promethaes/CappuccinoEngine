@@ -2,6 +2,11 @@
 #include "ShaderProgram.h"
 
 namespace Cappuccino {
+
+	/*
+	Purp: a directional light. be sure to update the view pos every frame
+	and also, be sure to load the view matrix every frame (both externally)
+	*/
 	class DirLight {
 	public:
 		DirLight(const glm::vec2& windowSize, const glm::vec3& direction, const glm::vec3& ambientColour, const glm::vec3& diffuseColour,
@@ -25,6 +30,7 @@ namespace Cappuccino {
 		glm::vec3& getSpecular() { return _specularColour; }
 		float& getShininess() { return _shininess; }
 
+		Shader _dirLightShader;
 	private:
 		glm::vec3 viewPosition;
 		glm::vec3 _direction;
@@ -32,6 +38,5 @@ namespace Cappuccino {
 		glm::vec3 _diffuseColour;
 		glm::vec3 _specularColour;
 		float _shininess;
-		static Shader _dirLightShader;
 	};
 }
