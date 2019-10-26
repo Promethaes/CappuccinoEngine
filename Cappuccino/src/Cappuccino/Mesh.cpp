@@ -6,6 +6,7 @@
 #include <fstream>
 #include "Cappuccino/Mesh.h"
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {
 	struct FaceData {
@@ -15,6 +16,12 @@ namespace Cappuccino {
 	};
 
 
+
+	Mesh::Mesh(const std::string& path)
+	{
+		this->_path = path;
+		ResourceManager::_allMeshes.push_back(this);
+	}
 
 	bool Mesh::loadMesh()
 	{

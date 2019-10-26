@@ -7,11 +7,11 @@ namespace Cappuccino {
 		: _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
 
 
-	void Cappuccino::RigidBody::update(float dt,glm::mat4 model)
+	void Cappuccino::RigidBody::update(float dt, glm::mat4 model)
 	{
 		if (_grav && _position.y != 0)
-		//	if (_accel.y <= _accelCap.y)
-				addAccel(glm::vec3(0, Physics::gravity, 0));
+			//	if (_accel.y <= _accelCap.y)
+			addAccel(glm::vec3(0, Physics::gravity, 0));
 		//	else
 		//		setAccel(glm::vec3(_accel.x, _accelCap.y, _accel.x));
 		/*else
@@ -20,25 +20,25 @@ namespace Cappuccino {
 			setVelocity(glm::vec3(_accel.x, 0, _accel.z), dt);
 		}
 		*/
-		
-		addVelocity(_accel, dt);
+
+		addVelocity(_accel);
 		//if (_vel.y > _velCap.y)
 		//{
 		//	setVelocity(glm::vec3(_vel.x, _velCap.y, _vel.z), dt);
 		//}
-		addForce(_vel, dt);
+		addForce(_vel,dt);
 
 
 		glm::mat4 newModel(1.0f);
 		newModel[3].x = model[3].x;
 		newModel[3].y = model[3].y;
 		newModel[3].z = model[3].z;
-		
+
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
 		_shader.setUniform("view",_view);
 		_shader.loadProjectionMatrix((800 * 2), (600 * 2));
-		
+
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (drawHitBox)
 			for (unsigned i = 0; i < _hitBoxes.size(); i++)
@@ -50,27 +50,27 @@ namespace Cappuccino {
 
 	void Cappuccino::RigidBody::addAccel(const glm::vec3& force)
 	{
-		_accel += (force / _mass);
+		_accel += force;
 	}
 
 	void RigidBody::setAccel(const glm::vec3& force)
 	{
-		_accel = (force / _mass);
+		_accel = force;
 	}
 
-	void RigidBody::setVelocity(const glm::vec3& force, float dt)
+	void RigidBody::setVelocity(const glm::vec3& force)
 	{
-		_vel = ((force / _mass) * dt);
+		_vel = force;
 	}
 
-	void RigidBody::addVelocity(const glm::vec3& force, float dt)
+	void RigidBody::addVelocity(const glm::vec3& force)
 	{
-		_vel += ((force / _mass) * dt);
+		_vel += force;
 	}
 
 	void RigidBody::addForce(const glm::vec3& force, float dt)
 	{
-		_position += ((force / _mass) * dt);
+		_position += force * dt;
 	}
 
 	bool RigidBody::intersecting(const Ray& ray)
