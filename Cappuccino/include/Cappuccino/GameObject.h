@@ -69,8 +69,6 @@ namespace Cappuccino {
 
 		bool checkCollision(GameObject& other);
 		
-		void setStateChange(const State& newState);
-
 		void setActive(bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
 	protected:
@@ -79,11 +77,8 @@ namespace Cappuccino {
 		*/
 		void draw();
 
-		State* _state;
 		//a temporary state variable to store a state before the checkChangeState can be called
-		State* _tempState;
 		bool stateChangeFlag = false;
-		glm::vec3 position;
 
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;
@@ -94,7 +89,6 @@ namespace Cappuccino {
 		float speed = 3.5f;
 		
 	private:
-		void checkChangeState(float dt, const State& newState);
 
 		/*
 		Purp: pure virtual function that calls the appropriate child update definition
