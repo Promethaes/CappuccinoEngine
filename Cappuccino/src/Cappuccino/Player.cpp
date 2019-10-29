@@ -39,7 +39,6 @@ namespace Cappuccino {
 #endif
 
 
-		_state = new PlayerStates::DefaultState();
 	}
 
 	Player::~Player()

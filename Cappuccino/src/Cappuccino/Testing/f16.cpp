@@ -13,7 +13,6 @@ namespace Cappuccino {
 			TextureType::SpecularMap) : text1, text2 == nullptr ? text2 = new Texture(CAPP_PATH + R"(Assets\Textures\container2.png)", TextureType::SpecularMap) : text2},
 			std::vector<Mesh*>{mesh == nullptr ? mesh = new Mesh(path) : mesh}, 10)
 	{
-		_state = new State();
 		id = "F16";
 		if (manager != nullptr)
 			_controller = manager->getController(controllerIndex);

@@ -8,8 +8,6 @@ namespace Cappuccino {
 		//mesh = new Mesh(MESH);
 
 		//set the state manually
-		_state = nullptr;
-		_tempState = new State();
 
 		this->_textures = _textures;
 		this->_meshes = _meshs;
@@ -36,15 +34,12 @@ namespace Cappuccino {
 			i--;
 		}
 
-		delete _state;
 
 	}
 	void GameObject::baseUpdate(float dt)
 	{
 		childUpdate(dt);
 
-		checkChangeState(dt, *_tempState);
-		_state->update(dt,this);
 		_rigidBody.update(dt,_transform._transformMat);
 		_transform._translateMat[3].x = _rigidBody._position.x;
 		_transform._translateMat[3].y = _rigidBody._position.y;
@@ -96,31 +91,7 @@ namespace Cappuccino {
 					return true;
 			}
 	}
-
-	void GameObject::setStateChange(const State& newState)
-	{
-		stateChangeFlag = true;
-		if (_tempState != nullptr) {
-			delete _tempState;
-			_tempState = nullptr;
-		}
-		*_tempState = newState;
-	}
-	void GameObject::checkChangeState(float dt, const State& newState)
-	{
-		if (stateChangeFlag == false)
-			return;
-
-		_state->onExit(dt, this);
-		delete _state;
-		_state = nullptr;
-		*_state = newState;
-		_state->onEnter(dt, this);
-		
-		delete _tempState;
-		_tempState = nullptr;
-		stateChangeFlag = false;
-	}
+	
 	void GameObject::draw()
 	{
 		//set active shader
