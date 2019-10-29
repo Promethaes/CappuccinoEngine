@@ -11,7 +11,7 @@ namespace Cappuccino {
 	{
 		if (_grav && _position.y != 0)
 			//	if (_accel.y <= _accelCap.y)
-			addAccel(glm::vec3(0, Physics::gravity, 0));
+			addAccel(glm::vec3(0, Physics::gravity*dt, 0));
 		//	else
 		//		setAccel(glm::vec3(_accel.x, _accelCap.y, _accel.x));
 		/*else
@@ -21,7 +21,7 @@ namespace Cappuccino {
 		}
 		*/
 
-		addVelocity(_accel);
+		addVelocity(_accel*dt);
 		//if (_vel.y > _velCap.y)
 		//{
 		//	setVelocity(glm::vec3(_vel.x, _velCap.y, _vel.z), dt);

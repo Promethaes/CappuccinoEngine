@@ -35,7 +35,8 @@ namespace Cappuccino {
 		void setVelocity(const glm::vec3& force);
 		void addVelocity(const glm::vec3& force);
 		void addForce   (const glm::vec3& force, float dt);
-		
+		bool getGrav() { return _grav; }
+		void setGrav(bool yn) { _grav = yn; }
 		/*
 		Purp: check if a ray is intersecting with cube hitboxes
 		Req: A ray
@@ -60,7 +61,7 @@ namespace Cappuccino {
 		glm::mat4 _rotateMat{ 1.0f };
 		float _mass = 1;
 		glm::vec3 _origin;
-		bool _grav = true;
+		bool _grav = false;
 
 		
 	};
