@@ -21,9 +21,10 @@ namespace Cappuccino {
 	}
 	
 	//Text
-	UIText::UIText(const std::string& text, Shader& defaultShader, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale)
+	UIText::UIText(const std::string& text, const glm::vec2& windowSize, Shader& defaultShader, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale)
 		:Text(text,defaultShader,defaultPosition,defaultColour,defaultScale)
 	{
+		_windowSize = windowSize;
 	}
 
 	void UIText::drawComponent()
