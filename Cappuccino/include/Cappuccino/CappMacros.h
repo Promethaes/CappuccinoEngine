@@ -8,12 +8,12 @@
 #ifdef _DEBUG
 
 #define SOUNDTEST false
-#define CUBETEST true
-#define SCENETEST true
+#define CUBETEST false
+#define SCENETEST false
 #define NETWORKTEST false
-#define CROSSHAIRTEST true
-#define TEXTRENDERTEST true
-#define UITEST true
+#define CROSSHAIRTEST false
+#define TEXTRENDERTEST false
+#define UITEST false
 
 #define CAPP_PRINT(message, ...)		printf(message, ##__VA_ARGS__)
 
