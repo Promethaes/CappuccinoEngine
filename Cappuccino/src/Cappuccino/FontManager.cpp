@@ -96,6 +96,7 @@ namespace Cappuccino {
 		_position = defaultPosition;
 		_colour = defaultColour;
 		_scale = defaultScale;
+		
 
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);
@@ -115,6 +116,9 @@ namespace Cappuccino {
 		glActiveTexture(GL_TEXTURE0);
 		glBindVertexArray(_VAO);
 		
+		_textShader->use();
+		_textShader->loadOrthoProjectionMatrix(_windowSize.x,_windowSize.y);
+		_textShader->setUniform("textColour", _colour);
 #if UITEST
 		_textShader->use();
 		_textShader->loadOrthoProjectionMatrix(1600.0f, 1200.0f);

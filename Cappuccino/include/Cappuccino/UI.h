@@ -36,9 +36,10 @@ namespace Cappuccino {
 
 	class UIText : public UIComponent, public Text {
 	public:
-		UIText(const std::string& text, Shader& defaultShader, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale);
+		UIText(const std::string& text, const glm::vec2& windowSize,Shader& defaultShader, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale);
 
 		void drawComponent() override;
+
 	};
 
 	class UIBar : public UIComponent {

@@ -19,10 +19,12 @@ namespace Cappuccino {
 		*/
 		CappInput(bool createKeyboard, const std::optional<unsigned>& controllerIndex);
 
-		
+		void update();
 
 		Keyboard* keyboard = nullptr;
 		Sedna::XInputController* controller = nullptr;
+		Sedna::Stick sticks[2];
+		Sedna::Triggers triggers;
 		//add in sticks and triggers when needed
 
 

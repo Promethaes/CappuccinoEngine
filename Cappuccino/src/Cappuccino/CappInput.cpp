@@ -13,5 +13,14 @@ namespace Cappuccino {
 			keyboard = new Keyboard();
 		if (controllerIndex.has_value())
 			controller = Sedna::XInputManager::getController(controllerIndex.value());
+
+	}
+	void CappInput::update()
+	{
+		if (controller) {
+			controller->getTriggers(triggers);
+			controller->updateSticks(sticks);
+		
+		}
 	}
 }
