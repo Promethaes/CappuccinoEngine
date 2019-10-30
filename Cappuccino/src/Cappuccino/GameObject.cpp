@@ -41,9 +41,9 @@ namespace Cappuccino {
 		childUpdate(dt);
 
 		_rigidBody.update(dt,_transform._transformMat);
-		_transform._translateMat[3].x = _rigidBody._position.x;
-		_transform._translateMat[3].y = _rigidBody._position.y;
-		_transform._translateMat[3].z = _rigidBody._position.z;
+		_transform._position->x = _rigidBody._position.x;
+		_transform._position->y = _rigidBody._position.y;
+		_transform._position->z = _rigidBody._position.z;
 		_transform.update();
 
 		draw();
