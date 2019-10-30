@@ -100,8 +100,6 @@ namespace Cappuccino {
 		//bind the textures to their proper slots
 		for (auto x : _textures) {
 			if (x->type == TextureType::DiffuseMap) {
-				//fix this later!!!!!
-				//TODO
 				x->bind(0);
 			}
 			else if (x->type == TextureType::SpecularMap) {
