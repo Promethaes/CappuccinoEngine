@@ -40,13 +40,14 @@ namespace Cappuccino {
 	{
 		childUpdate(dt);
 
-		_rigidBody.update(dt,_transform._transformMat);
+		_rigidBody.update(dt, _transform._transformMat);
 		_transform._position->x = _rigidBody._position.x;
 		_transform._position->y = _rigidBody._position.y;
 		_transform._position->z = _rigidBody._position.z;
 		_transform.update();
 
-		draw();
+		if (_isVisible)
+			draw();
 	}
 
 
@@ -78,8 +79,8 @@ namespace Cappuccino {
 	{
 		_transform.scale(glm::vec3(0, 0, 1), sizeScalar);
 	}
-	
-	
+
+
 	bool GameObject::checkCollision(GameObject& other)
 	{
 		if (!_rigidBody.hitBox[0].checkCollision(other._rigidBody.hitBox[0], other._rigidBody._position, _rigidBody._position))
@@ -91,7 +92,7 @@ namespace Cappuccino {
 					return true;
 			}
 	}
-	
+
 	void GameObject::draw()
 	{
 		//set active shader

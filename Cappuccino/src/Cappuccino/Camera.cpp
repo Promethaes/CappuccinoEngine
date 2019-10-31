@@ -8,7 +8,7 @@ namespace Cappuccino {
 	{
 		auto temp = lookVec - _cameraPos;
 
-		temp = temp / sqrt(temp.x * temp.x + temp.y * temp.y + temp.z * temp.z);
+		temp = glm::normalize(temp);
 
 		_cameraFront = temp;
 		glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
