@@ -11,7 +11,7 @@ if %ERRORLEVEL% NEQ 0 (
     exit
 )
 
-echo Setting "CappuccinoPathTest" environment variable...
+echo Setting "CappuccinoPath" environment variable...
 echo.
 
 for %%i in ("%~dp0..") do set "folder=%%~fi"

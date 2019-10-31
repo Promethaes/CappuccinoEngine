@@ -19,7 +19,7 @@ namespace Cappuccino {
 		///	go->setPosition(-go->transform._transformMat[0] * 2.5f * dt);
 	   ///
 		///if (player(go)->_input.keyboard->keyPressed(Events::A))
-		///	go->setPosition(-player(go)->getCamera().getRight() * 2.5f * dt);
+		///	go->setPosition(-player(go)->getCamera().getRight() * 2.5f * ++dt);
 		///if (player(go)->_input.keyboard->keyPressed(Events::D))
 		///	go->setPosition(player(go)->getCamera().getRight() * 2.5f * dt);
 	   ///

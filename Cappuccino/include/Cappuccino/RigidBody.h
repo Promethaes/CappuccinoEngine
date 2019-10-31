@@ -29,24 +29,32 @@ namespace Cappuccino {
 		*/
 		void update(float dt, glm::mat4 model);
 
-		void setViewProjMat(glm::mat4 &view, glm::mat4 &projection) { _view = &view; _projection = &projection; };
+		void setViewProjMat(glm::mat4 &view, glm::mat4 &projection) { _view = view; _projection = projection; };
 		void setAccel(const glm::vec3& force);
 		void addAccel(const glm::vec3& force);
 		void setVelocity(const glm::vec3& force);
 		void addVelocity(const glm::vec3& force);
 		void addForce   (const glm::vec3& force, float dt);
-		
+		bool getGrav() { return _grav; }
+		void setGrav(bool yn) { _grav = yn; }
+		/*
+		Purp: check if a ray is intersecting with cube hitboxes
+		Req: A ray
+		returns: whether or not it is intersecting
+		*/
+		bool intersecting(const Ray& ray);
+		bool checkCollision(RigidBody& other);
 
 		glm::mat4 getRotation() { return _rotateMat;}
-		std::vector<HitBox> hitBox;
+		std::vector<HitBox> _hitBoxes;
 		glm::vec3 _position;
 		glm::vec3 _accel{ 0,0,0 };
 		glm::vec3 _vel{ 0,0,0 };
 		glm::vec3 _accelCap{ 20, 20, 20 };
 		glm::vec3 _velCap{ 20, 20, 20 };
 		bool drawHitBox = true;
-		static glm::mat4* _view;
-		static glm::mat4* _projection;
+		static glm::mat4 _view;
+		static glm::mat4 _projection;
 		Shader _shader{ "hitBox.vert","hitBox.frag" };
 	private:
 		bool _collision = false;
@@ -54,7 +62,7 @@ namespace Cappuccino {
 		glm::mat4 _rotateMat{ 1.0f };
 		float _mass = 1;
 		glm::vec3 _origin;
-		bool _grav = true;
+		bool _grav = false;
 
 		
 	};

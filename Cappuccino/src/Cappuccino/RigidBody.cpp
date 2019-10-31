@@ -11,7 +11,7 @@ namespace Cappuccino {
 	{
 		if (_grav && _position.y != 0)
 			//	if (_accel.y <= _accelCap.y)
-			addAccel(glm::vec3(0, Physics::gravity, 0));
+			addAccel(glm::vec3(0, Physics::gravity*dt, 0));
 		//	else
 		//		setAccel(glm::vec3(_accel.x, _accelCap.y, _accel.x));
 		/*else
@@ -21,7 +21,7 @@ namespace Cappuccino {
 		}
 		*/
 
-		addVelocity(_accel);
+		addVelocity(_accel*dt);
 		//if (_vel.y > _velCap.y)
 		//{
 		//	setVelocity(glm::vec3(_vel.x, _velCap.y, _vel.z), dt);
@@ -36,13 +36,14 @@ namespace Cappuccino {
 
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
+		_shader.setUniform("view",_view);
 		_shader.loadProjectionMatrix((800 * 2), (600 * 2));
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (drawHitBox)
-			for (unsigned i = 0; i < hitBox.size(); i++)
+			for (unsigned i = 0; i < _hitBoxes.size(); i++)
 			{
-				hitBox[i].draw();
+				_hitBoxes[i].draw();
 			}
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
@@ -72,6 +73,29 @@ namespace Cappuccino {
 		_position += force * dt;
 	}
 
+	bool RigidBody::intersecting(const Ray& ray)
+	{
+		for (unsigned i=0;i<_hitBoxes.size();i++)
+		{
+			if (_hitBoxes[i].intersecting(ray, _position))
+				return true;
+		}
+		return false;
+	}
+
+	bool RigidBody::checkCollision(RigidBody& other)
+	{
+		for (unsigned i=0;i<_hitBoxes.size();i++)
+		{
+			for (unsigned n = 0; n < other._hitBoxes.size(); n++)
+			{
+				if (_hitBoxes[i].checkCollision(other._hitBoxes[n],other._position,_position))
+					return true;
+			}
+		}
+		return false;
+	}
+
 }
-glm::mat4* Cappuccino::RigidBody::_projection = new glm::mat4();
-glm::mat4* Cappuccino::RigidBody::_view = new glm::mat4();
+glm::mat4 Cappuccino::RigidBody::_projection =glm::mat4();
+glm::mat4 Cappuccino::RigidBody::_view =  glm::mat4();

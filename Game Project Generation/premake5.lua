@@ -32,6 +32,10 @@ os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\freetype.dll " .. solutionDi
 
 os.execute("xcopy %CappuccinoPath%\\Cappuccino\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
 
+-- This is to make sure the filters are created in Visual Studio even if there are no files in the folders
+os.execute("xcopy reeee.txt " .. solutionDir .. "\\include")
+os.execute("xcopy reeee.txt " .. solutionDir .. "\\Assets")
+
 os.execute("echo.")
 print("Starting premake build...")
 print(string.format("Building solution %s...", projName))
@@ -59,6 +63,8 @@ workspace (projName)
 	
 
 	includedirs {
+		solutionDir .. "/include",
+	
 		os.getenv("CappuccinoPath") .. "/Cappuccino/include",
 		os.getenv("CappuccinoPath") .. "/Externals/fmod/include",
 		os.getenv("CappuccinoPath") .. "/Externals/freetype/include",
@@ -111,9 +117,12 @@ project (projName)
 	}
 	
 	files {
+		solutionDir .. "/include/reeee.txt",
 		solutionDir .. "/include/**.h",
 		solutionDir .. "/include/**.hpp",
 		solutionDir .. "/src/**.cpp",
 		
 		solutionDir .. "/Assets/**"
 	}
+	
+os.execute("del /s /q %{solutionDir}\\reeee.txt")

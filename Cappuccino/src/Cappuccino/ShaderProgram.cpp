@@ -43,7 +43,7 @@ namespace Cappuccino {
 
 	void Shader::use() const { glUseProgram(_programID); }
 
-	void Shader::setDefaultPath(const string& directory){
+	void Shader::setDefaultPath(const string& directory) {
 		string dir = directory;
 		std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
 

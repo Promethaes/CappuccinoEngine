@@ -18,15 +18,15 @@ namespace Cappuccino {
 		testPlayer->_rigidBody._position = glm::vec3(0, 0, 3);
 
 
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
-		_f16._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), 2.0f));
+		_f16._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), 1.0f));
+		_f16._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), 1.0f));
 
 		_f162._transform.rotate(glm::vec3(0, 0, 1), 90);
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
-		_f162._rigidBody.hitBox.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
+		_f162._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
+		_f162._rigidBody._hitBoxes.push_back(HitBox(glm::vec3(0, 0, 0), glm::vec3(2.0f, 2.0f,2.0f)));
 		
 
-		testBody.setViewProjMat(viewMat, projMat);
+		
 		
 #if CUBETEST
 		float vertices2[] = {
@@ -127,12 +127,14 @@ namespace Cappuccino {
 		for (int i = 0; i < 4; i++)
 			lightCubes.push_back(Cube(vertices2, 288, new Texture(CAPP_PATH + R"(Assets\Textures\container2.png)", TextureType::DiffuseMap), true));
 
-#endif
+#endif	
+		
 	}
 
 	bool Cappuccino::TestScene::init()
 	{
 		_f16.setActive(true);
+		_f162.setActive(true);
 		testPlayer->setActive(true);
 
 		_shouldExit = false;
@@ -152,6 +154,8 @@ namespace Cappuccino {
 
 	void Cappuccino::TestScene::childUpdate(float dt)
 	{
+		
+		
 		//centre cube
 
 		glm::vec3 pointLightPositions[] = {
@@ -160,8 +164,8 @@ namespace Cappuccino {
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
 		};
-
-		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1);
+		
+		glm::vec3 lightColor = glm::vec4(2.0f, 2.0f, 2.0f, 1.0f);
 		//cubeeeee
 #if CUBETEST
 		rotate += dt;
@@ -246,17 +250,13 @@ namespace Cappuccino {
 			SceneManager::changeScene(0);
 		if (testPlayer->_input.keyboard->keyPressed(Events::F))
 			_f16.setActive(false);
-#if CUBETEST
-		_lightcubeShader.use();
+
 
 		viewMat = testPlayer->getCamera()->whereAreWeLooking();
-		_f16._rigidBody._shader.use();
-		_f16._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
-		_f162._rigidBody._shader.use();
-		_f162._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
-
+		
 		projMat = glm::perspective(glm::radians(45.0f), (800.0f * 2) / (600.0f * 2), 0.1f, 100.0f);
-#endif
+		testBody.setViewProjMat(viewMat, projMat);
+
 #if CROSSHAIRTEST
 		static float u = 0.0f;
 		static bool reverse = false;
@@ -278,16 +278,21 @@ namespace Cappuccino {
 
 
 		testPlayer->_crosshairShader.use();
-		if (testSection.intersecting(testRay))
+		if (testSection.intersecting(testRay)||_f162._rigidBody.intersecting(testRay))
+		{
 			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
 		else
 			testPlayer->_crosshairShader.setUniform("colour", glm::vec4(1.0f, 1.0f, 1.0f, Math::lerp(0.0f, 1.0f, u)));
 #endif
 
-#if TEXTRENDERTEST
-		testText.draw();
-#endif
+		viewMat = testPlayer->getCamera()->whereAreWeLooking();
+		_f16._rigidBody._shader.use();
+		_f16._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
+		_f162._rigidBody._shader.use();
+		_f162._rigidBody._shader.loadViewMatrix(*testPlayer->getCamera());
 
+		projMat = glm::perspective(glm::radians(45.0f), (800.0f * 2) / (600.0f * 2), 0.1f, 100.0f);
 	}
 	void TestScene::mouseFunction(double xpos, double ypos)
 	{
