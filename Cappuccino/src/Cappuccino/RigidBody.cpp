@@ -83,6 +83,19 @@ namespace Cappuccino {
 		return false;
 	}
 
+	bool RigidBody::checkCollision(RigidBody& other)
+	{
+		for (unsigned i=0;i<_hitBoxes.size();i++)
+		{
+			for (unsigned n = 0; n < other._hitBoxes.size(); n++)
+			{
+				if (_hitBoxes[i].checkCollision(other._hitBoxes[n],other._position,_position))
+					return true;
+			}
+		}
+		return false;
+	}
+
 }
 glm::mat4 Cappuccino::RigidBody::_projection =glm::mat4();
 glm::mat4 Cappuccino::RigidBody::_view =  glm::mat4();

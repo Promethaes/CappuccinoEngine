@@ -43,6 +43,7 @@ namespace Cappuccino {
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray);
+		bool checkCollision(RigidBody& other);
 
 		glm::mat4 getRotation() { return _rotateMat;}
 		std::vector<HitBox> _hitBoxes;
