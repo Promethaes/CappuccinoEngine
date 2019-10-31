@@ -8,7 +8,9 @@
 namespace Cappuccino {
 	class Transform {
 	public:
-		Transform() = default;
+		Transform() {
+			_position = &_translateMat[3];
+		}
 
 		/*
 		Purp: do whatever transformations you want...not a good idea to use this
@@ -27,14 +29,14 @@ namespace Cappuccino {
 
 		//using a quaternion
 		glm::mat4 rotate(/*TODO*/);
-		
+
 		//using a transformation matrix
 		glm::mat4 rotate(const glm::vec3& rotateOn, float rotationAngle);
 		glm::mat4 scale(const glm::vec3& scaleVec, float sizeScalar);
 
 		glm::mat4 _transformMat{ 1.0f };
 
-		glm::vec3 _position{ 1,1,1 };
+		glm::vec4* _position;
 
 		glm::mat4 _translateMat{ 1.0f };
 		glm::mat4 _scaleMat{ 1.0f };

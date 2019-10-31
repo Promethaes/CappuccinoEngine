@@ -71,6 +71,8 @@ namespace Cappuccino {
 		
 		void setActive(bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
+		void setVisible(bool yn) { _isVisible = yn; }
+		bool isVisible() const { return _isVisible; }
 	protected:
 		/*
 		Purp: draw the game object
@@ -99,6 +101,7 @@ namespace Cappuccino {
 		bool _loadedTextures = false;
 		bool _loadedMesh = false;
 		bool _isActive = false;
+		bool _isVisible = true;
 		
 
 		/*
