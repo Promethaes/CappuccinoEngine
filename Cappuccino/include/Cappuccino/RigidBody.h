@@ -21,7 +21,7 @@ namespace Cappuccino {
 	
 	class RigidBody	{
 	public:
-		RigidBody(const glm::vec3& transformPosition, const glm::vec3& origin = glm::vec3(0.0f, 0.0f, 0.0f), const float mass = 1,bool gravity = true);
+		RigidBody(const glm::vec3& transformPosition, const glm::vec3& origin = glm::vec3(0.0f, 0.0f, 0.0f), const float mass = 1,bool gravity = false);
 		/*
 		Purp: The update function is called each update to update all parts of the rigidBody
 		Pre: A float of the time between frames, a mat4 for the hitBox shader's model
