@@ -21,6 +21,11 @@ namespace Cappuccino {
 			_result = _system->init(512, FMOD_INIT_NORMAL, 0);
 			checkFmodErrors(_result, "system initialization");
 			_initialized = true;
+
+			//channel 0 is sfx
+			FMOD::Channel* channel = NULL;
+
+			_channels.push_back(channel);
 		}
 	}
 
@@ -46,13 +51,10 @@ namespace Cappuccino {
 		return _channelGroups.size() - 1;
 	}
 
-	void SoundSystem::playSound2D(unsigned soundsIndex, unsigned groupsIndex)
+	void SoundSystem::playSound2D(unsigned soundsIndex, unsigned groupsIndex, ChannelType type)
 	{
-		FMOD::Channel* channel = NULL;
-		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex], false, &channel);
+		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex], false, &_channels[(int)type]);
 		checkFmodErrors(_result, "play sound 2D");
-
-		_channels.push_back(channel);
 	}
 
 	void SoundSystem::checkFmodErrors(FMOD_RESULT& result, const std::string& whereError)

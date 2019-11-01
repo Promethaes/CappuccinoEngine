@@ -134,7 +134,7 @@ namespace Cappuccino {
 			glAttachShader(_programID, geometry);
 		}
 		else {
-			CAPP_PRINT_ERROR("No geometry shader linked!");
+		//	CAPP_PRINT_ERROR("No geometry shader linked!");
 		}
 
 		GLint success;
