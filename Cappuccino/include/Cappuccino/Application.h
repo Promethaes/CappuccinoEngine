@@ -28,6 +28,7 @@ namespace Cappuccino {
 
 		static GLFWwindow* window;
 
+		glm::vec4 _clearColour;
 	private:
 
 		void cleanup();
@@ -39,7 +40,6 @@ namespace Cappuccino {
 		GLuint _width, _height;
 		std::string _title;
 		GLuint _contextVersionMajor, _contextVersionMinor;
-		glm::vec4 _clearColour;
 
 
 		static bool _instantiated;

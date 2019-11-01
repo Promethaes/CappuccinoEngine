@@ -9,6 +9,11 @@ namespace Cappuccino {
 	class SoundSystem {
 	public:
 
+		enum class ChannelType {
+			SoundEffect = 0,
+			Music
+		};
+
 		/*
 		Purp: initialize the sound system
 		Req: default path for sound files eg. Assets/Sounds/
@@ -33,7 +38,7 @@ namespace Cappuccino {
 		Purp: play a 2D sound at the provided indicies
 		Req: index to the proper sounds and group
 		*/
-		static void playSound2D(unsigned soundsIndex, unsigned groupsIndex);
+		static void playSound2D(unsigned soundsIndex, unsigned groupsIndex,ChannelType type);
 
 		static void setDefaultPath(const std::string& defaultFilePath) { _soundPath = defaultFilePath; }
 	private:
