@@ -298,15 +298,15 @@ namespace Cappuccino {
 	{
 		if (firstMouse)
 		{
-			lastX = xpos;
-			lastY = ypos;
+			lastX = (float)xpos;
+			lastY = (float)ypos;
 			firstMouse = false;
 		}
 
-		GLfloat xOffset = xpos - lastX;
-		GLfloat yOffset = lastY - ypos;
-		lastX = xpos;
-		lastY = ypos;
+		GLfloat xOffset = (float)xpos - lastX;
+		GLfloat yOffset = lastY - (float)ypos;
+		lastX = (float)xpos;
+		lastY = (float)ypos;
 
 		if (testPlayer->_input.keyboard->keyPressed(Events::Alt))
 			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);

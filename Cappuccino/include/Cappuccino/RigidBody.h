@@ -34,15 +34,20 @@ namespace Cappuccino {
 		void addAccel(const glm::vec3& force);
 		void setVelocity(const glm::vec3& force);
 		void addVelocity(const glm::vec3& force);
-		void addForce   (const glm::vec3& force, float dt);
+		void addPosition   (const glm::vec3& force);
 		bool getGrav() { return _grav; }
 		void setGrav(bool yn) { _grav = yn; }
 		/*
-		Purp: check if a ray is intersecting with cube hitboxes
+		Purp: Check if a ray is intersecting with cube hitboxes
 		Req: A ray
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray);
+		/*
+		Purp: Check if two rigidbodies are colliding
+		Pre: Another RigidBody
+		Post: A boolean (True for Collision)
+		*/
 		bool checkCollision(RigidBody& other);
 
 		glm::mat4 getRotation() { return _rotateMat;}
@@ -63,7 +68,7 @@ namespace Cappuccino {
 		float _mass = 1;
 		glm::vec3 _origin;
 		bool _grav = false;
-
+		HitBox boundingBox;//TODO
 		
 	};
 }

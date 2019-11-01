@@ -2,7 +2,7 @@
 #include "Cappuccino/CappMacros.h"
 namespace Cappuccino {
 	float Physics::gravity = -9.8f;
-	float Physics::UniversalG = 6.67f * (pow(10, -11));
+	float Physics::UniversalG = 6.67f * (float)(pow(10, -11));
 	Cappuccino::RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& origin, const float mass, bool gravity)
 		: _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
 
@@ -11,7 +11,7 @@ namespace Cappuccino {
 	{
 		if (_grav && _position.y != 0)
 			//	if (_accel.y <= _accelCap.y)
-			addAccel(glm::vec3(0, Physics::gravity*dt, 0));
+			addAccel(glm::vec3(0, Physics::gravity * dt, 0));
 		//	else
 		//		setAccel(glm::vec3(_accel.x, _accelCap.y, _accel.x));
 		/*else
@@ -21,12 +21,12 @@ namespace Cappuccino {
 		}
 		*/
 
-		addVelocity(_accel*dt);
+		addVelocity(_accel * dt);
 		//if (_vel.y > _velCap.y)
 		//{
 		//	setVelocity(glm::vec3(_vel.x, _velCap.y, _vel.z), dt);
 		//}
-		addForce(_vel,dt);
+		addPosition(_vel * dt);
 
 
 		glm::mat4 newModel(1.0f);
@@ -68,9 +68,9 @@ namespace Cappuccino {
 		_vel += force;
 	}
 
-	void RigidBody::addForce(const glm::vec3& force, float dt)
+	void RigidBody::addPosition(const glm::vec3& force)
 	{
-		_position += force * dt;
+		_position += force;
 	}
 
 	bool RigidBody::intersecting(const Ray& ray)
