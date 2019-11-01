@@ -21,6 +21,7 @@ namespace Cappuccino {
 		returns: bool if it was successful or not
 		*/
 		bool load();
+		bool isLoaded() { return loaded; }
 
 		bool unload();
 
@@ -44,7 +45,9 @@ namespace Cappuccino {
 	private:
 		unsigned char* _data;
 
+
 		std::string _path;
 		unsigned _texture;
+		bool loaded = false;
 	};
 }

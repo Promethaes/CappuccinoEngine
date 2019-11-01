@@ -125,8 +125,12 @@ namespace Cappuccino {
 	{
 		if (!_loadedTextures) {
 			for (unsigned i = 0; i < _textures.size(); i++) {
-				if (_textures[i]->load())
-					continue;
+				if (!_textures[i]->isLoaded()) {
+					if (_textures[i]->load())
+						continue;
+					else
+						return;
+				}
 				else
 					return;
 			}
@@ -137,8 +141,12 @@ namespace Cappuccino {
 	{
 		if (!_loadedMesh) {
 			for (unsigned i = 0; i < _meshes.size(); i++) {
-				if (_meshes[i]->loadMesh())
-					continue;
+				if (!_meshes[i]->loaded) {
+					if (_meshes[i]->loadMesh())
+						continue;
+					else
+						return;
+				}
 				else
 					return;
 			}

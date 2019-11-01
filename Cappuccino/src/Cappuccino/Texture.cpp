@@ -51,6 +51,7 @@ namespace Cappuccino {
 		}
 
 		_texture = textureID;
+		loaded = true;
 		return true;
 	}
 	bool Texture::unload()
