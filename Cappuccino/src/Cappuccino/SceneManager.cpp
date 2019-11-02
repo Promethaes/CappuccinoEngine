@@ -13,6 +13,11 @@ namespace Cappuccino {
 			if (x->isActive())
 				x->mouseFunction(xpos, ypos);
 	}
+	void internalClickCallback(GLFWwindow* window, int button, int action, int mods) {
+		for (auto x : Scenes)
+			if (x->isActive())
+				x->clickFunction(button,action,mods);
+	}
 	std::vector<Scene*> Scene::scenes = {};
 	Camera* Scene::defaultCamera = new Camera();
 	Scene::Scene(bool firstScene) {
@@ -29,6 +34,7 @@ namespace Cappuccino {
 					scenes[j]->_active = false;
 				}
 				glfwSetCursorPosCallback(glfwGetCurrentContext(), internalMouseCallback);
+				glfwSetMouseButtonCallback(glfwGetCurrentContext(), internalClickCallback);
 				scenes[i]->childUpdate(dt);
 				break;
 			}
@@ -37,6 +43,9 @@ namespace Cappuccino {
 	void Scene::sendString(const std::string& info)
 	{
 		this->info = info;
+	}
+	void Scene::clickFunction(int button, int action, int mods)
+	{
 	}
 	void SceneManager::updateScenes(float dt)
 	{
