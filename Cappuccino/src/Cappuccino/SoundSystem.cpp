@@ -57,6 +57,11 @@ namespace Cappuccino {
 		checkFmodErrors(_result, "play sound 2D");
 	}
 
+	void SoundSystem::update()
+	{
+		_system->update();
+	}
+
 	void SoundSystem::checkFmodErrors(FMOD_RESULT& result, const std::string& whereError)
 	{
 		if (result != FMOD_OK)

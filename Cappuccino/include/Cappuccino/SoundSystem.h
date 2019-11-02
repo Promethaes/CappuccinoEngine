@@ -41,6 +41,8 @@ namespace Cappuccino {
 		static void playSound2D(unsigned soundsIndex, unsigned groupsIndex,ChannelType type);
 
 		static void setDefaultPath(const std::string& defaultFilePath) { _soundPath = defaultFilePath; }
+
+		static void update();
 	private:
 
 		/*

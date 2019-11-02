@@ -167,6 +167,8 @@ namespace Cappuccino {
 			Sedna::XInputManager::update();
 		}
 
+		SoundSystem::update();
+
 		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
 			if (x->isActive())

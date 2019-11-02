@@ -12,6 +12,18 @@ namespace Cappuccino {
 		bool keyPressed(unsigned char);
 	};
 
+	class ClickListener {
+	public:
+
+		void checkClick(int button, int action, int mods);
+
+		bool leftClicked()  const { return _mouseLeftClicked; }
+		bool rightClicked() const { return _mouseRightClicked; }
+	private:
+		bool _mouseLeftClicked = false;
+		bool _mouseRightClicked = false;
+	};
+
 	class CappInput {
 	public:
 		/*
@@ -21,6 +33,7 @@ namespace Cappuccino {
 
 		void update();
 
+		ClickListener clickListener;
 		Keyboard* keyboard = nullptr;
 		Sedna::XInputController* controller = nullptr;
 		Sedna::Stick sticks[2];

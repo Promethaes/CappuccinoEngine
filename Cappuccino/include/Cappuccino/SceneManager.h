@@ -33,6 +33,7 @@ namespace Cappuccino {
 		eg. isPaused, if so then make the mouse visible and so on
 		*/
 		virtual void mouseFunction(double xpos, double ypos) = 0;
+		virtual void clickFunction(int button, int action, int mods); 
 
 		void setActive(bool yn) { _active = yn; }
 	protected:
