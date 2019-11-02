@@ -37,7 +37,7 @@ namespace Cappuccino {
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
 		_shader.setUniform("view",_view);
-		_shader.loadProjectionMatrix((800 * 2), (600 * 2));
+		_shader.setUniform("projection", _projection);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (drawHitBox)

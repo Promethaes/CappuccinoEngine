@@ -16,11 +16,11 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 		if (lineNumber == EOF)
 		{
 			HitBox tempBox;
-			if (tempName == "Cube")
+			if (tempName[0] == 'C')
 			{
 				tempBox = HitBox(findCenter(), findBox());
 			}
-			else if (tempName == "Icosphere")
+			else if (tempName[0] == 'I')
 			{
 				tempBox = HitBox(findCenter(), findRadius());
 			}
@@ -35,11 +35,11 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 			if (!start)
 			{
 				HitBox tempBox;
-				if (tempName == "Cube")
+				if (tempName[0] == 'C')
 				{
 					 tempBox = HitBox(findCenter(),findBox());
 				}
-				else if (tempName == "Icosphere")
+				else if (tempName[0] == 'I')
 				{
 					tempBox = HitBox(findCenter(),findRadius());
 				}
@@ -100,7 +100,7 @@ glm::vec3 Cappuccino::HitBoxLoader::findBox()
 		if (_tempVerts[i].z < tempLow.z)
 			tempLow.z = _tempVerts[i].z;
 	}
-	return glm::vec3(tempHigh - tempLow);
+	return glm::vec3(tempHigh - tempLow)/2.0f;
 }
 
 glm::vec3 Cappuccino::HitBoxLoader::findCenter()
