@@ -49,6 +49,12 @@ namespace Cappuccino {
 		Post: A boolean (True for Collision)
 		*/
 		bool checkCollision(RigidBody& other);
+		/*
+		Purp: To check collision between a rigidbody and single hitbox
+		Pre: a hitbox
+		Post: a boolean true if colliding
+		*/
+		bool checkCollision(HitBox other, glm::vec3 pos);
 
 		glm::mat4 getRotation() { return _rotateMat;}
 		std::vector<HitBox> _hitBoxes;
@@ -61,14 +67,13 @@ namespace Cappuccino {
 		static glm::mat4 _view;
 		static glm::mat4 _projection;
 		Shader _shader{ "hitBox.vert","hitBox.frag" };
+		HitBox boundingBox;
 	private:
 		bool _collision = false;
 		glm::vec3 _scale{ 0 };
 		glm::mat4 _rotateMat{ 1.0f };
 		float _mass = 1;
 		glm::vec3 _origin;
-		bool _grav = false;
-		HitBox boundingBox;//TODO
-		
+		bool _grav = false;		
 	};
 }

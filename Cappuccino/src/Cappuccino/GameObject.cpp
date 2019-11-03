@@ -83,14 +83,12 @@ namespace Cappuccino {
 
 	bool GameObject::checkCollision(GameObject& other)
 	{
-		if (!_rigidBody._hitBoxes[0].checkCollision(other._rigidBody._hitBoxes[0], other._rigidBody._position, _rigidBody._position))
-			return false;
-		for (unsigned i = 1; i < _rigidBody._hitBoxes.size() - 1; i++)
-			for (unsigned n = 1; i < other._rigidBody._hitBoxes.size() - 1; n++)
-			{
-				if (_rigidBody._hitBoxes[i].checkCollision(other._rigidBody._hitBoxes[n], other._rigidBody._position, _rigidBody._position))
-					return true;
-			}
+		return _rigidBody.checkCollision(other._rigidBody);
+	}
+
+	bool GameObject::checkCollision(HitBox other, glm::vec3 pos)
+	{
+		return _rigidBody.checkCollision(other,pos);
 	}
 
 	void GameObject::draw()
