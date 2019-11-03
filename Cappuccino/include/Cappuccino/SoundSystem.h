@@ -43,6 +43,9 @@ namespace Cappuccino {
 		static void setDefaultPath(const std::string& defaultFilePath) { _soundPath = defaultFilePath; }
 
 		static void update();
+
+		static std::vector<FMOD::Channel*>& getChannels();
+		static std::vector<FMOD::Sound*>& getSounds();
 	private:
 
 		/*

@@ -62,6 +62,16 @@ namespace Cappuccino {
 		_system->update();
 	}
 
+	std::vector<FMOD::Channel*>& SoundSystem::getChannels()
+	{
+		return _channels;
+	}
+
+	std::vector<FMOD::Sound*>& SoundSystem::getSounds()
+	{
+		return _sounds;
+	}
+
 	void SoundSystem::checkFmodErrors(FMOD_RESULT& result, const std::string& whereError)
 	{
 		if (result != FMOD_OK)
