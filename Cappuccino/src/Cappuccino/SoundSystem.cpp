@@ -24,8 +24,10 @@ namespace Cappuccino {
 
 			//channel 0 is sfx
 			FMOD::Channel* channel = NULL;
+			FMOD::Channel* channel2 = NULL;
 
 			_channels.push_back(channel);
+			_channels.push_back(channel2);
 		}
 	}
 

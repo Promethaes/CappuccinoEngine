@@ -86,7 +86,7 @@ namespace Cappuccino {
 		return _rigidBody.checkCollision(other._rigidBody);
 	}
 
-	bool GameObject::checkCollision(HitBox other, glm::vec3 pos)
+	bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos)
 	{
 		return _rigidBody.checkCollision(other,pos);
 	}

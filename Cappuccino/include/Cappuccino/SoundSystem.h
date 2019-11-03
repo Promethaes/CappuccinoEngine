@@ -11,6 +11,7 @@ namespace Cappuccino {
 
 		enum class ChannelType {
 			SoundEffect = 0,
+			SoundEffect2,
 			Music
 		};
 

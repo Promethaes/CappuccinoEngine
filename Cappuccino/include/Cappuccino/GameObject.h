@@ -78,7 +78,7 @@ namespace Cappuccino {
 		Pre: a hitbox
 		Post: a boolean true if colliding
 		*/
-		bool checkCollision(HitBox other, glm::vec3 pos);
+		bool checkCollision(const HitBox& other, const glm::vec3& pos);
 		
 		void setActive(bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
