@@ -66,8 +66,19 @@ namespace Cappuccino {
 
 		Transform _transform;
 		RigidBody _rigidBody;
-
+		/*
+		Purp: To check collision between gameobject
+		Pre: another gameobject
+		Post: a boolean true if colliding
+		*/
 		bool checkCollision(GameObject& other);
+
+		/*
+		Purp: To check collision between a gameobject and hitbox
+		Pre: a hitbox
+		Post: a boolean true if colliding
+		*/
+		bool checkCollision(HitBox other, glm::vec3 pos);
 		
 		void setActive(bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }

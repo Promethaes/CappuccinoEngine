@@ -85,14 +85,24 @@ namespace Cappuccino {
 
 	bool RigidBody::checkCollision(RigidBody& other)
 	{
-		for (unsigned i=0;i<_hitBoxes.size();i++)
-		{
-			for (unsigned n = 0; n < other._hitBoxes.size(); n++)
+		if(_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
+			for (unsigned i=1;i<_hitBoxes.size();i++)
 			{
-				if (_hitBoxes[i].checkCollision(other._hitBoxes[n],other._position,_position))
-					return true;
+				for (unsigned n = 1; n < other._hitBoxes.size(); n++)
+				{
+					if (_hitBoxes[i].checkCollision(other._hitBoxes[n],other._position,_position))
+						return true;
+				}
 			}
-		}
+		return false;
+	}
+
+	bool RigidBody::checkCollision(HitBox other,glm::vec3 pos)
+	{
+		if (_hitBoxes[0].checkCollision(other, pos, _position))
+			for (unsigned i = 1; i < _hitBoxes.size(); i++)
+				if (_hitBoxes[i].checkCollision(other, pos, _position))
+					return true;
 		return false;
 	}
 
