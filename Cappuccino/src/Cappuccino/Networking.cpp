@@ -1,6 +1,9 @@
 #include "Cappuccino/Networking.h"
+
 #include <iostream>
+
 bool WinSocketCommon::winSocketInitialized = false;
+
 WinSocketCommon::~WinSocketCommon()
 {
 	WSACleanup();

@@ -1,21 +1,9 @@
 #include "Cappuccino/Application.h"
-#include "Cappuccino/CappMacros.h"
-#include "Cappuccino/Camera.h"
-#include "Cappuccino/FontManager.h"
-#include "Cappuccino/GameObject.h"
-#include "Cappuccino/Input.h"
-#include "Cappuccino/SceneManager.h"
-#include "Cappuccino/SoundSystem.h"
-#include "Cappuccino/XInputManager.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
-
-#if SCENETEST
-#include "Cappuccino/Testing/Test Scene.h"
-#endif
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;
@@ -112,30 +100,30 @@ namespace Cappuccino {
 #endif
 
 
-	//	FontManager::loadTypeFace("arial.ttf");
+		//FontManager::loadTypeFace("arial.ttf");
 
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		CAPP_GL_CALL(glEnable(GL_DEPTH_TEST));
+		CAPP_GL_CALL(glEnable(GL_BLEND));
+		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		static GLfloat lastFrame;
 
 		/*
 		Render Loop
 		*/
 		while (!glfwWindowShouldClose(window)) {
-			const GLfloat currentFrame = glfwGetTime();
+			const GLfloat currentFrame = static_cast<GLfloat>(glfwGetTime());
 			const GLfloat deltaTime = currentFrame - lastFrame;
 
-			glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			CAPP_GL_CALL(glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w));
+			CAPP_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 			
 			update(deltaTime);
 			drawImGui(deltaTime);
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
-			glfwPollEvents();
-			glfwSwapBuffers(window);
+			CAPP_GL_CALL(glfwPollEvents());
+			CAPP_GL_CALL(glfwSwapBuffers(window));
 
 		}
 
@@ -157,10 +145,11 @@ namespace Cappuccino {
 	GAME LOOP
 	*/
 	void Application::update(GLfloat dt) {
-#ifdef _DEBUG
-		if (isEvent(Events::Escape))
-			exit(0);
-#endif
+		#ifdef _DEBUG
+		if(isEvent(Events::Escape)) {
+			glfwSetWindowShouldClose(window, true);
+		}
+		#endif
 
 		if (Sedna::XInputManager::controllerConnected(0) || Sedna::XInputManager::controllerConnected(1) ||
 			Sedna::XInputManager::controllerConnected(2) || Sedna::XInputManager::controllerConnected(3)) {
@@ -189,7 +178,7 @@ namespace Cappuccino {
 		ImGui::End();
 		ImGuiIO& io = ImGui::GetIO();
 
-		io.DisplaySize = ImVec2(_width, _height);
+		io.DisplaySize = ImVec2(static_cast<GLfloat>(_width), static_cast<GLfloat>(_height));
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

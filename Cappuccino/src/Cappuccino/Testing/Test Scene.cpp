@@ -199,9 +199,9 @@ namespace Cappuccino {
 #endif
 		_lightingShader.loadViewMatrix(*testPlayer->getCamera());
 		_lightingShader.loadProjectionMatrix(800.0f * 2, 600.0f * 2);
-		_lightingShader.setUniform("material.diffuse", (int)0);
-		_lightingShader.setUniform("material.specular", (int)1);
-		_lightingShader.setUniform("material.shininess", (float)32.0f);
+		_lightingShader.setUniform("material.diffuse", 0);
+		_lightingShader.setUniform("material.specular", 1);
+		_lightingShader.setUniform("material.shininess", 32.0f);
 
 		// directional light
 		_lightingShader.setUniform("dirLight.direction", -0.2f, -1.0f, -0.3f);
