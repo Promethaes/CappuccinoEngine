@@ -41,7 +41,7 @@
 														CAPP_PRINT_WARNING("OPENGL ERROR: %x", error);\
 														CAPP_PRINT_WARNING(__FUNCSIG__);\
 														CAPP_PRINT_WARNING("[%s : %i ]", __FILE__, __LINE__);\
-														/*__debugbreak();*/\
+														__debugbreak();\
 													}
 
 #define CAPP_PRINT(message, ...)					printf(message, ##__VA_ARGS__)

@@ -1,13 +1,12 @@
 #include "Cappuccino/Application.h"
-#include "Cappuccino/FontManager.h"
-#include "Cappuccino/ShaderProgram.h"
-#include "Cappuccino/SoundSystem.h"
-#include "Cappuccino/Testing/Test Scene.h"
 
 using Application = Cappuccino::Application;
-using SoundSystem = Cappuccino::SoundSystem;
 using FontManager = Cappuccino::FontManager;
+using Mesh        = Cappuccino::Mesh;
 using Shader      = Cappuccino::Shader;
+using SoundSystem = Cappuccino::SoundSystem;
+using Texture     = Cappuccino::Texture;
+
 
 #pragma region PROGRAM SETTINGS
 
@@ -36,10 +35,11 @@ int main() {
 		// Cappuccino::TestScene* e = new Cappuccino::TestScene(true);
 		// e->init();
 
-		SoundSystem::setDefaultPath("./Assets/Sounds/");
 		FontManager::setDefaultPath("./Assets/Fonts/");
+		Mesh::setDefaultPath("./Assets/Meshes/");
 		Shader::setDefaultPath("./Assets/Shaders/");
-
+		SoundSystem::setDefaultPath("./Assets/Sounds/");
+		Texture::setDefaultPath("./Assets/Textures/");
 
 		application->run();
 		delete application;

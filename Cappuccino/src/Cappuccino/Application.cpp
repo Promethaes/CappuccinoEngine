@@ -1,21 +1,9 @@
 #include "Cappuccino/Application.h"
-#include "Cappuccino/CappMacros.h"
-#include "Cappuccino/Camera.h"
-#include "Cappuccino/FontManager.h"
-#include "Cappuccino/GameObject.h"
-#include "Cappuccino/Input.h"
-#include "Cappuccino/SceneManager.h"
-#include "Cappuccino/SoundSystem.h"
-#include "Cappuccino/XInputManager.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
-
-#if SCENETEST
-#include "Cappuccino/Testing/Test Scene.h"
-#endif
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;

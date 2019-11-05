@@ -31,7 +31,6 @@ Shader::Shader(const string& vertShaderPath, const string& fragShaderPath, const
 }
 
 void Shader::createShader() {
-	_programID = 0;
 	GLuint vertShader = 0, fragShader = 0, geomShader = 0;
 
 	compileShader(_vertexShaderPath.c_str(), ShaderType::VERTEX, vertShader);
