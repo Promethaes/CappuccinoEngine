@@ -112,11 +112,11 @@ namespace Cappuccino {
 #endif
 
 
-	//	FontManager::loadTypeFace("arial.ttf");
+		//FontManager::loadTypeFace("arial.ttf");
 
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		CAPP_GL_CALL(glEnable(GL_DEPTH_TEST));
+		CAPP_GL_CALL(glEnable(GL_BLEND));
+		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		static GLfloat lastFrame;
 
 		/*
@@ -126,16 +126,16 @@ namespace Cappuccino {
 			const GLfloat currentFrame = glfwGetTime();
 			const GLfloat deltaTime = currentFrame - lastFrame;
 
-			glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			CAPP_GL_CALL(glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w));
+			CAPP_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 			
 			update(deltaTime);
 			drawImGui(deltaTime);
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
-			glfwPollEvents();
-			glfwSwapBuffers(window);
+			CAPP_GL_CALL(glfwPollEvents());
+			CAPP_GL_CALL(glfwSwapBuffers(window));
 
 		}
 
@@ -157,10 +157,11 @@ namespace Cappuccino {
 	GAME LOOP
 	*/
 	void Application::update(GLfloat dt) {
-#ifdef _DEBUG
-		if (isEvent(Events::Escape))
-			exit(0);
-#endif
+		#ifdef _DEBUG
+		if(isEvent(Events::Escape)) {
+			glfwSetWindowShouldClose(window, true);
+		}
+		#endif
 
 		if (Sedna::XInputManager::controllerConnected(0) || Sedna::XInputManager::controllerConnected(1) ||
 			Sedna::XInputManager::controllerConnected(2) || Sedna::XInputManager::controllerConnected(3)) {

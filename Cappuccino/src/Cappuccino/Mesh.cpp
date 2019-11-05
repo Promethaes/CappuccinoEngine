@@ -1,20 +1,23 @@
+#include "Cappuccino/Mesh.h"
+
+#include "Cappuccino/CappMacros.h"
+#include "Cappuccino/ResourceManager.h"
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+
 #include <vector>
 #include <sstream>
 #include <iostream>
 #include <fstream>
-#include "Cappuccino/Mesh.h"
-#include "Cappuccino/CappMacros.h"
-#include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {
+	
 	struct FaceData {
 		unsigned vertexData[3]{};
 		unsigned textureData[3]{};
 		unsigned normalData[3]{};
 	};
-
 
 
 	Mesh::Mesh(const std::string& path)
@@ -110,27 +113,27 @@ namespace Cappuccino {
 		for (unsigned i = 0; i < unPnormalData.size(); i++)
 			master.push_back(unPnormalData[i]);
 
-		glGenVertexArrays(1, &_VAO);
-		glGenBuffers(1, &_VBO);
+		CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
+		CAPP_GL_CALL(glGenBuffers(1, &_VBO));
 
 		//binding the vao
-		glBindVertexArray(_VAO);
+		CAPP_GL_CALL(glBindVertexArray(_VAO));
 
 		//enable slots
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+		CAPP_GL_CALL(glEnableVertexAttribArray(0));
+		CAPP_GL_CALL(glEnableVertexAttribArray(1));
+		CAPP_GL_CALL(glEnableVertexAttribArray(2));
 
-		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+		CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
 		//vertex
-		glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(unPvertexData.size() * sizeof(float)));
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size()) * sizeof(float)));
+		CAPP_GL_CALL(glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_STATIC_DRAW));
+		CAPP_GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+		CAPP_GL_CALL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(unPvertexData.size() * sizeof(float))));
+		CAPP_GL_CALL(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size()) * sizeof(float))));
 
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		CAPP_GL_CALL(glBindVertexArray(0));
 
 		input.close();
 		return loaded = true;
@@ -139,9 +142,9 @@ namespace Cappuccino {
 	void Mesh::unload()
 	{
 		//empty the buffers
-		glDeleteBuffers(1, &_VBO);
+		CAPP_GL_CALL(glDeleteBuffers(1, &_VBO));
 
-		glDeleteVertexArrays(1, &_VAO);
+		CAPP_GL_CALL(glDeleteVertexArrays(1, &_VAO));
 		_VBO = 0;
 		_VAO = 0;
 
@@ -151,7 +154,7 @@ namespace Cappuccino {
 
 	void Mesh::draw()
 	{
-		glBindVertexArray(_VAO);
-		glDrawArrays(GL_TRIANGLES, 0, _numVerts);
+		CAPP_GL_CALL(glBindVertexArray(_VAO));
+		CAPP_GL_CALL(glDrawArrays(GL_TRIANGLES, 0, _numVerts));
 	}
 }

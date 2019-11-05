@@ -1,63 +1,64 @@
 #include "Cappuccino/Texture.h"
+
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/ResourceManager.h"
 
 #include <iostream>
-namespace Cappuccino {
-	Texture::Texture(std::string& PATH, const TextureType& ID)
+
+using namespace Cappuccino;
+	
+Texture::Texture(std::string& PATH, const TextureType& ID)
+{
+	_path = PATH;
+	type = ID;
+	load();
+	ResourceManager::_allTextures.push_back(this);
+}
+bool Texture::load() {
+	//again, one hundred million % not mine
+	//i got this code from learn opengl.com https://learnopengl.com/code_viewer_gh.php?code=src/2.lighting/5.3.light_casters_spot/light_casters_spot.cpp
+	GLuint textureID;
+	CAPP_GL_CALL(glGenTextures(1, &textureID));
+
+	int width, height, nrComponents;
+	_data = stbi_load(_path.c_str(), &width, &height, &nrComponents, 0);
+	//stbi_set_flip_vertically_on_load(true);
+	if (_data)
 	{
-		_path = PATH;
-		type = ID;
-		load();
-		ResourceManager::_allTextures.push_back(this);
-	}
-	bool Texture::load() {
-		//again, one hundred million % not mine
-		//i got this code from learn opengl.com https://learnopengl.com/code_viewer_gh.php?code=src/2.lighting/5.3.light_casters_spot/light_casters_spot.cpp
-		unsigned textureID;
-		glGenTextures(1, &textureID);
+		GLenum format;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
 
-		int width, height, nrComponents;
-		_data = stbi_load(_path.c_str(), &width, &height, &nrComponents, 0);
-		//stbi_set_flip_vertically_on_load(true);
-		if (_data)
-		{
-			GLenum format;
-			if (nrComponents == 1)
-				format = GL_RED;
-			else if (nrComponents == 3)
-				format = GL_RGB;
-			else if (nrComponents == 4)
-				format = GL_RGBA;
+		CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, textureID));
+		CAPP_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, _data));
+		CAPP_GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
+			
+		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, _data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			//delete the stored _data
-			stbi_image_free(_data);
-		}
-		else
-		{
-			CAPP_PRINT_ERROR("Problem loading Texture at %s", _path.c_str());
-			stbi_image_free(_data);
-			SYS_EXIT(0);
-			return false;
-		}
-
-		_texture = textureID;
-		loaded = true;
-		return true;
-	}
-	bool Texture::unload()
-	{
+		//delete the stored _data
 		stbi_image_free(_data);
-
-		return true;
 	}
+	else
+	{
+		CAPP_PRINT_ERROR("Problem loading Texture at %s", _path.c_str());
+		stbi_image_free(_data);
+		SYS_EXIT(0);
+	}
+
+	_texture = textureID;
+	loaded = true;
+	return true;
+}
+bool Texture::unload()
+{
+	stbi_image_free(_data);
+
+	return true;
 }

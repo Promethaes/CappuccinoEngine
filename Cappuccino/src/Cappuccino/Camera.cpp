@@ -1,52 +1,53 @@
 #include "Cappuccino/Camera.h"
-namespace Cappuccino {
-	glm::mat4 Camera::whereAreWeLooking() const {
-		return glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
-	}
 
-	void Camera::lookAt(const glm::vec3& lookVec)
-	{
-		auto temp = lookVec - _cameraPos;
+using namespace Cappuccino;
 
-		temp = glm::normalize(temp);
+glm::mat4 Camera::whereAreWeLooking() const {
+	return glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
+}
 
-		_cameraFront = temp;
-		glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
-	}
+void Camera::lookAt(const glm::vec3& lookVec)
+{
+	auto temp = lookVec - _cameraPos;
 
-	void Camera::doMouseMovement(float xoffset, float yoffset) {
-		xoffset *= _mouseSensitivity;
-		yoffset *= _mouseSensitivity;
+	temp = glm::normalize(temp);
 
-		_yaw += xoffset;
-		_pitch += yoffset;
+	_cameraFront = temp;
+	glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
+}
 
-		if (_pitch > 89.0f)
-			_pitch = 89.0f;
-		if (_pitch < -89.0f)
-			_pitch = -89.0f;
-		update();
-	}
+void Camera::doMouseMovement(float xoffset, float yoffset) {
+	xoffset *= _mouseSensitivity;
+	yoffset *= _mouseSensitivity;
 
-	void Camera::move(GLFWwindow* window, float _movementSpeed) {
-		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-			_cameraPos += _movementSpeed * _cameraFront;
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-			_cameraPos -= _movementSpeed * _cameraFront;
-		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-			_cameraPos -= glm::normalize(glm::cross(_cameraFront, _cameraUp)) * _movementSpeed;
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-			_cameraPos += glm::normalize(glm::cross(_cameraFront, _cameraUp)) * _movementSpeed;
-	}
+	_yaw += xoffset;
+	_pitch += yoffset;
 
-	void Camera::update() {
-		glm::vec3 _front;
-		_front.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
-		_front.y = sin(glm::radians(_pitch));
-		_front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
-		_cameraFront = glm::normalize(_front);
+	if (_pitch > 89.0f)
+		_pitch = 89.0f;
+	if (_pitch < -89.0f)
+		_pitch = -89.0f;
+	update();
+}
 
-		_cameraRight = glm::normalize(glm::cross(_cameraFront, _cameraUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-		//_cameraUp = glm::normalize(glm::cross(cameraRight, _cameraFront));
-	}
+void Camera::move(GLFWwindow* window, float _movementSpeed) {
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		_cameraPos += _movementSpeed * _cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		_cameraPos -= _movementSpeed * _cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		_cameraPos -= glm::normalize(glm::cross(_cameraFront, _cameraUp)) * _movementSpeed;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		_cameraPos += glm::normalize(glm::cross(_cameraFront, _cameraUp)) * _movementSpeed;
+}
+
+void Camera::update() {
+	glm::vec3 _front;
+	_front.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+	_front.y = sin(glm::radians(_pitch));
+	_front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+	_cameraFront = glm::normalize(_front);
+
+	_cameraRight = glm::normalize(glm::cross(_cameraFront, _cameraUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+	//_cameraUp = glm::normalize(glm::cross(cameraRight, _cameraFront));
 }

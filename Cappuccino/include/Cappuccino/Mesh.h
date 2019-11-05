@@ -1,13 +1,14 @@
 #pragma once
 
-#include <Cappuccino/Transform.h>
 #include <string>
+
 namespace Cappuccino {
+
 	class Mesh {
 	public:
+
 		Mesh(const std::string& path);
 
-		
 		/*
 		Purpose: The mesh will be loaded off of the filepath provided in the contructor
 		Req.: None
@@ -30,9 +31,12 @@ namespace Cappuccino {
 		unsigned getVerts() const { return _numVerts; }
 
 		bool loaded = false;
+
 	protected:
+
 		unsigned _numFaces = 0;
 		unsigned _numVerts = 0;
 		std::string _path;
+
 	};
 }
