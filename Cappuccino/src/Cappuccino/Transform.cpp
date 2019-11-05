@@ -10,16 +10,9 @@ glm::mat4 Transform::doTransform(const std::optional<glm::vec3>& translation, co
 		_transformMat = glm::rotate(_transformMat, rotationAngle.value(), rotateOn.value());
 	if (scaleVec.has_value())
 		_transformMat = glm::scale(_transformMat, scaleVec.value() * sizeScalar.value());
-
-<<<<<<< Updated upstream
-	glm::mat4 Transform::rotate(const glm::vec3& rotateOn, float rotationAngle)
-	{
-		return _rotateMat = glm::rotate(_rotateMat, glm::radians(rotationAngle), rotateOn);
-	}
-=======
 	return _transformMat;
 }
->>>>>>> Stashed changes
+
 
 void Transform::update()
 {

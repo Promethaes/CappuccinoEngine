@@ -123,7 +123,7 @@ namespace Cappuccino {
 		Render Loop
 		*/
 		while (!glfwWindowShouldClose(window)) {
-			const GLfloat currentFrame = glfwGetTime();
+			const GLfloat currentFrame = static_cast<GLfloat>(glfwGetTime());
 			const GLfloat deltaTime = currentFrame - lastFrame;
 
 			CAPP_GL_CALL(glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w));
@@ -190,7 +190,7 @@ namespace Cappuccino {
 		ImGui::End();
 		ImGuiIO& io = ImGui::GetIO();
 
-		io.DisplaySize = ImVec2(_width, _height);
+		io.DisplaySize = ImVec2(static_cast<GLfloat>(_width), static_cast<GLfloat>(_height));
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
