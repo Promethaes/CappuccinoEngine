@@ -1,6 +1,5 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <vector>
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -101,14 +100,19 @@ namespace Cappuccino {
 
 		_numFaces = faces.size();
 		_numVerts = _numFaces * 3;
-		std::vector<float> master;
 
-		for (unsigned i = 0; i < unPvertexData.size(); i++)
+		for (unsigned i = 0; i < unPvertexData.size(); i++) {
 			master.push_back(unPvertexData[i]);
-		for (unsigned i = 0; i < unPtextureData.size(); i++)
+			verts.push_back(unPvertexData[i]);
+		}
+		for (unsigned i = 0; i < unPtextureData.size(); i++) {
 			master.push_back(unPtextureData[i]);
-		for (unsigned i = 0; i < unPnormalData.size(); i++)
+			texts.push_back(unPtextureData[i]);
+		}
+		for (unsigned i = 0; i < unPnormalData.size(); i++) {
 			master.push_back(unPnormalData[i]);
+			norms.push_back(unPnormalData[i]);
+		}
 
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);
@@ -135,6 +139,51 @@ namespace Cappuccino {
 		input.close();
 		return loaded = true;
 	}
+
+	void Mesh::reload(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS)
+	{
+		master.clear();
+		verts.clear();
+		texts.clear();
+		norms.clear();
+
+		unload();
+
+		for (unsigned i = 0; i < VERTS.size(); i++) {
+			master.push_back(VERTS[i]);
+			verts.push_back(VERTS[i]);
+		}
+		for (unsigned i = 0; i < TEXTS.size(); i++) {
+			master.push_back(TEXTS[i]);
+			texts.push_back(TEXTS[i]);
+		}
+		for (unsigned i = 0; i < NORMS.size(); i++) {
+			master.push_back(NORMS[i]);
+			norms.push_back(NORMS[i]);
+		}
+
+		glGenVertexArrays(1, &_VAO);
+		glGenBuffers(1, &_VBO);
+		
+		glBindVertexArray(_VAO);
+
+		//enable slots
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+		//vertex
+		glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(verts.size() * sizeof(float)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size()) * sizeof(float)));
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
 
 	void Mesh::unload()
 	{

@@ -88,7 +88,7 @@ namespace Cappuccino {
 
 	bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos)
 	{
-		return _rigidBody.checkCollision(other,pos);
+		return _rigidBody.checkCollision(other, pos);
 	}
 
 	void GameObject::draw()
@@ -107,6 +107,8 @@ namespace Cappuccino {
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
+
+		
 		for (auto x : _meshes) {
 			x->draw();
 		}
