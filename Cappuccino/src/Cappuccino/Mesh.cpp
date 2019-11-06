@@ -174,7 +174,7 @@ namespace Cappuccino {
 
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		//vertex
-		glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(verts.size() * sizeof(float)));
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size()) * sizeof(float)));
@@ -194,8 +194,8 @@ namespace Cappuccino {
 		_VBO = 0;
 		_VAO = 0;
 
-		_numFaces = 0;//reset all numbers
-		_numVerts = 0;
+		//_numFaces = 0;//reset all numbers
+		//_numVerts = 0;
 	}
 
 	void Mesh::draw()
