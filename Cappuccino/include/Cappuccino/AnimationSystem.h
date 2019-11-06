@@ -11,7 +11,7 @@ namespace Cappuccino {
 		void animate(float dt);
 
 	private:
-		unsigned index = 0;
+		unsigned index = 1;
 		float t = 0.0f;
 		std::vector<Mesh*> _morphTargets;
 		std::vector<float> _originalVerts;
