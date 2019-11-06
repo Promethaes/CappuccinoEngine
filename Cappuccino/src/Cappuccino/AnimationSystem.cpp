@@ -20,6 +20,8 @@ namespace Cappuccino {
 			_originalTexts = _morphTargets[index]->texts;
 			_originalNorms = _morphTargets[index]->norms;
 			index++;
+			if (index > _morphTargets.size() - 1)
+				index = 0;
 		}
 		else {
 			std::vector<float> tempVerts;
@@ -37,7 +39,7 @@ namespace Cappuccino {
 				tempTexts.push_back(Math::lerp(_originalNorms[i], _morphTargets[index]->norms[i], t));
 
 			}
-			_morphTargets[0]->reload(tempVerts, tempTexts, tempNorms);
+			_morphTargets[index - 1]->reload(tempVerts, tempTexts, tempNorms);
 		}
 
 	}
