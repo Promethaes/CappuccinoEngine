@@ -144,7 +144,7 @@ namespace Cappuccino {
 	{
 		master.clear();
 		verts.clear();
-		texts.clear();
+	//	texts.clear();
 		norms.clear();
 
 		unload();
@@ -155,7 +155,6 @@ namespace Cappuccino {
 		}
 		for (unsigned i = 0; i < TEXTS.size(); i++) {
 			master.push_back(TEXTS[i]);
-			texts.push_back(TEXTS[i]);
 		}
 		for (unsigned i = 0; i < NORMS.size(); i++) {
 			master.push_back(NORMS[i]);
