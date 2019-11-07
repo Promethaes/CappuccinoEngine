@@ -1,8 +1,7 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include "stb/stb_image.h"
+
 #include <string>
+
 namespace Cappuccino {
 	enum class TextureType {
 		DiffuseMap = 0,
@@ -14,40 +13,46 @@ namespace Cappuccino {
 	*/
 	class Texture {
 	public:
-		Texture(std::string& PATH, const TextureType& type);
+		Texture(const std::string& PATH, const TextureType& type);
 		Texture() = default;
 		/*
 		Purp: loads the texture into memory
 		returns: bool if it was successful or not
 		*/
 		bool load();
-		bool isLoaded() { return loaded; }
+		bool isLoaded() const { return _loaded; }
 
 		bool unload();
 
 		unsigned getTextureId() const { return _texture; }
 
 		/*
+		 * Purp.: Changes the directory in which the engine looks for the texture files
+		 * Req.:
+		 *     directory: the directory in which to look for, use "default" to look in default directory ( %CappuccinoPath%\Assets\Textures\ )
+		 * Returns: Nothing
+		 */
+		static void setDefaultPath(const std::string& directory);
+		
+		/*
 		Purp: binds the texture in the proper slot
 		*/
-		void bind(unsigned textureSlot) {
-			glActiveTexture(GL_TEXTURE0 + textureSlot);
-			glBindTexture(GL_TEXTURE_2D, _texture);
-		}
+		void bind(unsigned textureSlot) const;
+		
 		/*
 		Purp: unbinds the texture in the proper slot
 		*/
-		void unbind(unsigned textureSlot) {
-			glActiveTexture(GL_TEXTURE + textureSlot);
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+		void unbind(unsigned textureSlot) const;
+		
 		TextureType type;
+		
 	private:
+		static std::string _textureDirectory;
+		
 		unsigned char* _data;
-
 
 		std::string _path;
 		unsigned _texture;
-		bool loaded = false;
+		bool _loaded = false;
 	};
 }

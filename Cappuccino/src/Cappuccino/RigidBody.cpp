@@ -25,13 +25,13 @@ namespace Cappuccino {
 		_shader.setUniform("view",_view);
 		_shader.setUniform("projection", _projection);
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 		if (drawHitBox)
 			for (unsigned i = 0; i < _hitBoxes.size(); i++)
 			{
 				_hitBoxes[i].draw();
 			}
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 	}
 
 	void Cappuccino::RigidBody::addAccel(const glm::vec3& force)

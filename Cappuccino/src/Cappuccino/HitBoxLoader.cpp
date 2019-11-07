@@ -1,6 +1,8 @@
 #include "Cappuccino/HitBoxLoader.h"
 
-Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
+using namespace Cappuccino;
+
+HitBoxLoader::HitBoxLoader(const char* filename)
 {
 	char tempName[256];
 	bool start = true;
@@ -64,7 +66,7 @@ Cappuccino::HitBoxLoader::HitBoxLoader(const char* filename)
 	
 }
 
-float Cappuccino::HitBoxLoader::findRadius()
+float HitBoxLoader::findRadius()
 {
 	float high = _tempVerts[0].y;
 	float low = _tempVerts[0].y;
@@ -79,7 +81,7 @@ float Cappuccino::HitBoxLoader::findRadius()
 	return (low+high)/2-low;
 }
 
-glm::vec3 Cappuccino::HitBoxLoader::findBox()
+glm::vec3 HitBoxLoader::findBox()
 {
 	glm::vec3 tempHigh = _tempVerts[0];
 	glm::vec3 tempLow = _tempVerts[0];
@@ -103,7 +105,7 @@ glm::vec3 Cappuccino::HitBoxLoader::findBox()
 	return glm::vec3(tempHigh - tempLow)/2.0f;
 }
 
-glm::vec3 Cappuccino::HitBoxLoader::findCenter()
+glm::vec3 HitBoxLoader::findCenter()
 {
 	glm::vec3 tempHigh = _tempVerts[0];
 	glm::vec3 tempLow = _tempVerts[0];
@@ -123,8 +125,8 @@ glm::vec3 Cappuccino::HitBoxLoader::findCenter()
 		if (_tempVerts[i].z < tempLow.z)
 			tempLow.z = _tempVerts[i].z;
 	}
-	return glm::vec3(
-		(tempHigh.x / 2) + (tempLow.x / 2),
-		(tempHigh.y / 2) + (tempLow.y / 2), 
-		(tempHigh.z / 2) + (tempLow.z / 2));
+	
+	return glm::vec3(tempHigh.x / 2 + tempLow.x / 2,
+	                 tempHigh.y / 2 + tempLow.y / 2,
+	                 tempHigh.z / 2 + tempLow.z / 2);
 }

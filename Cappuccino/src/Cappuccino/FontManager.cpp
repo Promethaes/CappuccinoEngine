@@ -1,14 +1,16 @@
 #include "Cappuccino/FontManager.h"
 #include "Cappuccino/CappMacros.h"
-#include "glad/glad.h"
-#include "glm/gtc/matrix_transform.hpp"
+
+#include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Cappuccino {
 
 	std::map<char, Character> Character::_characters;
-
 	FT_Library FontManager::_lib;
 	bool FontManager::_initialized = false;
 	std::string FontManager::_typefacePath = "";
+	
 	bool FontManager::init(const std::string& defaultPath)
 	{
 		if (_initialized)
@@ -53,9 +55,9 @@ namespace Cappuccino {
 			}
 			// Generate texture
 			GLuint texture;
-			glGenTextures(1, &texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(
+			CAPP_GL_CALL(glGenTextures(1, &texture));
+			CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, texture));
+			CAPP_GL_CALL(glTexImage2D(
 				GL_TEXTURE_2D,
 				0,
 				GL_RED,
@@ -65,12 +67,12 @@ namespace Cappuccino {
 				GL_RED,
 				GL_UNSIGNED_BYTE,
 				face->glyph->bitmap.buffer
-			);
+			));
 			// Set texture options
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+			CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+			CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+			CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 			// Now store character for later use
 			Character character = {
 				texture,
@@ -98,23 +100,23 @@ namespace Cappuccino {
 		_scale = defaultScale;
 		
 
-		glGenVertexArrays(1, &_VAO);
-		glGenBuffers(1, &_VBO);
-		glBindVertexArray(_VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-		glBufferData(GL_ARRAY_BUFFER, (sizeof(GLfloat) * 6) * 4, NULL, GL_DYNAMIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
+		CAPP_GL_CALL(glGenBuffers(1, &_VBO));
+		CAPP_GL_CALL(glBindVertexArray(_VAO));
+		CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
+		CAPP_GL_CALL(glBufferData(GL_ARRAY_BUFFER, (sizeof(GLfloat) * 6) * 4, NULL, GL_DYNAMIC_DRAW));
+		CAPP_GL_CALL(glEnableVertexAttribArray(0));
+		CAPP_GL_CALL(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
+		CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		CAPP_GL_CALL(glBindVertexArray(0));
 	}
 
 	void Text::draw()
 	{
 		
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindVertexArray(_VAO);
+		CAPP_GL_CALL(glActiveTexture(GL_TEXTURE0));
+		CAPP_GL_CALL(glBindVertexArray(_VAO));
 		
 		_textShader->use();
 		_textShader->loadOrthoProjectionMatrix(_windowSize.x,_windowSize.y);
@@ -145,18 +147,18 @@ namespace Cappuccino {
 				{ xpos + w, ypos + h,   1.0, 0.0 }
 			};
 			// Render glyph texture over quad
-			glBindTexture(GL_TEXTURE_2D, ch._textureId);
+			CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, ch._textureId));
 			// Update content of VBO memory
-			glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
+			CAPP_GL_CALL(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
+			CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 			// Render quad
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			CAPP_GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
 			// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 			tempPos.x += (ch._advance >> 6)* _scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
-		glBindVertexArray(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		CAPP_GL_CALL(glBindVertexArray(0));
+		CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
 	}
 
 

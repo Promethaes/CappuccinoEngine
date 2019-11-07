@@ -1,5 +1,18 @@
 #pragma once
 
+#include "Cappuccino/CappMacros.h"
+#include "Cappuccino/Camera.h"
+#include "Cappuccino/FontManager.h"
+#include "Cappuccino/GameObject.h"
+#include "Cappuccino/Input.h"
+#include "Cappuccino/SceneManager.h"
+#include "Cappuccino/SoundSystem.h"
+#include "Cappuccino/XInputManager.h"
+
+#if SCENETEST
+#include "Cappuccino/Testing/Test Scene.h"
+#endif
+
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
 #include <glm/glm.hpp>

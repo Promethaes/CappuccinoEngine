@@ -1,13 +1,13 @@
 #pragma once
+
 #include "Cappuccino/Mesh.h"
+#include "Cappuccino/RigidBody.h"
 #include "Cappuccino/ShaderProgram.h"
 #include "Cappuccino/Texture.h"
+#include "Cappuccino/Transform.h"
+
 #include <string>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <vector>
-#include "Cappuccino/RigidBody.h"
 #include <optional>
 
 namespace Cappuccino {

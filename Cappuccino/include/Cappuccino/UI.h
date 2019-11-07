@@ -45,7 +45,7 @@ namespace Cappuccino {
 	class UIBar : public UIComponent {
 	public:
 
-		enum class OriginPoint{
+		enum class OriginPoint {
 			Middle = 0,
 			BottomRight,
 			BottomLeft,

@@ -1,5 +1,6 @@
 #include "Cappuccino/Player.h"
 #include "Cappuccino/CappMath.h"
+
 #define player static_cast<Cappuccino::Player*>
 
 namespace Cappuccino {

@@ -2,10 +2,13 @@
 #include <glm/glm.hpp>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 #include <fstream>
 #include "Cappuccino/Mesh.h"
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/ResourceManager.h"
+
+using string = std::string;
 
 namespace Cappuccino {
 	struct FaceData {
@@ -15,7 +18,7 @@ namespace Cappuccino {
 	};
 
 
-
+	std::string Mesh::_meshDirectory = CAPP_PATH + R"(Assets/Meshes/)";
 	Mesh::Mesh(const std::string& path)
 	{
 		this->_path = path;
@@ -37,7 +40,7 @@ namespace Cappuccino {
 		std::vector<float> unPnormalData{};
 		//load the file
 		std::ifstream input{};
-		input.open(_path);
+		input.open(_meshDirectory + _path);
 
 		if (!input.good()) {
 			std::cout << "Problem loading file: " << _path << "\n";
@@ -144,7 +147,7 @@ namespace Cappuccino {
 	{
 		master.clear();
 		verts.clear();
-	//	texts.clear();
+		//	texts.clear();
 		norms.clear();
 
 		unload();
@@ -163,7 +166,7 @@ namespace Cappuccino {
 
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);
-		
+
 		glBindVertexArray(_VAO);
 
 		//enable slots
@@ -202,4 +205,14 @@ namespace Cappuccino {
 		glBindVertexArray(_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, _numVerts);
 	}
+void Mesh::setDefaultPath(const std::string& directory) {
+	string dir = directory;
+	std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
+
+	if (dir == "default")
+		_meshDirectory = CAPP_PATH + R"(\Assets\Meshes\)";
+	else
+		_meshDirectory = directory;
+}
+
 }
