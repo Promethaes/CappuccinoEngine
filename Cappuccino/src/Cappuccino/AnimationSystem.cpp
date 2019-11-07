@@ -12,16 +12,20 @@ namespace Cappuccino {
 	}
 	void Animation::animate(float dt)
 	{
+		static bool stop = false;
+		if (stop)
+			return;
 		t += dt;
 
 		if (t >= 1.0f) {
 			t = 0.0f;
+
 			_originalVerts = _morphTargets[index]->verts;
 			_originalTexts = _morphTargets[index]->texts;
 			_originalNorms = _morphTargets[index]->norms;
 			index++;
 			if (index > _morphTargets.size() - 1)
-				index = 0;
+				stop = true;
 		}
 		else {
 			std::vector<float> tempVerts;
@@ -36,10 +40,11 @@ namespace Cappuccino {
 			}
 			std::vector<float> tempNorms;
 			for (unsigned i = 0; i < _originalNorms.size(); i++) {
-				tempTexts.push_back(Math::lerp(_originalNorms[i], _morphTargets[index]->norms[i], t));
+				tempNorms.push_back(Math::lerp(_originalNorms[i], _morphTargets[index]->norms[i], t));
 
 			}
-			_morphTargets[index - 1]->reload(tempVerts, tempTexts, tempNorms);
+
+			_morphTargets[0]->reload(tempVerts, tempTexts, tempNorms);
 		}
 
 	}
