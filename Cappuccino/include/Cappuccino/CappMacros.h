@@ -38,7 +38,14 @@
 #define CAPP_GL_CALL(glCall)						while(glGetError() != GL_NO_ERROR);\
 													glCall;\
 													while(GLenum error = glGetError()) {\
-														CAPP_PRINT_WARNING("OPENGL ERROR: %x", error);\
+														char* type = NULL;\
+														if(error == GL_INVALID_ENUM)					type = "GL_INVALID_ENUM";\
+														if(error == GL_INVALID_VALUE)					type = "GL_INVALID_VALUE";\
+														if(error == GL_INVALID_OPERATION)				type = "GL_INVALID_OPERATION";\
+														if(error == GL_INVALID_FRAMEBUFFER_OPERATION)	type = "GL_INVALID_FRAMEBUFFER_OPERATION";\
+														if(error == GL_OUT_OF_MEMORY)					type = "GL_OUT_OF_MEMORY";\
+														\
+														CAPP_PRINT_WARNING("OPENGL ERROR: %s", type);\
 														CAPP_PRINT_WARNING(__FUNCSIG__);\
 														CAPP_PRINT_WARNING("[%s : %i ]", __FILE__, __LINE__);\
 														__debugbreak();\

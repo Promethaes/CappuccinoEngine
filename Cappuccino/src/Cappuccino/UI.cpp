@@ -10,10 +10,12 @@ void UIComponent::drawComponent() {}
 
 void UserInterface::update(float dt)
 {
-	for (auto x : _uiComponents)
-		x->updateComponent(dt);
-	for (auto x : _uiComponents)
-		x->drawComponent();
+	for(int i = _uiComponents.size() - 1; i >= 0; --i) {
+		_uiComponents[i]->updateComponent(dt);
+	}
+	for(int i = _uiComponents.size() - 1; i >= 0; --i) {
+		_uiComponents[i]->drawComponent();
+	}
 }
 	
 //Text
@@ -38,11 +40,11 @@ UIBar::UIBar(const glm::vec2& defaultPosition, const glm::vec4& defaultColour, c
 	_transform.scale(barDimensions, 1.0f);
 
 	if(point == OriginPoint::BottomLeft)
-		_barMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Cube3.obj");
+		_barMesh = new Mesh("Cube3.obj");
 	else if(point == OriginPoint::Middle)
-		_barMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Cube2.obj");
+		_barMesh = new Mesh("Cube2.obj");
 	else if(point == OriginPoint::BottomRight)
-		_barMesh = new Mesh(CAPP_PATH + "Assets/Mesh/Cube.obj");
+		_barMesh = new Mesh("Cube.obj");
 
 
 	_barMesh->loadMesh();
