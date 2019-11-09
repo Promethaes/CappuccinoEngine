@@ -1,6 +1,7 @@
 #pragma once
 //all of this code is from a previous GDW game and Game Programming Club in one of last semester's sessions.
-namespace Events {
+namespace Events
+{
 	//enum to make it easier to use
 	enum : unsigned char {
 		Mouse_Left = 0x01,
@@ -116,7 +117,7 @@ namespace Events {
 		LeftShift = 0xA0,
 		RightShift = 0xA1,
 		LeftControl = 0xA2,
-		RightContol = 0xA3,
+		RightControl = 0xA3,
 		LeftMenu = 0xA4,
 		RightMenu = 0xA5,
 		BrowserBack = 0xA6,

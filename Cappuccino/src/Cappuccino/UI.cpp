@@ -10,10 +10,10 @@ void UIComponent::drawComponent() {}
 
 void UserInterface::update(float dt)
 {
-	for(int i = _uiComponents.size() - 1; i >= 0; --i) {
+	for(int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
 		_uiComponents[i]->updateComponent(dt);
 	}
-	for(int i = _uiComponents.size() - 1; i >= 0; --i) {
+	for(int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
 		_uiComponents[i]->drawComponent();
 	}
 }

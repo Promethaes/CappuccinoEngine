@@ -334,5 +334,6 @@ ASALocalRun/
 *.bsc
 *.lnk
 *.sln
+*.sln.DotSettings
 *.vcxproj
 *.vcxproj.filters
