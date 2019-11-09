@@ -1,11 +1,21 @@
 #include "Cappuccino/CappInput.h"
+
 #include "Cappuccino/Application.h"
-#include "glfw/glfw3.h"
+
+#include <glfw/glfw3.h>
 
 namespace Cappuccino {
 	bool Keyboard::keyPressed(unsigned char key)
 	{
 		return isEvent(key);
+	}
+
+	bool Keyboard::keyPressed(KeyEvent key) {
+		return glfwGetKey(Application::window, static_cast<int>(key)) == GLFW_PRESS;
+	}
+
+	bool Keyboard::keyReleased(KeyEvent key) {
+		return glfwGetKey(Application::window, static_cast<int>(key)) == GLFW_RELEASE;
 	}
 
 	CappInput::CappInput(bool createKeyboard, const std::optional<unsigned>& controllerIndex)
@@ -36,6 +46,11 @@ namespace Cappuccino {
 			_mouseRightClicked = true;
 		else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
 			_mouseRightClicked = false;
+
+		if(button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+			_mouseMiddleClicked = true;
+		else if(button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
+			_mouseMiddleClicked = false;
 
 	}
 }
