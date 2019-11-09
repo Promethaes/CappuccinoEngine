@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace Cappuccino {
 
@@ -15,6 +16,8 @@ namespace Cappuccino {
 		Returns: A boolean representing if the load succeeded or not
 		*/
 		bool loadMesh();
+
+		void reload(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS);
 
 		/*
 		Purpose: This function will wipe all the data of the object
@@ -42,6 +45,10 @@ namespace Cappuccino {
 		unsigned getVerts() const { return _numVerts; }
 
 		bool loaded = false;
+		std::vector<float> master;
+		std::vector<float> verts;
+		std::vector<float> texts;
+		std::vector<float> norms;
 
 	protected:
 

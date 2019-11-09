@@ -13,6 +13,17 @@ glm::mat4 Transform::doTransform(const std::optional<glm::vec3>& translation, co
 	return _transformMat;
 }
 
+glm::mat4 Transform::rotate(const glm::vec3& rotateOn, float rotationAngle)
+{
+	_rotateMat = glm::rotate(_rotateMat, glm::radians(rotationAngle), rotateOn);
+	//forward = glm::rotate(forward, glm::radians(rotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+	return _rotateMat;
+}
+
+glm::mat4 Transform::scale(const glm::vec3& scaleVec, float sizeScalar)
+{
+	return _scaleMat = glm::scale(_scaleMat, scaleVec * sizeScalar);
+}
 
 void Transform::update()
 {
@@ -23,14 +34,4 @@ glm::vec3 Transform::translate(const glm::vec3& translateBy)
 {
 	_translateMat = glm::translate(_translateMat, translateBy);
 	return _translateMat[3];
-}
-
-glm::mat4 Transform::rotate(const glm::vec3& rotateOn, float rotationAngle)
-{
-	return _rotateMat = glm::rotate(_rotateMat, glm::radians(rotationAngle), glm::radians(rotateOn)*rotationAngle);
-}
-
-glm::mat4 Transform::scale(const glm::vec3& scaleVec, float sizeScalar)
-{
-	return _scaleMat = glm::scale(_scaleMat, scaleVec*sizeScalar);
 }

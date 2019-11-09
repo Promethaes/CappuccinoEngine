@@ -26,11 +26,11 @@ namespace Cappuccino {
 
 		Application();
 		Application(
-			GLuint       WIDTH,
-			GLuint       HEIGHT,
-	  const std::string& TITLE,
-			GLuint       contextVersionMajor = 4u,
-			GLuint       contextVersionMinor = 2u
+			GLuint             WIDTH,
+			GLuint             HEIGHT,
+			const std::string& TITLE,
+			GLuint             contextVersionMajor = 4u,
+			GLuint             contextVersionMinor = 6u
 		);
 		~Application() = default;
 
@@ -49,7 +49,8 @@ namespace Cappuccino {
 		void update(GLfloat dt);
 		void drawImGui(GLfloat dt);
 
-
+		static void glDebugMessageCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data);
+		
 		GLuint _width, _height;
 		std::string _title;
 		GLuint _contextVersionMajor, _contextVersionMinor;

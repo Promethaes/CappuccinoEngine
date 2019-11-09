@@ -41,6 +41,8 @@ namespace Cappuccino {
 		glm::mat4 _translateMat{ 1.0f };
 		glm::mat4 _scaleMat{ 1.0f };
 		glm::mat4 _rotateMat{ 1.0f };
+	
+		glm::vec3 forward{ 0.0f,0.0f,-1.0f };
 	private:
 	};
 }

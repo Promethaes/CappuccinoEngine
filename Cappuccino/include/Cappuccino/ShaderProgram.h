@@ -76,7 +76,7 @@ namespace Cappuccino {
 		// Function to compile shaders in the constructor
 		static void compileShader(const char* shaderPath, const ShaderType& type, GLuint& shader);
 		// Function to link shaders together after compilation
-		void createProgram(GLuint vertex, GLuint fragment, GLuint geometry);
+		void createProgram(GLuint vertex, GLuint fragment, std::optional<GLuint> geometry = std::nullopt);
 
 		GLuint _programID;
 		static std::string _shaderDirectory;

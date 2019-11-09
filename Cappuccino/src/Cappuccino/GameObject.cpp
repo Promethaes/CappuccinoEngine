@@ -6,8 +6,8 @@ std::vector<GameObject*> GameObject::gameObjects = {};
 
 GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& _textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass)
 	:_shader(_shader), _rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z),
-	                              glm::vec3(0, 0, 0),
-								  mass.has_value() ? mass.value() : 1)
+		glm::vec3(0, 0, 0),
+		mass.has_value() ? mass.value() : 1)
 {
 	//mesh = new Mesh(MESH);
 
@@ -23,17 +23,17 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& _text
 }
 
 GameObject::~GameObject() {
-	
-	for(unsigned i = 0; i < _meshes.size(); i++) {
+
+	for (unsigned i = 0; i < _meshes.size(); i++) {
 		_meshes[i]->unload();
 		delete _meshes[i];
 		i--;
 	}
-	
-	for(unsigned i = 0; i < _textures.size(); i++) {
-		if(_textures[i]->type == TextureType::DiffuseMap)
+
+	for (unsigned i = 0; i < _textures.size(); i++) {
+		if (_textures[i]->type == TextureType::DiffuseMap)
 			_textures[i]->unbind(0);
-		else if(_textures[i]->type == TextureType::SpecularMap)
+		else if (_textures[i]->type == TextureType::SpecularMap)
 			_textures[i]->unbind(1);
 
 		delete _textures[i];
@@ -47,7 +47,7 @@ bool GameObject::checkCollision(GameObject& other) {
 }
 
 bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
-	return _rigidBody.checkCollision(other,pos);
+	return _rigidBody.checkCollision(other, pos);
 }
 
 void GameObject::baseUpdate(float dt) {
@@ -93,6 +93,7 @@ void GameObject::scaleZ(const float sizeScalar)
 	_transform.scale(glm::vec3(0, 0, 1), sizeScalar);
 }
 
+
 void GameObject::draw()
 {
 	//set active shader
@@ -109,6 +110,8 @@ void GameObject::draw()
 	}
 
 	_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
+
+
 	for (auto x : _meshes) {
 		x->draw();
 	}
@@ -121,7 +124,6 @@ void GameObject::draw()
 			x->unbind(1);
 	}
 }
-
 void GameObject::loadTextures()
 {
 	if (!_loadedTextures) {
@@ -132,10 +134,7 @@ void GameObject::loadTextures()
 				else
 					return;
 			}
-			else
-				return;
 		}
-		_loadedTextures = true;
 	}
 }
 

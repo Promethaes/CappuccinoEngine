@@ -1,7 +1,10 @@
 #pragma once
+
+#include "Cappuccino/CappEvents.h"
 #include "Cappuccino/Input.h"
 #include "Cappuccino/Events.h"
 #include "Cappuccino/XInputManager.h"
+
 
 #include <optional>
 
@@ -9,7 +12,10 @@ namespace Cappuccino {
 	class Keyboard {
 	public:
 
-		bool keyPressed(unsigned char);
+		bool keyPressed(unsigned char key);
+		
+		bool keyPressed(KeyEvent key);
+		bool keyReleased(KeyEvent key);
 	};
 
 	class ClickListener {
@@ -22,6 +28,7 @@ namespace Cappuccino {
 	private:
 		bool _mouseLeftClicked = false;
 		bool _mouseRightClicked = false;
+		bool _mouseMiddleClicked = false;
 	};
 
 	class CappInput {
