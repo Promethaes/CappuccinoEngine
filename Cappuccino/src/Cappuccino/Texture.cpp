@@ -22,11 +22,11 @@ Texture::Texture(const std::string& PATH, const TextureType& ID) : type(ID), _da
 bool Texture::load() {
 	// Again, 100,000,000% not mine
 	// I got this code from learnopengl.com: https://learnopengl.com/code_viewer_gh.php?code=src/2.lighting/5.3.light_casters_spot/light_casters_spot.cpp
-	CAPP_GL_CALL(glGenTextures(1, &_texture));
+	CAPP_GL_CALL(glGenTextures(1, &_texture));	
+	stbi_set_flip_vertically_on_load(true);
 
 	int width, height, nrComponents;
 	_data = stbi_load(std::string(_textureDirectory + _path).c_str(), &width, &height, &nrComponents, 0);
-	// stbi_set_flip_vertically_on_load(true);
 	
 	if (_data) {
 		GLenum format;
