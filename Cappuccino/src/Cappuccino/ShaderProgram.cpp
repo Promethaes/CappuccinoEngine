@@ -37,9 +37,11 @@ void Shader::createShader() {
 	compileShader(_fragmentShaderPath.c_str(), ShaderType::FRAGMENT, fragShader);
 	if (!_geometryShaderPath.empty()) {
 		compileShader(_geometryShaderPath.c_str(), ShaderType::GEOMETRY, geomShader);
+		createProgram(vertShader, fragShader, geomShader);
 	}
-
-	createProgram(vertShader, fragShader, geomShader);
+	else {
+		createProgram(vertShader, fragShader);
+	}
 }
 
 void Shader::use() const { CAPP_GL_CALL(glUseProgram(_programID)); }
@@ -72,7 +74,7 @@ bool Shader::loadFileAsString(const std::string& file, std::string& output) {
 }
 
 void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuint& shader) {
-	std::string shaderString = "";
+	std::string shaderString;
 
 	if (!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
 		CAPP_PRINT_ERROR("Failed to read shader from file!");
@@ -84,17 +86,17 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 	GLuint shaderType = NULL;
 
 	switch (type) {
-	case ShaderType::VERTEX:
-		shaderType = GL_VERTEX_SHADER;
-		break;
+		case ShaderType::VERTEX:
+			shaderType = GL_VERTEX_SHADER;
+			break;
 
-	case ShaderType::FRAGMENT:
-		shaderType = GL_FRAGMENT_SHADER;
-		break;
+		case ShaderType::FRAGMENT:
+			shaderType = GL_FRAGMENT_SHADER;
+			break;
 
-	case ShaderType::GEOMETRY:
-		shaderType = GL_GEOMETRY_SHADER;
-		break;
+		case ShaderType::GEOMETRY:
+			shaderType = GL_GEOMETRY_SHADER;
+			break;
 	}
 
 	auto shaderFinal = shaderString.c_str();
@@ -110,11 +112,11 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 
 		CAPP_PRINT_ERROR("Failed to compile shader!");
 		CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
-		CAPP_PRINT_ERROR(infoLog);
+		CAPP_PRINT_ERROR("%s", infoLog);
 	}
 }
 
-void Shader::createProgram(const GLuint vertex, const GLuint fragment, const GLuint geometry) {
+void Shader::createProgram(const GLuint vertex, const GLuint fragment, std::optional<GLuint> geometry) {
 	CAPP_GL_CALL(_programID = glCreateProgram());
 
 	if (vertex) {
@@ -131,11 +133,15 @@ void Shader::createProgram(const GLuint vertex, const GLuint fragment, const GLu
 		CAPP_PRINT_WARNING("No fragment shader linked!");
 	}
 
-	if (geometry) {
-		CAPP_GL_CALL(glAttachShader(_programID, geometry));
-	}
-	else {
-		CAPP_PRINT_WARNING("No geometry shader linked!");
+	if(geometry.has_value()) {
+		
+		if (geometry.value()) {
+			CAPP_GL_CALL(glAttachShader(_programID, geometry.value()));
+		}
+		else {
+			CAPP_PRINT_WARNING("No geometry shader linked!");
+		}
+		
 	}
 
 	GLint success;
@@ -147,7 +153,7 @@ void Shader::createProgram(const GLuint vertex, const GLuint fragment, const GLu
 		GLchar infoLog[512];
 		CAPP_GL_CALL(glGetProgramInfoLog(_programID, 512, NULL, infoLog));
 		CAPP_PRINT_ERROR("Failed to create the shader program!");
-		CAPP_PRINT_ERROR(infoLog);
+		CAPP_PRINT_ERROR("%s", infoLog);
 	}
 
 	if (vertex) {
@@ -156,8 +162,10 @@ void Shader::createProgram(const GLuint vertex, const GLuint fragment, const GLu
 	if (fragment) {
 		CAPP_GL_CALL(glDeleteShader(fragment));
 	}
-	if (geometry) {
-		CAPP_GL_CALL(glDeleteShader(geometry));
+	if(geometry.has_value()) {
+		if (geometry.value()) {
+			CAPP_GL_CALL(glDeleteShader(geometry.value()));
+		}
 	}
 }
 
@@ -181,22 +189,18 @@ glm::mat4 Shader::loadModelMatrix(const std::optional<glm::vec3>& translation, c
 }
 
 void Shader::loadViewMatrix(Camera& defaultCamera) {
-	glm::mat4 view(1.0f);
-	view = defaultCamera.whereAreWeLooking();
-
+	const glm::mat4 view = defaultCamera.whereAreWeLooking();
 	setUniform("view", view);
 }
 
 void Shader::loadProjectionMatrix(float width, float height) {
-	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	const glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 	setUniform("projection", projection);
 }
 
 void Shader::loadOrthoProjectionMatrix(float width, float height)
 {
-	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::ortho(-width, width, -height, height, -0.1f, 100.0f);
+	const glm::mat4 projection = glm::ortho(-width, width, -height, height, -0.1f, 100.0f);
 	setUniform("projection", projection);
 }
 

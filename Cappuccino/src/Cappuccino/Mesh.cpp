@@ -70,13 +70,13 @@ namespace Cappuccino {
 				normalData.push_back(normData);
 			}//face data
 			else if (inputString[0] == 'f' && inputString[1] == ' ') {
-				faces.push_back(FaceData());
+				faces.emplace_back();
 
 
 				std::sscanf(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
-					&faces.back().vertexData[0], &faces.back().textureData[0], &faces.back().normalData[0],
-					&faces.back().vertexData[1], &faces.back().textureData[1], &faces.back().normalData[1],
-					&faces.back().vertexData[2], &faces.back().textureData[2], &faces.back().normalData[2]);
+				            &faces.back().vertexData[0], &faces.back().textureData[0], &faces.back().normalData[0],
+				            &faces.back().vertexData[1], &faces.back().textureData[1], &faces.back().normalData[1],
+				            &faces.back().vertexData[2], &faces.back().textureData[2], &faces.back().normalData[2]);
 			}
 			else
 				continue;
@@ -205,14 +205,15 @@ namespace Cappuccino {
 		glBindVertexArray(_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, _numVerts);
 	}
-void Mesh::setDefaultPath(const std::string& directory) {
-	string dir = directory;
-	std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
+	
+	void Mesh::setDefaultPath(const std::string& directory) {
+		string dir = directory;
+		std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
 
-	if (dir == "default")
-		_meshDirectory = CAPP_PATH + R"(\Assets\Meshes\)";
-	else
-		_meshDirectory = directory;
-}
+		if (dir == "default")
+			_meshDirectory = CAPP_PATH + R"(\Assets\Meshes\)";
+		else
+			_meshDirectory = directory;
+	}
 
 }

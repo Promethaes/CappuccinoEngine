@@ -13,7 +13,7 @@ namespace Cappuccino {
 	bool Application::_instantiated = false;
 	GLFWwindow* Application::window = nullptr;
 
-	Application::Application() : Application(100, 100, "Failed to load properly!", 4u, 2u) {}
+	Application::Application() : Application(100, 100, "Failed to load properly!", 4u, 6u) {}
 
 	Application::Application(const GLuint WIDTH, const GLuint HEIGHT, const string& TITLE, const GLuint contextVersionMajor, const GLuint contextVersionMinor) {
 		window = NULL;
@@ -46,23 +46,29 @@ namespace Cappuccino {
 
 			const char* error;
 			glfwGetError(&error);
-			CAPP_PRINT_ERROR(error);
+			CAPP_PRINT_ERROR("%s", error);
 
 			SYS_EXIT(-2);
 		}
 
 		glfwMakeContextCurrent(window);
-		glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, GLint width, GLint height) { glViewport(0, 0, width, height); });
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, const GLint width, const GLint height) { glViewport(0, 0, width, height); });
 
 
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
 			glfwTerminate();
 
 			CAPP_PRINT_ERROR("Error initializing GLAD! Exiting...\n");
 			SYS_EXIT(-3);
 		}
 
-#if _DEBUG
+		#if _DEBUG
+
+		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
+		CAPP_GL_CALL(glDebugMessageCallback(glDebugMessageCallbackFunc, NULL));
+		CAPP_GL_CALL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, 0, GL_FALSE));
+		
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -72,7 +78,7 @@ namespace Cappuccino {
 		io.ConfigFlags |= ImGuiConfigFlags_TransparentBackbuffers;
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 420");
+		ImGui_ImplOpenGL3_Init("#version 460");
 
 		ImGui::StyleColorsDark();
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -81,7 +87,9 @@ namespace Cappuccino {
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
 		}
-#endif
+		
+		#endif
+		
 		SoundSystem::init(CAPP_PATH + "Assets\\Sounds\\");
 		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
 	}
@@ -92,12 +100,12 @@ namespace Cappuccino {
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
 
-#if SOUNDTEST
+		#if SOUNDTEST
 		auto soundRef = SoundSystem::load2DSound("testSound.mp3");
 		auto groupRef = SoundSystem::createChannelGroup("group1");
 
 		SoundSystem::playSound2D(soundRef, groupRef);
-#endif
+		#endif
 
 
 		//FontManager::loadTypeFace("arial.ttf");
@@ -190,5 +198,87 @@ namespace Cappuccino {
 
 			glfwMakeContextCurrent(window);
 		}
+	}
+
+	void Application::glDebugMessageCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data) {
+
+		char buffer[9] = { '\0' };
+		sprintf(buffer, "%.8x", id);
+
+		std::string message = "OpenGL(0x" + std::string(buffer) + "): ";
+
+		switch(type) {
+			case GL_DEBUG_TYPE_ERROR:
+				message += "ERROR";
+				break;
+			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+				message += "DEPRECATED BEHAVIOUR";
+				break;
+			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+				message += "UNDEFINED BEHAVIOUR";
+				break;
+			case GL_DEBUG_TYPE_PORTABILITY:
+				message += "PORTABILITY ISSUE";
+				break;
+			case GL_DEBUG_TYPE_PERFORMANCE:
+				message += "PERFORMANCE ISSUE";
+				break;
+			case GL_DEBUG_TYPE_MARKER:
+				message += "TYPE MARKER";
+				break;
+			case GL_DEBUG_TYPE_OTHER:
+				message += "OTHER";
+				break;
+			default: break;
+		}
+
+		message += "\nSOURCE: ";
+		switch(source) {
+			case GL_DEBUG_SOURCE_API:
+				message += "API";
+				break;
+			case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+				message += "Window system";
+				break;
+			case GL_DEBUG_SOURCE_SHADER_COMPILER:
+				message += "Shader compiler";
+				break;
+			case GL_DEBUG_SOURCE_THIRD_PARTY:
+				message += "Third party";
+				break;
+			case GL_DEBUG_SOURCE_APPLICATION:
+				message += "Application";
+				break;
+			case GL_DEBUG_SOURCE_OTHER:
+				message += "Other";
+			default: break;
+		}
+
+		message += " \nSEVERITY: ";
+		switch(severity) {
+			case GL_DEBUG_SEVERITY_HIGH:
+				message += "HIGH";
+				break;
+			case GL_DEBUG_SEVERITY_MEDIUM:
+				message += "Medium";
+				break;
+			case GL_DEBUG_SEVERITY_LOW:
+				message += "Low";
+				break;
+			case GL_DEBUG_SEVERITY_NOTIFICATION:
+				message += "Notification";
+			default: break;
+		}
+
+		message += "\n" + std::string(msg) + "\n";
+
+		if(type == GL_DEBUG_TYPE_ERROR || severity == GL_DEBUG_SEVERITY_HIGH) {
+			CAPP_PRINT_ERROR("%s", message.c_str());
+			__debugbreak();
+		}
+		else {
+			CAPP_PRINT_WARNING("%s", message.c_str());
+		}
+
 	}
 }
