@@ -33,6 +33,10 @@ namespace Cappuccino {
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray,glm::vec3&);
+
+		void rotateBox(float angle);
+
+		void rebindVBO();
 		glm::vec3 _position = glm::vec3(0, 0, 0);
 		float _radius = 0;
 		float _scale = 1;
