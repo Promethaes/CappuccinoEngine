@@ -101,20 +101,20 @@ void GameObject::draw()
 
 	//bind the textures to their proper slots
 	for (auto x : _textures) {
-		if (x->type == TextureType::DiffuseMap) {
+		if (x->type == TextureType::DiffuseMap)
 			x->bind(0);
-		}
-		else if (x->type == TextureType::SpecularMap) {
+		else if (x->type == TextureType::SpecularMap)
 			x->bind(1);
-		}
+		else if (x->type == TextureType::NormalMap)
+			x->bind(2);
 	}
 
 	_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
 
 
-	for (auto x : _meshes) {
+	for (auto x : _meshes)
 		x->draw();
-	}
+
 
 	//unloads the textures
 	for (auto x : _textures) {
@@ -122,6 +122,8 @@ void GameObject::draw()
 			x->unbind(0);
 		else if (x->type == TextureType::SpecularMap)
 			x->unbind(1);
+		else if (x->type == TextureType::NormalMap)
+			x->unbind(2);
 	}
 }
 void GameObject::loadTextures()

@@ -29,7 +29,7 @@ namespace Cappuccino {
 		if (drawHitBox)
 			for (unsigned i = 0; i < _hitBoxes.size(); i++)
 			{
-				_hitBoxes[i].draw();
+				//_hitBoxes[i].draw();
 			}
 		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 	}

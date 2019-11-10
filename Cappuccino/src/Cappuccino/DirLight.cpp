@@ -11,6 +11,7 @@ namespace Cappuccino {
 		_dirLightShader.loadProjectionMatrix(windowSize.x, windowSize.y);
 		_dirLightShader.setUniform("material.diffuse", 0);
 		_dirLightShader.setUniform("material.specular", 1);
+		_dirLightShader.setUniform("material.normalMap", 2);
 
 		setDirection(direction);
 		setAmbient(ambientColour);
