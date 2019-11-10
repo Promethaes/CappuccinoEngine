@@ -52,6 +52,7 @@ namespace Cappuccino {
 		void setScale(float newScale) { _scale = newScale; }
 
 		glm::vec3 getColour() const { return _colour; }
+		glm::vec2& getPosition() { return _position; }
 	protected:
 		glm::vec2 _windowSize;
 		float _scale;
