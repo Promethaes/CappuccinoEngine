@@ -29,7 +29,7 @@ namespace Cappuccino {
 		if (drawHitBox)
 			for (unsigned i = 0; i < _hitBoxes.size(); i++)
 			{
-				_hitBoxes[i].draw();
+				//_hitBoxes[i].draw();
 			}
 		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 	}
@@ -71,25 +71,41 @@ namespace Cappuccino {
 
 	bool RigidBody::checkCollision(RigidBody& other)
 	{
-		if(_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
-			for (unsigned i=1;i<_hitBoxes.size();i++)
-			{
-				for (unsigned n = 1; n < other._hitBoxes.size(); n++)
+		if (!_hitBoxes.size()||!other._hitBoxes.size())
+			return false;
+		if (_hitBoxes.size() > 1)
+		{
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
+				for (unsigned i = 1; i < _hitBoxes.size(); i++)
 				{
-					if (_hitBoxes[i].checkCollision(other._hitBoxes[n],other._position,_position))
-						return true;
+					for (unsigned n = 1; n < other._hitBoxes.size(); n++)
+					{
+						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position))
+							return true;
+					}
 				}
-			}
-		return false;
+		}
+		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
+			return true;
+		else
+			return false;
 	}
 
 	bool RigidBody::checkCollision(HitBox other,glm::vec3 pos)
 	{
-		if (_hitBoxes[0].checkCollision(other, pos, _position))
-			for (unsigned i = 1; i < _hitBoxes.size(); i++)
-				if (_hitBoxes[i].checkCollision(other, pos, _position))
-					return true;
-		return false;
+		if (_hitBoxes.size() == 0)
+			return false;
+		if (_hitBoxes.size() > 1)
+		{
+			if (_hitBoxes[0].checkCollision(other, pos, _position))
+				for (unsigned i = 1; i < _hitBoxes.size(); i++)
+					if (_hitBoxes[i].checkCollision(other, pos, _position))
+						return true;
+		}
+		else if (_hitBoxes[0].checkCollision(other,pos,_position))
+			return true;
+		else
+			return false;
 	}
 
 }
