@@ -159,7 +159,7 @@ namespace Cappuccino {
 	GAME LOOP
 	*/
 	void Application::update(GLfloat dt) {
-		#ifdef _DEBUG
+		#if _DEBUG
 		if(isEvent(Events::Escape)) {
 			glfwSetWindowShouldClose(window, true);
 		}
