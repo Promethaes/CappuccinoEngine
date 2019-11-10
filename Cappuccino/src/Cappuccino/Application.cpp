@@ -126,7 +126,10 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 			
 			update(deltaTime);
+
+			#if _DEBUG
 			drawImGui(deltaTime);
+			#endif
 
 			// Swap the buffers and poll events for the next frame
 			lastFrame = currentFrame;
@@ -139,11 +142,14 @@ namespace Cappuccino {
 	}
 
 	void Application::cleanup() {
+
+		#if _DEBUG
 		// Shutdown imGui
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
-
+		#endif
+		
 		// Shutdown GLFW
 		glfwTerminate();
 	}
