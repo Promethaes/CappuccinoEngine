@@ -19,8 +19,8 @@ void UserInterface::update(float dt)
 }
 	
 //Text
-UIText::UIText(const std::string& text, const glm::vec2& windowSize, Shader& defaultShader, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale)
-	:Text(text,defaultShader,defaultPosition,defaultColour,defaultScale)
+UIText::UIText(const std::string& text, const glm::vec2& windowSize, const glm::vec2& defaultPosition, const glm::vec3& defaultColour, float defaultScale)
+	:Text(text, _textShader, defaultPosition, defaultColour, defaultScale)
 {
 	_windowSize = windowSize;
 }
