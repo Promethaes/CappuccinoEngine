@@ -33,10 +33,24 @@ namespace Cappuccino {
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray,glm::vec3&);
-
+		/*
+		Purp: Rotate the hitbox
+		Pre: an angle of rotation
+		Post: None
+		*/
 		void rotateBox(float angle);
-
-		void rebindVBO();
+		/*
+		Purp: Rebind the vbo for hitbox drawing
+		Pre: the position of the rigidbody and the radius of the hitbox
+		Post: None
+		*/
+		void rebindVBO(glm::vec3& newPos, float newRadius);
+		/*
+		Purp: Rebind the vbo for hitbox drawing
+		Pre:  the position of the rigidbody and the size of the hitbox
+		Post: None
+		*/
+		void rebindVBO(glm::vec3& newPos, glm::vec3& newSize);
 		glm::vec3 _position = glm::vec3(0, 0, 0);
 		float _radius = 0;
 		float _scale = 1;
