@@ -229,13 +229,9 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 
 void Cappuccino::HitBox::rotateBox(float angle)
 {
-	int temp1, temp2;
 	if (angle/90.0f == 1.0f)
 	{
-		temp1 = _size.x;
-		temp2 = _size.z;
-		_size.x = temp2;
-		_size.z = temp1;
+		_size = glm::vec3(_size.z, _size.y, _size.x);
 		_position = glm::vec3(_position.z,_position.y,-_position.x);
 	}
 	else if (angle / 90.0f == 2.0f)
@@ -245,10 +241,7 @@ void Cappuccino::HitBox::rotateBox(float angle)
 	}
 	else if (angle / 90.0f == 3.0f)
 	{
-		temp1 = _size.x;
-		temp2 = _size.z;
-		_size.x = temp2;
-		_size.z = temp1;
+		_size = glm::vec3(_size.z,_size.y,_size.x);
 		_position = glm::vec3(-_position.z, _position.y, _position.x);
 	}
 	if (_radius)
