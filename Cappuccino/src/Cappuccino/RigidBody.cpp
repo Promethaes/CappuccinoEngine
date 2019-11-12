@@ -108,6 +108,14 @@ namespace Cappuccino {
 			return false;
 	}
 
+	void RigidBody::rotateRigid(float angle)
+	{
+		for (int i = 0; i < _hitBoxes.size(); i++)
+		{
+			_hitBoxes[i].rotateBox(angle);
+		}
+	}
+
 }
 glm::mat4 Cappuccino::RigidBody::_projection =glm::mat4();
 glm::mat4 Cappuccino::RigidBody::_view =  glm::mat4();
