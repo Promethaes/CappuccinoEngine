@@ -90,8 +90,8 @@ namespace Cappuccino {
 		
 		#endif
 		
-		SoundSystem::init(CAPP_PATH + "Assets\\Sounds\\");
-		FontManager::init(CAPP_PATH + "Assets\\Fonts\\");
+		SoundSystem::init(".\\Assets\\Sounds\\");
+		FontManager::init(".\\Assets\\Fonts\\");
 	}
 	
 	void Application::run() {

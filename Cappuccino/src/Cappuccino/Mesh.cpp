@@ -18,7 +18,7 @@ namespace Cappuccino {
 	};
 
 
-	std::string Mesh::_meshDirectory = CAPP_PATH + R"(Assets/Meshes/)";
+	std::string Mesh::_meshDirectory = "./Assets/Meshes/";
 	Mesh::Mesh(const std::string& path)
 	{
 		this->_path = path;
@@ -211,7 +211,7 @@ namespace Cappuccino {
 		std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
 
 		if (dir == "default")
-			_meshDirectory = CAPP_PATH + R"(\Assets\Meshes\)";
+			_meshDirectory = "./Assets/Meshes/";
 		else
 			_meshDirectory = directory;
 	}

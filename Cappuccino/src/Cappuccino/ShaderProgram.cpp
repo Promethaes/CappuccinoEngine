@@ -14,7 +14,7 @@ using sstream = std::stringstream;
 
 using namespace Cappuccino;
 
-string Shader::_shaderDirectory = CAPP_PATH + R"(Assets\Shaders\)";
+string Shader::_shaderDirectory = "./Assets/Shaders/";
 
 Shader::Shader() : _programID(0), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
 
@@ -51,7 +51,7 @@ void Shader::setDefaultPath(const string& directory) {
 	std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
 
 	if (dir == "default")
-		_shaderDirectory = CAPP_PATH + R"(\Assets\Shaders\)";
+		_shaderDirectory = "./Assets/Shaders/";
 	else
 		_shaderDirectory = directory;
 }
