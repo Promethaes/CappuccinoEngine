@@ -40,7 +40,7 @@ namespace Cappuccino {
 				hitBox.draw();
 			}
 			
-			//CAPP_GL_CALL(glEnable(GL_CULL_FACE));
+			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 		}
 		
