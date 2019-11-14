@@ -150,7 +150,7 @@ namespace Cappuccino {
 		//	texts.clear();
 		norms.clear();
 
-		unload();
+		//unload();
 
 		for (unsigned i = 0; i < VERTS.size(); i++) {
 			master.push_back(VERTS[i]);
@@ -164,8 +164,6 @@ namespace Cappuccino {
 			norms.push_back(NORMS[i]);
 		}
 
-		glGenVertexArrays(1, &_VAO);
-		glGenBuffers(1, &_VBO);
 
 		glBindVertexArray(_VAO);
 
