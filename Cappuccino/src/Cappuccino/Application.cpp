@@ -90,8 +90,8 @@ namespace Cappuccino {
 		
 		#endif
 		
-		SoundSystem::init(".\\Assets\\Sounds\\");
-		FontManager::init(".\\Assets\\Fonts\\");
+		SoundSystem::init(R"(.\Assets\Sounds\)");
+		FontManager::init(R"(.\Assets\Fonts\)");
 	}
 	
 	void Application::run() {
@@ -107,10 +107,8 @@ namespace Cappuccino {
 		SoundSystem::playSound2D(soundRef, groupRef);
 		#endif
 
-
-		//FontManager::loadTypeFace("arial.ttf");
-
 		CAPP_GL_CALL(glEnable(GL_DEPTH_TEST));
+		CAPP_GL_CALL(glEnable(GL_CULL_FACE));
 		CAPP_GL_CALL(glEnable(GL_BLEND));
 		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		static GLfloat lastFrame;

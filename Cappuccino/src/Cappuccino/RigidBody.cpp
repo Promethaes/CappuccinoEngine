@@ -1,16 +1,22 @@
 #include "Cappuccino/RigidBody.h"
 #include "Cappuccino/CappMacros.h"
+
 namespace Cappuccino {
+
+	glm::mat4 RigidBody::_projection = glm::mat4();
+	glm::mat4 RigidBody::_view = glm::mat4();
+	
 	float Physics::gravity = -98.0f;
-	float Physics::UniversalG = 6.67f * (float)(pow(10, -11));
-	Cappuccino::RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& origin, const float mass, bool gravity)
-		: _mass(mass), _position(transformPosition), _origin(origin), _grav(gravity) {}
+	float Physics::UniversalG = 6.67f * static_cast<float>(pow(10, -11));
+	
+	RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& origin, const float mass, bool gravity)
+		: _position(transformPosition), _mass(mass), _origin(origin), _grav(gravity) {}
 
 
-	void Cappuccino::RigidBody::update(float dt, glm::mat4 model)
+	void RigidBody::update(const float dt, glm::mat4 model)
 	{
 		if (_grav)
-			addAccel(glm::vec3(0.0f, Physics::gravity*dt, 0.0f));
+			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));
 
 		addVelocity(_accel*dt);
 		addPosition(_vel*dt);
@@ -25,16 +31,22 @@ namespace Cappuccino {
 		_shader.setUniform("view",_view);
 		_shader.setUniform("projection", _projection);
 
-		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-		if (drawHitBox)
-			for (unsigned i = 0; i < _hitBoxes.size(); i++)
-			{
-				_hitBoxes[i].draw();
+		
+		if(drawHitBox) {
+			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
+			
+			for(auto& hitBox : _hitBoxes) {
+				hitBox.draw();
 			}
-		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+			
+			//CAPP_GL_CALL(glEnable(GL_CULL_FACE));
+			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+		}
+		
 	}
 
-	void Cappuccino::RigidBody::addAccel(const glm::vec3& force)
+	void RigidBody::addAccel(const glm::vec3& force)
 	{
 		_accel += force;
 	}
@@ -71,8 +83,9 @@ namespace Cappuccino {
 
 	bool RigidBody::checkCollision(RigidBody& other)
 	{
-		if (!_hitBoxes.size()||!other._hitBoxes.size())
+		if (_hitBoxes.empty() || other._hitBoxes.empty())
 			return false;
+		
 		if (_hitBoxes.size() > 1)
 		{
 			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
@@ -87,13 +100,13 @@ namespace Cappuccino {
 		}
 		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
 			return true;
-		else
-			return false;
+
+		return false;
 	}
 
 	bool RigidBody::checkCollision(HitBox other,glm::vec3 pos)
 	{
-		if (_hitBoxes.size() == 0)
+		if (_hitBoxes.empty())
 			return false;
 		if (_hitBoxes.size() > 1)
 		{
@@ -104,18 +117,15 @@ namespace Cappuccino {
 		}
 		else if (_hitBoxes[0].checkCollision(other,pos,_position))
 			return true;
-		else
-			return false;
+
+		return false;
 	}
 
 	void RigidBody::rotateRigid(float angle)
 	{
-		for (int i = 0; i < _hitBoxes.size(); i++)
-		{
-			_hitBoxes[i].rotateBox(angle);
+		for(auto& hitBox : _hitBoxes) {
+			hitBox.rotateBox(angle);
 		}
 	}
 
 }
-glm::mat4 Cappuccino::RigidBody::_projection =glm::mat4();
-glm::mat4 Cappuccino::RigidBody::_view =  glm::mat4();
