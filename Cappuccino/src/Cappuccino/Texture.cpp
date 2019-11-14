@@ -12,7 +12,7 @@
 using string = std::string;
 using namespace Cappuccino;
 
-string Texture::_textureDirectory = CAPP_PATH + R"(Assets\Textures\)";
+string Texture::_textureDirectory = "./Assets/Textures/";
 
 Texture::Texture(const std::string& PATH, const TextureType& ID) : type(ID), _data(nullptr), _path(PATH), _texture(0) {
 	load();
@@ -71,7 +71,7 @@ void Texture::setDefaultPath(const string& directory) {
 	std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
 
 	if(dir == "default")
-		_textureDirectory = CAPP_PATH + R"(\Assets\Textures\)";
+		_textureDirectory = "./Assets/Textures/";
 	else
 		_textureDirectory = directory;
 }
