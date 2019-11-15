@@ -108,8 +108,6 @@ namespace Cappuccino {
 		#endif
 
 
-		//FontManager::loadTypeFace("arial.ttf");
-
 		CAPP_GL_CALL(glEnable(GL_DEPTH_TEST));
 		CAPP_GL_CALL(glEnable(GL_BLEND));
 		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -171,6 +169,7 @@ namespace Cappuccino {
 		}
 
 		SoundSystem::update();
+
 
 		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)

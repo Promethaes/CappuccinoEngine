@@ -35,6 +35,7 @@ namespace Cappuccino {
 		glm::vec3& getFront() { return _cameraFront; }
 		glm::vec3& getRight() { return _cameraRight; }
 		glm::vec3& getUp() { return _cameraUp; }
+		glm::vec3& getRelativeUp() { return _cameraRelativeUp; }
 
 		void setPosition(const glm::vec3& pos) { _cameraPos = pos; }
 	private:
@@ -50,5 +51,6 @@ namespace Cappuccino {
 		glm::vec3 _cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 		glm::vec3 _cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 		glm::vec3 _cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::vec3 _cameraRelativeUp = _cameraUp;
 	};
 }
