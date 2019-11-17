@@ -73,7 +73,7 @@ HitBox::HitBox(glm::vec3& newPos, float newRadius)
 HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 {
 	_position = newPos;
-	_size = newSize;
+	_size = newSize * 2.0f;
 	std::vector<glm::vec3> data;
 	CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
 	CAPP_GL_CALL(glBindVertexArray(_VAO));
