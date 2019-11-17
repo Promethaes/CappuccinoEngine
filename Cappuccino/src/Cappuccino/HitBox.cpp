@@ -81,14 +81,14 @@ HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 	CAPP_GL_CALL(glEnableVertexAttribArray(0));
 	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
 
-	glm::vec3 p1(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
-	glm::vec3 p2(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
-	glm::vec3 p3(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
-	glm::vec3 p4(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
-	glm::vec3 p5(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
-	glm::vec3 p6(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
-	glm::vec3 p7(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
-	glm::vec3 p8(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 p1(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p2(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p3(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p4(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p5(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p6(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p7(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p8(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
 
 	data.push_back(p1);
 	data.push_back(p2);
@@ -226,6 +226,159 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 		return false;
 	}
 }
+
+void Cappuccino::HitBox::rotateBox(float angle)
+{
+	if (angle/90.0f == 1.0f)
+	{
+		_size = glm::vec3(_size.z, _size.y, _size.x);
+		_position = glm::vec3(_position.z,_position.y,-_position.x);
+	}
+	else if (angle / 90.0f == 2.0f)
+	{
+		_position.x *= -1;
+		_position.z *= -1;
+	}
+	else if (angle / 90.0f == 3.0f)
+	{
+		_size = glm::vec3(_size.z,_size.y,_size.x);
+		_position = glm::vec3(-_position.z, _position.y, _position.x);
+	}
+	if (_radius)
+		rebindVBO(_position, _radius);
+	else
+		rebindVBO(_position,_size);
+}
+
+void Cappuccino::HitBox::rebindVBO(glm::vec3& newPos, float newRadius)
+{
+	CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
+	CAPP_GL_CALL(glBindVertexArray(_VAO));
+	CAPP_GL_CALL(glGenBuffers(1, &_VBO));
+	CAPP_GL_CALL(glEnableVertexAttribArray(0));
+	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
+	glm::vec3 data [24];
+	glm::vec3 p1(newPos.x, newPos.y + newRadius, newPos.z);
+	glm::vec3 p2(newPos.x, newPos.y, newPos.z - newRadius);
+	glm::vec3 p3(newPos.x - newRadius, newPos.y, newPos.z);
+	glm::vec3 p4(newPos.x, newPos.y, newPos.z + newRadius);
+	glm::vec3 p5(newPos.x + newRadius, newPos.y, newPos.z);
+	glm::vec3 p6(newPos.x, newPos.y - newRadius, newPos.z);
+
+
+	data[0]=(p1);
+	data[1]=(p4);
+	data[2]=(p5);
+	data[3]=(p1);
+	data[4]=(p2);
+	data[5]=(p5);
+	data[6]=(p1);
+	data[7]=(p2);
+	data[8]=(p3);
+	data[9]=(p1);
+	data[10]=(p3);
+	data[11]=(p4);
+	data[12]=(p6);
+	data[13]=(p4);
+	data[14]=(p5);
+	data[15]=(p6);
+	data[16]=(p2);
+	data[17]=(p5);
+	data[18]=(p6);
+	data[19]=(p2);
+	data[20]=(p3);
+	data[21]=(p6);
+	data[22]=(p3);
+	data[23]=(p4);
+
+	float data2 [24*3];
+	for (unsigned i = 0; i < 24; i++)
+	{
+		data2[i*3]=(data[i].x);
+		data2[i*3+1]=(data[i].y);
+		data2[i*3+2]=(data[i].z);
+	}
+
+	_numVerts = 24*3;
+
+	CAPP_GL_CALL(glBufferData(GL_ARRAY_BUFFER, 24*3 * sizeof(float), &data2[0], GL_STATIC_DRAW));
+	CAPP_GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0));
+
+	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	CAPP_GL_CALL(glBindVertexArray(0));
+}
+
+void Cappuccino::HitBox::rebindVBO(glm::vec3& newPos, glm::vec3& newSize)
+{
+	CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
+	CAPP_GL_CALL(glBindVertexArray(_VAO));
+	CAPP_GL_CALL(glGenBuffers(1, &_VBO));
+	CAPP_GL_CALL(glEnableVertexAttribArray(0));
+	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
+	glm::vec3 data[36];
+	glm::vec3 p1(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p2(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p3(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p4(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
+	glm::vec3 p5(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p6(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p7(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p8(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+
+	data[0]=(p1);
+	data[1]=(p2);
+	data[2]=(p4);
+	data[3]=(p1);
+	data[4]=(p3);
+	data[5]=(p4);
+	data[6]=(p5);
+	data[7]=(p6);
+	data[8]=(p8);
+	data[9]=(p5);
+	data[10]=(p7);
+	data[11]=(p8);
+	data[12]=(p5);
+	data[13]=(p6);
+	data[14]=(p2);
+	data[15]=(p5);
+	data[16]=(p1);
+	data[17]=(p2);
+	data[18]=(p3);
+	data[19]=(p7);
+	data[20]=(p8);
+	data[21]=(p3);
+	data[22]=(p4);
+	data[23]=(p8);
+	data[24]=(p1);
+	data[25]=(p5);
+	data[26]=(p7);
+	data[27]=(p1);
+	data[28]=(p3);
+	data[29]=(p7);
+	data[30]=(p2);
+	data[31]=(p6);
+	data[32]=(p8);
+	data[33]=(p2);
+	data[34]=(p4);
+	data[35]=(p8);
+
+	float data2 [36*3];
+	for (unsigned i = 0; i < 36; i++)
+	{
+		data2[i*3]=(data[i].x);
+		data2[i*3+1]=(data[i].y);
+		data2[i*3+2]=(data[i].z);
+	}
+
+	_numVerts = 36*3;
+
+	CAPP_GL_CALL(glBufferData(GL_ARRAY_BUFFER, 36 * 3 * sizeof(float), &data2[0], GL_STATIC_DRAW));
+	CAPP_GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0));
+
+	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	CAPP_GL_CALL(glBindVertexArray(0));
+}
+
 
 float Cappuccino::HitBox::checkCircleBox(glm::vec3& circ, glm::vec3& boxPos, glm::vec3& boxSize)
 {

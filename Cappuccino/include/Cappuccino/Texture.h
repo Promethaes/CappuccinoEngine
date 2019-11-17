@@ -21,6 +21,7 @@ namespace Cappuccino {
 		returns: bool if it was successful or not
 		*/
 		bool load();
+		void setLoaded(bool yn) { _loaded = yn; }
 		bool isLoaded() const { return _loaded; }
 
 		bool unload();
@@ -34,22 +35,22 @@ namespace Cappuccino {
 		 * Returns: Nothing
 		 */
 		static void setDefaultPath(const std::string& directory);
-		
+
 		/*
 		Purp: binds the texture in the proper slot
 		*/
 		void bind(unsigned textureSlot) const;
-		
+
 		/*
 		Purp: unbinds the texture in the proper slot
 		*/
 		void unbind(unsigned textureSlot) const;
-		
+
 		TextureType type;
-		
+
 	private:
 		static std::string _textureDirectory;
-		
+
 		unsigned char* _data;
 
 		std::string _path;
