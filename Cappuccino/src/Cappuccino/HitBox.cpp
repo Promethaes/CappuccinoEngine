@@ -73,7 +73,7 @@ HitBox::HitBox(glm::vec3& newPos, float newRadius)
 HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 {
 	_position = newPos;
-	_size = newSize * 2.0f;
+	_size = newSize ;
 	std::vector<glm::vec3> data;
 	CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
 	CAPP_GL_CALL(glBindVertexArray(_VAO));
@@ -81,14 +81,14 @@ HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 	CAPP_GL_CALL(glEnableVertexAttribArray(0));
 	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
 
-	glm::vec3 p1(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p2(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p3(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p4(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p5(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
-	glm::vec3 p6(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
-	glm::vec3 p7(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
-	glm::vec3 p8(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p1(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p2(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p3(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p4(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p5(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 p6(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 p7(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 p8(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
 
 	data.push_back(p1);
 	data.push_back(p2);
@@ -316,14 +316,14 @@ void Cappuccino::HitBox::rebindVBO(glm::vec3& newPos, glm::vec3& newSize)
 	CAPP_GL_CALL(glEnableVertexAttribArray(0));
 	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
 	glm::vec3 data[36];
-	glm::vec3 p1(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p2(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p3(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p4(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z + (newSize.z /*/ 2*/));
-	glm::vec3 p5(newPos.x - (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
-	glm::vec3 p6(newPos.x + (newSize.x /*/ 2*/), newPos.y + (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
-	glm::vec3 p7(newPos.x - (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
-	glm::vec3 p8(newPos.x + (newSize.x /*/ 2*/), newPos.y - (newSize.y /*/ 2*/), newPos.z - (newSize.z /*/ 2*/));
+	glm::vec3 p1(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p2(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p3(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p4(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z + (newSize.z / 2));
+	glm::vec3 p5(newPos.x - (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 p6(newPos.x + (newSize.x / 2), newPos.y + (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 p7(newPos.x - (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
+	glm::vec3 p8(newPos.x + (newSize.x / 2), newPos.y - (newSize.y / 2), newPos.z - (newSize.z / 2));
 
 	data[0]=(p1);
 	data[1]=(p2);
