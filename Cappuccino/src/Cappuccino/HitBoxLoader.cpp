@@ -102,7 +102,7 @@ glm::vec3 HitBoxLoader::findBox()
 		if (_tempVerts[i].z < tempLow.z)
 			tempLow.z = _tempVerts[i].z;
 	}
-	return glm::vec3(tempHigh - tempLow)/2.0f;
+	return glm::vec3(tempHigh - tempLow);
 }
 
 glm::vec3 HitBoxLoader::findCenter()
