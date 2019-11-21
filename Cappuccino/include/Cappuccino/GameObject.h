@@ -102,7 +102,12 @@ namespace Cappuccino {
 		float speed = 3.5f;
 		
 	private:
-
+		/*
+		Purp: to check collision with all gameobjects
+		Pre: None
+		Post: None
+		*/
+		void collision();
 		/*
 		Purp: pure virtual function that calls the appropriate child update definition
 		Req: delta time to update properly

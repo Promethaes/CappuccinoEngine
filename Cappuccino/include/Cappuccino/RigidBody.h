@@ -74,6 +74,7 @@ namespace Cappuccino {
 		glm::mat4 _rotateMat{ 1.0f };
 		float _mass = 1;
 		glm::vec3 _origin;
-		bool _grav = false;		
+		bool _grav = false;
+		bool _moveable = false;
 	};
 }
