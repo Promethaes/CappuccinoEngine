@@ -6,7 +6,9 @@ namespace Cappuccino {
 	enum class TextureType {
 		DiffuseMap = 0,
 		SpecularMap,
-		NormalMap
+		NormalMap,
+		EmissionMap,
+		HeightMap
 	};
 
 	/*

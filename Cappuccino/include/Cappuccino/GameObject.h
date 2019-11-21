@@ -49,6 +49,10 @@ namespace Cappuccino {
 
 		static std::vector<GameObject*> gameObjects;
 
+		static Texture* defaultEmission;
+		static Texture* defaultNormal;
+		static Texture* defaultHeight;
+
 		std::string id;
 
 

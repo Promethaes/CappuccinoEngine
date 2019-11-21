@@ -9,6 +9,8 @@ namespace Cappuccino {
 		_pointLightShader.setUniform("material.diffuse", 0);
 		_pointLightShader.setUniform("material.specular", 1);
 		_pointLightShader.setUniform("material.normalMap", 2);
+		_pointLightShader.setUniform("material.emissionMap", 3);
+		_pointLightShader.setUniform("material.heightMap", 4);
 
 		setPosition(position);
 		setAmbient(ambientColour);
