@@ -4,7 +4,11 @@ using namespace Cappuccino;
 
 std::vector<GameObject*> GameObject::gameObjects = {};
 
-GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& _textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass)
+Texture* GameObject::defaultEmission = nullptr;
+Texture* GameObject::defaultNormal   = nullptr;
+Texture* GameObject::defaultHeight   = nullptr;
+
+GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass)
 	:_shader(_shader), _rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z),
 		glm::vec3(0, 0, 0),
 		mass.has_value() ? mass.value() : 1)
@@ -13,8 +17,37 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& _text
 
 	//set the state manually
 
-	this->_textures = _textures;
+	this->_textures = textures;
 	this->_meshes = _meshs;
+
+	bool hasNormal = false, hasEmission = false,hasHeight = false;
+	for (unsigned i = 0; i < this->_textures.size(); i++) {
+		if (_textures[i]->type == TextureType::EmissionMap)
+			hasEmission = true;
+		else if (_textures[i]->type == TextureType::NormalMap)
+			hasNormal = true;
+		else if (_textures[i]->type == TextureType::HeightMap)
+			hasHeight = true;
+
+	}
+
+	static bool initDefaultMaps = false;
+
+	if (!initDefaultMaps) {
+		defaultEmission = new Texture("defaultEmission.png", TextureType::EmissionMap);
+		defaultNormal = new Texture("defaultEmission.png", TextureType::EmissionMap);
+		defaultHeight = new Texture("defaultHeight.png", TextureType::HeightMap);
+	
+		//after all maps are init one time, never do it again
+		initDefaultMaps = true;
+	}
+
+	if (!hasEmission)
+		_textures.push_back(defaultEmission);
+	if (!hasNormal)
+		_textures.push_back(defaultNormal);
+	if (!hasHeight)
+		_textures.push_back(defaultHeight);
 
 	loadTextures();
 	loadMesh();
@@ -109,6 +142,10 @@ void GameObject::draw()
 			x->bind(1);
 		else if (x->type == TextureType::NormalMap)
 			x->bind(2);
+		else if (x->type == TextureType::EmissionMap)
+			x->bind(3);
+		else if (x->type == TextureType::HeightMap)
+			x->bind(4);
 	}
 
 	_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
@@ -126,6 +163,8 @@ void GameObject::draw()
 			x->unbind(1);
 		else if (x->type == TextureType::NormalMap)
 			x->unbind(2);
+		else if (x->type == TextureType::EmissionMap)
+			x->bind(3);
 	}
 }
 void Cappuccino::GameObject::collision()

@@ -21,20 +21,29 @@ os.execute("mkdir " .. solutionDir .. "\\Build\\bin\\x64")
 os.execute("mkdir " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
 os.execute("mkdir " .. solutionDir .. "\\Build\\bin\\x64\\Release")
 os.execute("mkdir " .. solutionDir .. "\\Assets")
-os.execute("mkdir " .. solutionDir .. "\\include")
+os.execute("mkdir " .. solutionDir .. "\\Engine\\Cappuccino")
+os.execute("mkdir " .. solutionDir .. "\\Engine\\Externals")
 os.execute("mkdir " .. solutionDir .. "\\src")
+os.execute("mkdir " .. solutionDir .. "\\libs\\Debug")
+os.execute("mkdir " .. solutionDir .. "\\libs\\Release")
 
 print("Copying necessary files...")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmod.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmod.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\freetype.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\freetype.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
+os.execute("xcopy %CappuccinoPath%\\Build\\bin\\x86_64\\Debug\\capp.lib " .. solutionDir .. "\\libs\\Debug")
+os.execute("xcopy %CappuccinoPath%\\Build\\bin\\x86_64\\Release\\capp.lib " .. solutionDir .. "\\libs\\Release")
+os.execute("xcopy %CappuccinoPath%\\Externals\\Build\\bin\\x86_64\\Debug\\Externals.lib " .. solutionDir .. "\\libs\\Debug")
+os.execute("xcopy %CappuccinoPath%\\Externals\\Build\\bin\\x86_64\\Release\\Externals.lib " .. solutionDir .. "\\libs\\Release")
 
-os.execute("xcopy %CappuccinoPath%\\Cappuccino\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
+
+os.execute("xcopy /S %CappuccinoPath%\\Cappuccino\\include\\Cappuccino " .. solutionDir .. 			  "\\Engine\\Cappuccino")
+os.execute("xcopy /S %CappuccinoPath%\\\"Game Project Generation\"\\Externals " .. solutionDir ..     "\\Engine\\Externals")
+os.execute("xcopy /S %CappuccinoPath%\\Cappuccino\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
 
 -- This is to make sure the filters are created in Visual Studio even if there are no files in the folders
-os.execute("xcopy reeee.txt " .. solutionDir .. "\\include")
-os.execute("xcopy reeee.txt " .. solutionDir .. "\\Assets")
+os.execute("xcopy reeee.txt " .. solutionDir .. "\\include\\")
 
 os.execute("echo.")
 print("Starting premake build...")
@@ -65,20 +74,18 @@ workspace (projName)
 	includedirs {
 		solutionDir .. "/include",
 	
-		os.getenv("CappuccinoPath") .. "/Cappuccino/include",
-		os.getenv("CappuccinoPath") .. "/Externals/fmod/include",
-		os.getenv("CappuccinoPath") .. "/Externals/freetype/include",
-		os.getenv("CappuccinoPath") .. "/Externals/glad/include",
-		os.getenv("CappuccinoPath") .. "/Externals/glfw3/include",
-		os.getenv("CappuccinoPath") .. "/Externals/glm/include",
-		os.getenv("CappuccinoPath") .. "/Externals/imgui/include",
-		os.getenv("CappuccinoPath") .. "/Externals/stb/include"
+		solutionDir.."/Engine",
+		solutionDir.."/Engine/Externals/fmod/include",
+		solutionDir.."/Engine/Externals/freetype/include",
+		solutionDir.."/Engine/Externals/glad/include",
+		solutionDir.."/Engine/Externals/glfw3/include",
+		solutionDir.."/Engine/Externals/glm/include",
+		solutionDir.."/Engine/Externals/imgui/include",
+		solutionDir.."/Engine/Externals/stb/include"
 	}
 	
-	libdirs {
-		os.getenv("CappuccinoPath") .. "/Build/bin/%{cfg.architecture}/%{cfg.buildcfg}",
-		os.getenv("CappuccinoPath") .. "/Externals/Build/bin/%{cfg.architecture}/%{cfg.buildcfg}"
-	}
+	
+
 	
 	filter "platforms:x64"
 		system "windows"
@@ -97,11 +104,17 @@ workspace (projName)
 		defines "DEBUG"
 		runtime "Debug"
 		symbols "on"
+		libdirs {
+			solutionDir.."\\libs\\Debug"
+		}
 
 	filter "configurations:Release"
 		defines "NDEBUG"
 		runtime "Release"
 		optimize "on"
+		libdirs {
+			solutionDir.."\\libs\\Release"
+		}
 
 print(string.format("Building project %s...", projName)) 
 project (projName)
@@ -119,10 +132,7 @@ project (projName)
 	files {
 		solutionDir .. "/include/reeee.txt",
 		solutionDir .. "/include/**.h",
-		solutionDir .. "/include/**.hpp",
 		solutionDir .. "/src/**.cpp",
-		
-		solutionDir .. "/Assets/**"
 	}
 	
 os.execute("del /s /q %{solutionDir}\\reeee.txt")
