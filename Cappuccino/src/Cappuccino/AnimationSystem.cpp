@@ -2,7 +2,7 @@
 #include "Cappuccino/CappMath.h"
 
 namespace Cappuccino {
-	Animation::Animation(std::vector<Mesh*>& morphTargets)
+	Animation::Animation(const std::vector<Mesh*>& morphTargets)
 	{
 		_morphTargets = morphTargets;
 

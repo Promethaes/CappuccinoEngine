@@ -1,13 +1,13 @@
 #pragma once
 
-#include <glad/glad.h>
-
-#include <windows.h>
 #include <iostream>
 
 #define CAPP_PATH									std::string(std::getenv("CappuccinoPath")) + "\\Cappuccino\\"
 
 #if _DEBUG || DEBUG
+
+#include <glad/glad.h>
+#include <windows.h>
 
 #define SOUNDTEST									false
 #define CUBETEST									false
@@ -17,23 +17,14 @@
 #define TEXTRENDERTEST								false
 #define UITEST										false
 
-#define RED FOREGROUND_RED | FOREGROUND_INTENSITY
-#define YELLOW FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY
+#define RED											(FOREGROUND_RED | FOREGROUND_INTENSITY)
+#define YELLOW										(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY)
 
 #define CAPP_ASSERT(exp)							if(!(exp)) {\
 														CAPP_PRINT_WARNING("ERROR ASSERTING \"%s\"!", #exp);\
 														CAPP_PRINT_WARNING(__FUNCSIG__);\
 														CAPP_PRINT_WARNING("[%s : %i ]", __FILE__, __LINE__);\
 														__debugbreak();\
-													}
-
-//#define CAPP_GL_ASSERT(exp)							if(!(exp)) {\
-//														CAPP_PRINT_WARNING("ERROR ASSERTING \"%s\"!", #exp);\
-//														CAPP_PRINT_WARNING(__FUNCSIG__);\
-//														CAPP_PRINT_WARNING("[%s : %i ]", __FILE__, __LINE__);\
-//														CAPP_PRINT_WARNING("OPENGL ERROR: %x", error);\
-//														__debugbreak();\
-//													}
 
 #define CAPP_GL_CALL(glCall)						while(glGetError() != GL_NO_ERROR);\
 													glCall;\
