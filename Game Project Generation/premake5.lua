@@ -67,7 +67,6 @@ workspace (projName)
 	staticruntime "on"
 	
 	targetdir (solutionDir .. "/Build/bin/%{cfg.platform}/%{cfg.buildcfg}")
-	debugdir (solutionDir .. "/Build/bin/%{cfg.platform}/%{cfg.buildcfg}")
 	objdir (solutionDir .. "/Build/obj/%{cfg.platform}/%{cfg.buildcfg}")
 	
 
@@ -121,8 +120,6 @@ project (projName)
 	kind "ConsoleApp"
 	configuration "windows"
 	targetname (projName)
-	
-	debugdir (solutionDir .. "/Build/bin/%{cfg.platform}/%{cfg.buildcfg}")
 	
 	links {
 		"capp",
