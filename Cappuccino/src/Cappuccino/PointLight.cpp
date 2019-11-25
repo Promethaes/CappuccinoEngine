@@ -17,6 +17,26 @@ namespace Cappuccino {
 		setDiffuse(diffuseColour);
 		setSpecular(specularColour);
 		setShininess(shininess);
+
+		_windowSize = windowSize;
+	}
+
+	void PointLight::recompile()
+	{
+		_pointLightShader.createShader();
+		_pointLightShader.use();
+		_pointLightShader.loadProjectionMatrix(_windowSize.x, _windowSize.y);
+		_pointLightShader.setUniform("material.diffuse", 0);
+		_pointLightShader.setUniform("material.specular", 1);
+		_pointLightShader.setUniform("material.normalMap", 2);
+		_pointLightShader.setUniform("material.emissionMap", 3);
+		_pointLightShader.setUniform("material.heightMap", 4);
+
+		setPosition(_position);
+		setAmbient(_ambientColour);
+		setDiffuse(_diffuseColour);
+		setSpecular(_specularColour);
+		setShininess(_shininess);
 	}
 
 	void PointLight::updateViewPos(const glm::vec3& cameraPos)

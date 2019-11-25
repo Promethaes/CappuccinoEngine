@@ -35,7 +35,7 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 
 	if (!initDefaultMaps) {
 		defaultEmission = new Texture("defaultEmission.png", TextureType::EmissionMap);
-		defaultNormal = new Texture("defaultEmission.png", TextureType::EmissionMap);
+		defaultNormal = new Texture("defaultNorm.png", TextureType::NormalMap);
 		defaultHeight = new Texture("defaultHeight.png", TextureType::HeightMap);
 	
 		//after all maps are init one time, never do it again
@@ -162,7 +162,9 @@ void GameObject::draw()
 		else if (x->type == TextureType::NormalMap)
 			x->unbind(2);
 		else if (x->type == TextureType::EmissionMap)
-			x->bind(3);
+			x->unbind(3);
+		else if (x->type == TextureType::HeightMap)
+			x->unbind(4);
 	}
 }
 void GameObject::loadTextures()

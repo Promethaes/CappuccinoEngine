@@ -11,6 +11,9 @@ namespace Cappuccino {
 		PointLight(const glm::vec2& windowSize, const glm::vec3& position, const glm::vec3& ambientColour,
 			const glm::vec3& diffuseColour, const glm::vec3& specularColour, float shininess);
 
+
+		void recompile();
+
 		/*
 		Purp: update the view position, should be called every frame
 		Req: the camera position
@@ -31,6 +34,7 @@ namespace Cappuccino {
 
 		Shader _pointLightShader;
 	private:
+		glm::vec2 _windowSize;
 		glm::vec3 _position;
 		glm::vec3 _ambientColour;
 		glm::vec3 _diffuseColour;
