@@ -22,6 +22,11 @@ namespace Cappuccino {
 		*/
 		virtual void drawComponent();
 
+		void setVisible(bool yn) { _isVisible = yn; }
+		bool isVisible() { return _isVisible; }
+	private:
+		bool _isVisible = true;
+
 	};
 
 	class UserInterface {
@@ -42,7 +47,7 @@ namespace Cappuccino {
 
 	private:
 
-		Shader _textShader { "font.vert", "font.frag" };
+		Shader _textShader{ "font.vert", "font.frag" };
 
 	};
 
