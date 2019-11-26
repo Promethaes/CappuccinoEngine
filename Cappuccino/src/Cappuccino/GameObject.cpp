@@ -86,6 +86,8 @@ bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 
+	collision();
+
 	_rigidBody.update(dt, _transform._transformMat);
 	_transform._position->x = _rigidBody._position.x;
 	_transform._position->y = _rigidBody._position.y;
@@ -166,6 +168,14 @@ void GameObject::draw()
 		else if (x->type == TextureType::HeightMap)
 			x->unbind(4);
 	}
+}
+void Cappuccino::GameObject::collision()
+{
+	for (auto x : GameObject::gameObjects){
+
+
+	}
+
 }
 void GameObject::loadTextures()
 {

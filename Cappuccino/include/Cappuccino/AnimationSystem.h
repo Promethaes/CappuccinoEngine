@@ -6,7 +6,7 @@ namespace Cappuccino {
 	class Animation {
 	public:
 		//should never have meshes that are different in this list
-		Animation(std::vector<Mesh*>& morphTargets);
+		Animation(const std::vector<Mesh*>& morphTargets);
 
 		void animate(float dt);
 
