@@ -74,9 +74,9 @@ namespace Cappuccino {
 
 
 				std::sscanf(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
-				            &faces.back().vertexData[0], &faces.back().textureData[0], &faces.back().normalData[0],
-				            &faces.back().vertexData[1], &faces.back().textureData[1], &faces.back().normalData[1],
-				            &faces.back().vertexData[2], &faces.back().textureData[2], &faces.back().normalData[2]);
+					&faces.back().vertexData[0], &faces.back().textureData[0], &faces.back().normalData[0],
+					&faces.back().vertexData[1], &faces.back().textureData[1], &faces.back().normalData[1],
+					&faces.back().vertexData[2], &faces.back().textureData[2], &faces.back().normalData[2]);
 			}
 			else
 				continue;
@@ -174,7 +174,7 @@ namespace Cappuccino {
 
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		//vertex
-		glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_DYNAMIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, master.size() * sizeof(float), &master[0]);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(verts.size() * sizeof(float)));
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size()) * sizeof(float)));
@@ -203,7 +203,7 @@ namespace Cappuccino {
 		glBindVertexArray(_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, _numVerts);
 	}
-	
+
 	void Mesh::setDefaultPath(const std::string& directory) {
 		string dir = directory;
 		std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
