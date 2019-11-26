@@ -49,6 +49,10 @@ namespace Cappuccino {
 
 		static std::vector<GameObject*> gameObjects;
 
+		static Texture* defaultEmission;
+		static Texture* defaultNormal;
+		static Texture* defaultHeight;
+
 		std::string id;
 
 
@@ -96,10 +100,6 @@ namespace Cappuccino {
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;
 		Shader _shader;
-
-		//gameplay stuff
-		float hp;
-		float speed = 3.5f;
 		
 	private:
 		/*
