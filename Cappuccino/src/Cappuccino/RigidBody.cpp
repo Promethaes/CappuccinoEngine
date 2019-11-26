@@ -121,6 +121,28 @@ namespace Cappuccino {
 		return false;
 	}
 
+	collisionData RigidBody::getData(RigidBody& other)
+	{
+		collisionData newData;
+		if (_hitBoxes.size() > 1){
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
+				for (unsigned i = 1; i < _hitBoxes.size(); i++){
+					for (unsigned n = 1; n < other._hitBoxes.size(); n++){
+						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position)) {
+							newData.one = _hitBoxes[i];
+							newData.two = other._hitBoxes[n];
+							break;
+						}
+					}
+				}
+		}
+		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position)) {
+			newData.one = _hitBoxes[0];
+			newData.two = other._hitBoxes[0];
+		}
+		return newData;
+	}
+
 	void RigidBody::rotateRigid(float angle)
 	{
 		for(auto& hitBox : _hitBoxes) {

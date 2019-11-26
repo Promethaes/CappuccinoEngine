@@ -42,8 +42,8 @@ GameObject::~GameObject() {
 }
 
 
-bool GameObject::checkCollision(GameObject& other) {
-	return _rigidBody.checkCollision(other._rigidBody);
+bool GameObject::checkCollision(GameObject* other) {
+	return _rigidBody.checkCollision(other->_rigidBody);
 }
 
 bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
@@ -53,13 +53,15 @@ bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 
-	collision();
+	
 
 	_rigidBody.update(dt, _transform._transformMat);
 	_transform._position->x = _rigidBody._position.x;
 	_transform._position->y = _rigidBody._position.y;
 	_transform._position->z = _rigidBody._position.z;
 	_transform.update();
+
+	collision();
 
 	if (_isVisible)
 		draw();
@@ -130,10 +132,55 @@ void GameObject::draw()
 }
 void Cappuccino::GameObject::collision()
 {
-	for (auto x : GameObject::gameObjects){
+	collisionData newData;//what hitboxes are colliding
+	if(_rigidBody._moveable)//if this object can move
+		for (auto x : gameObjects){//check the other game objects
+			if (x->isActive()&&checkCollision(x)){//if the object is active and we are colliding
+				newData = _rigidBody.getData(x->_rigidBody);//get the hitboxes
+				//glm::vec3 vectorData = glm::vec3((_rigidBody._position+newData.one._position)-(x->_rigidBody._position+newData.two._position));
+				//glm::vec3 normalizedData = glm::normalize(vectorData);//old code but may be useful if system is changed
+				
+				/*HitBox ourMiniBoxes[6];//will not work but not deleted just yet
+				HitBox otherMiniBoxes[6];
+				for (unsigned i = 0; i < 6; i++) {//create the miniBoxes for the colliding hitboxes
+					int mult = 1;//this is the multiplier for which side the mini box will be on one axis
+					for (unsigned n = 0; n < i; n++)//for the current iteration we invert the multiplier //does it need to run once more
+						mult *= -1;
+
+					glm::vec3 ourTempSize = newData.one._size;
+					ourTempSize[(i) / 2] /= 2;
+
+					glm::vec3 otherTempSize = newData.two._size;
+					otherTempSize[(i) / 2] /= 2;
+
+					glm::vec3 ourTempPos = newData.one._position;//create temp position data for each minibox
+					ourTempPos[(i) / 2] += (ourTempSize[(i) / 2] * mult);
+
+					glm::vec3 otherTempPos = newData.two._position;
+					otherTempPos[(i) / 2] += (otherTempSize[(i) / 2] * mult);
+
+					ourMiniBoxes[i] = HitBox(ourTempPos,ourTempSize);
+					otherMiniBoxes[i] = HitBox(otherTempPos,otherTempSize);
+				}
+				bool ourDirection[6];
+				bool otherDirection[6];
+				for (unsigned i = 0; i < 6; i++) {
+					ourDirection[i] = x->_rigidBody.checkCollision(ourMiniBoxes[i], _rigidBody._position);
+				}
+				for (unsigned i = 0; i < 6; i++) {
+					otherDirection[i] = _rigidBody.checkCollision(otherMiniBoxes[i], x->_rigidBody._position);
+				}*/
 
 
-	}
+				if (x->_rigidBody._moveable) {
+
+				}
+				else {
+
+				}
+
+			}
+		}
 
 }
 void GameObject::loadTextures()

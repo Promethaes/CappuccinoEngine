@@ -71,7 +71,7 @@ namespace Cappuccino {
 		Pre: another gameobject
 		Post: a boolean true if colliding
 		*/
-		bool checkCollision(GameObject& other);
+		bool checkCollision(GameObject* other);
 
 		/*
 		Purp: To check collision between a gameobject and hitbox
@@ -119,6 +119,7 @@ namespace Cappuccino {
 		bool _isActive = false;
 		bool _isVisible = true;
 		
+
 
 		/*
 		Purp: load the textures, make sure this is only called once
