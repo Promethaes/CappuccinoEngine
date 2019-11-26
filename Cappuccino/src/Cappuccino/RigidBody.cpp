@@ -37,7 +37,7 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
 			
 			for(auto& hitBox : _hitBoxes) {
-				hitBox.draw();
+			//	hitBox.draw();
 			}
 			
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
