@@ -26,7 +26,7 @@ namespace Cappuccino {
 			setSpecular(specularColour, i);
 			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].constant", 1.0f);
 			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].linear", 0.0001f);
-			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].quadratic", 0.0001f);
+			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].quadratic", 0.001f);
 		}
 			setShininess(shininess);
 
