@@ -9,8 +9,10 @@
 namespace Cappuccino {
 	
 	struct collisionData {
-		HitBox one;
+		HitBox ourBox;
 		HitBox two;
+		//HitBox otherBox[8];
+		//unsigned collisions = 0;
 	};
 
 	class Physics {
@@ -79,6 +81,7 @@ namespace Cappuccino {
 		Shader _shader{ "hitBox.vert","hitBox.frag" };
 		void rotateRigid(float angle);
 		bool _moveable = false;
+		bool _canTouch= true;
 	private:
 		bool _collision = false;
 		glm::vec3 _scale{ 0 };

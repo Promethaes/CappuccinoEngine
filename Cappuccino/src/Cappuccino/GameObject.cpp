@@ -86,7 +86,7 @@ bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 
-	collision();
+	
 
 	_rigidBody.update(dt, _transform._transformMat);
 	_transform._position->x = _rigidBody._position.x;
@@ -94,7 +94,7 @@ void GameObject::baseUpdate(float dt) {
 	_transform._position->z = _rigidBody._position.z;
 	_transform.update();
 
-
+	collision();
 	if (_isVisible)
 		draw();
 }
@@ -175,7 +175,7 @@ void Cappuccino::GameObject::collision()
 	collisionData newData;//what hitboxes are colliding
 	if (_rigidBody._moveable)//if this object can move
 		for (auto x : gameObjects){//check the other game objects
-			if (x->isActive() && checkCollision(x) && x != this) {//if the object is active and we are colliding
+			if (x->isActive() && checkCollision(x) && x != this&&x->_rigidBody._canTouch) {//if the object is active and we are colliding
 				newData = _rigidBody.getData(x->_rigidBody);//get the hitboxes
 				//glm::vec3 vectorData = glm::vec3((_rigidBody._position+newData.one._position)-(x->_rigidBody._position+newData.two._position));
 				//glm::vec3 normalizedData = glm::normalize(vectorData);//old code but may be useful if system is changed
@@ -225,7 +225,7 @@ void Cappuccino::GameObject::collision()
 					right
 				};
 				unsigned bestmatch = 0;
-				glm::vec3 displacement((_rigidBody._position + newData.one._position) - (x->_rigidBody._position + newData.two._position));
+				glm::vec3 displacement((_rigidBody._position + newData.ourBox._position) - (x->_rigidBody._position + newData.two._position));
 				//glm::vec3 displacement = _rigidBody._position - x->_rigidBody._position;
 				float max = 0.0f;
 				for (unsigned i = 0; i < 4; i++) {
@@ -241,21 +241,25 @@ void Cappuccino::GameObject::collision()
 				if (dir == left) {
 					//x-
 					_rigidBody._vel.x = 0.0f;
+					_rigidBody._position.x = x->_rigidBody._position.x + newData.two._position.x - newData.two._size.x / 2  - newData.ourBox._size.x / 2 + newData.ourBox._position.x-0.01;
 					CAPP_PRINT_N("LEFT: %f", _rigidBody._vel.x);
 				}
 				else if (dir == right) {
 					//x+
 					_rigidBody._vel.x = 0.0f;
+					_rigidBody._position.x = x->_rigidBody._position.x + newData.two._position.x + newData.two._size.x / 2 + newData.ourBox._size.x / 2 + newData.ourBox._position.x + 0.01;
 					CAPP_PRINT_N("RIGHT: %f", _rigidBody._vel.x);
 				}
 				else if (dir == forward) {
 					//z+
 					_rigidBody._vel.z = 0.0f;
+					_rigidBody._position.z = x->_rigidBody._position.z + newData.two._position.z + newData.two._size.z / 2 + newData.ourBox._size.z / 2 + newData.ourBox._position.z + 0.01;
 					CAPP_PRINT_N("FOR: %f", _rigidBody._vel.z);
 				}
 				else if (dir == backward) {
 					//z-
 					_rigidBody._vel.z = 0.0f;
+					_rigidBody._position.z = x->_rigidBody._position.z + newData.two._position.z - newData.two._size.z / 2 - newData.ourBox._size.z / 2 + newData.ourBox._position.z - 0.01;
 					CAPP_PRINT_N("BACK: %f", _rigidBody._vel.z);
 				}
 			}
