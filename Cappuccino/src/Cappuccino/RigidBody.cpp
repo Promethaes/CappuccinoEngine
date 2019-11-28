@@ -130,18 +130,15 @@ namespace Cappuccino {
 					for (unsigned n = 1; n < other._hitBoxes.size(); n++){
 						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position)) {
 							newData.ourBox = _hitBoxes[i];
-							newData.two = other._hitBoxes[n];//
-							break;//
-							//newData.otherBox[newData.collisions] = other._hitBoxes[n];
-							//newData.collisions++;
+							newData.otherBox[newData.collisions] = other._hitBoxes[n];
+							newData.collisions++;
 						}
 					}
 				}
 		}
 		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position)) {
 			newData.ourBox = _hitBoxes[0];
-			newData.two = other._hitBoxes[0];
-			//newData.otherBox[0] = other._hitBoxes[0];
+			newData.otherBox[0] = other._hitBoxes[0];
 		}
 		return newData;
 	}

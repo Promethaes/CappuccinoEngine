@@ -10,9 +10,8 @@ namespace Cappuccino {
 	
 	struct collisionData {
 		HitBox ourBox;
-		HitBox two;
-		//HitBox otherBox[8];
-		//unsigned collisions = 0;
+		HitBox otherBox[8];
+		unsigned collisions = 0;
 	};
 
 	class Physics {
