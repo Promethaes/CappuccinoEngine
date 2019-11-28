@@ -14,7 +14,7 @@ project "Externals"
 		"glad/include/glad/glad.h",
         "glad/include/KHR/khrplatform.h",
         "glad/src/glad.c",
-				
+		
 		"imgui/include/imgui/imconfig.h",
         "imgui/include/imgui/imgui.h",
         "imgui/include/imgui/imgui_impl_glfw.h",
@@ -60,12 +60,7 @@ project "Externals"
 		"opengl32"
 	}
 	
-	filter "system:windows"
-        buildoptions {
-			"-std=c11",
-			"-lgdi32"
-		}
-		
+	filter "system:windows"		
         systemversion "latest"
         
         files {
@@ -93,7 +88,5 @@ project "Externals"
 		defines "NDEBUG"
         runtime "Release"
         optimize "on"
-		
-	filter { "system:windows", "configurations:Release" }		
 		
 		

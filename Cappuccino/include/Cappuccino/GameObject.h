@@ -75,7 +75,7 @@ namespace Cappuccino {
 		Pre: another gameobject
 		Post: a boolean true if colliding
 		*/
-		bool checkCollision(GameObject& other);
+		bool checkCollision(GameObject* other);
 
 		/*
 		Purp: To check collision between a gameobject and hitbox
@@ -100,10 +100,6 @@ namespace Cappuccino {
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;
 		Shader _shader;
-
-		//gameplay stuff
-		float hp;
-		float speed = 3.5f;
 		
 	private:
 		/*
@@ -123,6 +119,7 @@ namespace Cappuccino {
 		bool _isActive = false;
 		bool _isVisible = true;
 		
+
 
 		/*
 		Purp: load the textures, make sure this is only called once

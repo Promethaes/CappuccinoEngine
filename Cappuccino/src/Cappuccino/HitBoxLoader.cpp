@@ -1,12 +1,11 @@
 #include "Cappuccino/HitBoxLoader.h"
-
 using namespace Cappuccino;
 
 HitBoxLoader::HitBoxLoader(const char* filename)
 {
 	char tempName[256];
 	bool start = true;
-
+	_boxes.push_back(HitBox(glm::vec3(0),glm::vec3(0)));
 	FILE* file = fopen(filename, "r");
 	if (file == NULL)
 		printf("Failed to open file\n");
@@ -21,36 +20,49 @@ HitBoxLoader::HitBoxLoader(const char* filename)
 			if (tempName[0] == 'C')
 			{
 				tempBox = HitBox(findCenter(), findBox());
+				_boxes.push_back(tempBox);
 			}
 			else if (tempName[0] == 'I')
 			{
 				tempBox = HitBox(findCenter(), findRadius());
+				_boxes.push_back(tempBox);
 			}
-			//hitBox creation
-			_boxes.push_back(tempBox);
+			else if (tempName[0] == 'B')
+			{
+				tempBox = HitBox(findCenter(), findBox());
+				_boxes[0] = tempBox;
+			}			
 			_tempVerts.clear();
 			moreFile ^= 1;
 		}
 		else if (strcmp(line, "o") == 0)
 		{
-			fscanf(file, "%s\n", &tempName);
+			
 			if (!start)
 			{
 				HitBox tempBox;
 				if (tempName[0] == 'C')
 				{
 					 tempBox = HitBox(findCenter(),findBox());
+					 _boxes.push_back(tempBox);
 				}
 				else if (tempName[0] == 'I')
 				{
 					tempBox = HitBox(findCenter(),findRadius());
+					_boxes.push_back(tempBox);
+				}
+				else if (tempName[0] == 'B')
+				{
+					tempBox = HitBox(findCenter(), findBox());
+					_boxes[0] = tempBox;
 				}
 				//hitBox creation
-				_boxes.push_back(tempBox);
+				fscanf(file, "%s\n", &tempName);
 				_tempVerts.clear();
 			}
 			else
 			{
+				fscanf(file, "%s\n", &tempName);
 				start ^= 1;
 			}
 			

@@ -37,7 +37,7 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
 			
 			for(auto& hitBox : _hitBoxes) {
-			//	hitBox.draw();
+				hitBox.draw();
 			}
 			
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
@@ -119,6 +119,28 @@ namespace Cappuccino {
 			return true;
 
 		return false;
+	}
+
+	collisionData RigidBody::getData(RigidBody& other)
+	{
+		collisionData newData;
+		if (_hitBoxes.size() > 1){
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
+				for (unsigned i = 1; i < _hitBoxes.size(); i++){
+					for (unsigned n = 1; n < other._hitBoxes.size(); n++){
+						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position)) {
+							newData.ourBox = _hitBoxes[i];
+							newData.otherBox[newData.collisions] = other._hitBoxes[n];
+							newData.collisions++;
+						}
+					}
+				}
+		}
+		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position)) {
+			newData.ourBox = _hitBoxes[0];
+			newData.otherBox[0] = other._hitBoxes[0];
+		}
+		return newData;
 	}
 
 	void RigidBody::rotateRigid(float angle)
