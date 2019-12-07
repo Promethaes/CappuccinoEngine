@@ -34,7 +34,7 @@ namespace Cappuccino {
 
 	class GameObject {
 	public:
-		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs, const std::optional<float>& mass = std::nullopt);
+		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs, const std::optional<float>& mass = std::nullopt,unsigned viewportNum = 0);
 		virtual ~GameObject();
 		/*
 		Purp: wrapper class to call child update
@@ -83,24 +83,25 @@ namespace Cappuccino {
 		Post: a boolean true if colliding
 		*/
 		bool checkCollision(const HitBox& other, const glm::vec3& pos);
-		
+
 		void setActive(bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
 		void setVisible(bool yn) { _isVisible = yn; }
 		bool isVisible() const { return _isVisible; }
-	protected:
-		/*
-		Purp: draw the game object
-		*/
+
 		void draw();
 
+		//returns which viewport the object should be drawn in
+		unsigned getViewportNum() { return _viewportNum; }
+	protected:
+		unsigned _viewportNum;
 		//a temporary state variable to store a state before the checkChangeState can be called
 		bool stateChangeFlag = false;
 
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;
 		Shader _shader;
-		
+
 	private:
 		/*
 		Purp: to check collision with all gameobjects
@@ -118,7 +119,7 @@ namespace Cappuccino {
 		bool _loadedMesh = false;
 		bool _isActive = false;
 		bool _isVisible = true;
-		
+
 
 
 		/*

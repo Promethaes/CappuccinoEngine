@@ -22,7 +22,7 @@ namespace Cappuccino {
 
 		/*
 		Purp: performs matrix multiplication and assigns the final product to the transformMat
-		*/
+		*/ 
 		void update();
 
 		glm::vec3 translate(const glm::vec3& translateBy);

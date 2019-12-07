@@ -33,15 +33,15 @@ namespace Cappuccino {
 
 		
 		if(drawHitBox) {
-			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
-			
-			for(auto& hitBox : _hitBoxes) {
-				hitBox.draw();
-			}
-			
-			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
-			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+			//CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+			//CAPP_GL_CALL(glDisable(GL_CULL_FACE));
+			//
+			//for(auto& hitBox : _hitBoxes) {
+			////	hitBox.draw();
+			//}
+			//
+			//CAPP_GL_CALL(glEnable(GL_CULL_FACE));
+			//CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 		}
 		
 	}

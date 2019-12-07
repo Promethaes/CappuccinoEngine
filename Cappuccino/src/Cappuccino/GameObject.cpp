@@ -8,11 +8,12 @@ Texture* GameObject::defaultEmission = nullptr;
 Texture* GameObject::defaultNormal   = nullptr;
 Texture* GameObject::defaultHeight   = nullptr;
 
-GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass)
+GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass,unsigned viewportNum)
 	:_shader(_shader), _rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z),
 		glm::vec3(0, 0, 0),
 		mass.has_value() ? mass.value() : 1)
 {
+	_viewportNum = viewportNum;
 	//mesh = new Mesh(MESH);
 
 	//set the state manually
@@ -86,8 +87,6 @@ bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 
-	
-
 	_rigidBody.update(dt, _transform._transformMat);
 	_transform._position->x = _rigidBody._position.x;
 	_transform._position->y = _rigidBody._position.y;
@@ -95,8 +94,6 @@ void GameObject::baseUpdate(float dt) {
 	_transform.update();
 
 	collision();
-	if (_isVisible)
-		draw();
 }
 
 
