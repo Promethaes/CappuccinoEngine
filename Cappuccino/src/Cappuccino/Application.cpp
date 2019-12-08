@@ -118,34 +118,33 @@ namespace Cappuccino {
 		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		static GLfloat lastFrame;
 		float lag = 0.0f;
-		float turnRate = 0.0016f;
+		float turnRate = 1000.0f / 120.0f;
+		turnRate /= 1000.0f;
 		/*
 		Render Loop
 		*/
 		while (!glfwWindowShouldClose(window)) {
+			//https://gameprogrammingpatterns.com/game-loop.html
+
 			const GLfloat currentFrame = static_cast<GLfloat>(glfwGetTime());
 			const GLfloat deltaTime = currentFrame - lastFrame;
-			//lag += deltaTime;
+			lag += deltaTime;
 
 
-			//while (lag >= turnRate/1000.0f) {
-				update(deltaTime);
-			//	lag -= turnRate;
-			//}
-			//lag += deltaTime;
-		//	while (lag >= turnRate / 1000.0f) {
+			while (lag >= turnRate) {
+				update(turnRate);
+				lag -= turnRate;
+			}
 
-				for (unsigned i = 0; i < _viewports.size(); i++) {
-					_viewports[i].use();
-					for (auto y : GameObjects)
-						if (y->isActive() && y->isVisible() && y->getViewportNum() == i)
-							y->draw();
-					for (auto x : UserInterface::_allUI)
-						x->draw();
-				}
-			//	lag -= turnRate;
+			for (unsigned i = 0; i < _viewports.size(); i++) {
+				_viewports[i].use();
+				for (auto y : GameObjects)
+					if (y->isActive() && y->isVisible() && y->getViewportNum() == i)
+						y->draw();
+				for (auto x : UserInterface::_allUI)
+					x->draw();
+			}
 
-			//}
 
 #if _DEBUG
 			drawImGui(deltaTime);
@@ -155,10 +154,10 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glfwPollEvents());
 			CAPP_GL_CALL(glfwSwapBuffers(window));
 
-			//float delay = 16.0f;
-			//long long finalDelay = (long long)(currentFrame + delay - glfwGetTime());
-			//
-			//std::this_thread::sleep_for(std::chrono::milliseconds(finalDelay));
+			float delay = turnRate * 1000.0f;
+			long long finalDelay = (long long)(currentFrame + delay - glfwGetTime());
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(finalDelay));
 
 			lastFrame = currentFrame;
 		}
