@@ -246,25 +246,21 @@ void Cappuccino::GameObject::collision()
 						//x-
 						_rigidBody._vel.x = 0.0f;
 						_rigidBody._position.x = x->_rigidBody._position.x + newData.otherBox[i]._position.x - newData.otherBox[i]._size.x / 2  - newData.ourBox._size.x / 2 + newData.ourBox._position.x-0.01;
-						CAPP_PRINT_N("LEFT: %f", _rigidBody._vel.x);
 					}
 					else if (dir == right) {
 						//x+
 						_rigidBody._vel.x = 0.0f;
 						_rigidBody._position.x = x->_rigidBody._position.x + newData.otherBox[i]._position.x + newData.otherBox[i]._size.x / 2 + newData.ourBox._size.x / 2 + newData.ourBox._position.x + 0.01;
-						CAPP_PRINT_N("RIGHT: %f", _rigidBody._vel.x);
 					}
 					else if (dir == forward) {
 						//z+
 						_rigidBody._vel.z = 0.0f;
 						_rigidBody._position.z = x->_rigidBody._position.z + newData.otherBox[i]._position.z + newData.otherBox[i]._size.z / 2 + newData.ourBox._size.z / 2 + newData.ourBox._position.z + 0.01;
-						CAPP_PRINT_N("FOR: %f", _rigidBody._vel.z);
 					}
 					else if (dir == backward) {
 						//z-
 						_rigidBody._vel.z = 0.0f;
 						_rigidBody._position.z = x->_rigidBody._position.z + newData.otherBox[i]._position.z - newData.otherBox[i]._size.z / 2 - newData.ourBox._size.z / 2 + newData.ourBox._position.z - 0.01;
-						CAPP_PRINT_N("BACK: %f", _rigidBody._vel.z);
 					}
 				}
 			}
