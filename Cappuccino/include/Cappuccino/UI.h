@@ -24,6 +24,7 @@ namespace Cappuccino {
 
 		void setVisible(bool yn) { _isVisible = yn; }
 		bool isVisible() { return _isVisible; }
+
 	private:
 		bool _isVisible = true;
 
@@ -31,10 +32,14 @@ namespace Cappuccino {
 
 	class UserInterface {
 	public:
+		UserInterface();
 
 		void update(float dt);
+		
+		void draw();
 
 		std::vector<UIComponent*> _uiComponents;
+		static std::vector<UserInterface*> _allUI;
 	};
 
 	//UI components

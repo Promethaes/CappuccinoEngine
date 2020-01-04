@@ -20,7 +20,18 @@
 #include <string>
 
 namespace Cappuccino {
-	
+
+	class Viewport {
+	public:
+		Viewport(const glm::vec4& borderColour, const glm::vec4& bounds, void(*specialDrawInstructionsCallback)() = nullptr,GLenum drawMode = GL_FILL);
+		void use();
+	private:
+		void(*_callback)();
+		glm::vec4 _borderColour;
+		glm::vec4 _bounds;
+		GLenum _drawMode;
+	};
+
 	class Application {
 	public:
 
@@ -29,6 +40,7 @@ namespace Cappuccino {
 			GLuint             WIDTH,
 			GLuint             HEIGHT,
 			const std::string& TITLE,
+			const std::vector<Viewport>& viewports,
 			GLuint             contextVersionMajor = 4u,
 			GLuint             contextVersionMinor = 6u
 		);
@@ -50,13 +62,14 @@ namespace Cappuccino {
 		void drawImGui(GLfloat dt);
 
 		static void glDebugMessageCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data);
-		
+
 		GLuint _width, _height;
 		std::string _title;
 		GLuint _contextVersionMajor, _contextVersionMinor;
+		std::vector<Viewport> _viewports;
 
 
 		static bool _instantiated;
 	};
-	
+
 }

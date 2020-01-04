@@ -1,9 +1,12 @@
 #include "Cappuccino/Application.h"
+#include "Cappuccino/UI.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include <thread>
+#include <chrono>
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;
@@ -13,13 +16,14 @@ namespace Cappuccino {
 	bool Application::_instantiated = false;
 	GLFWwindow* Application::window = nullptr;
 
-	Application::Application() : Application(100, 100, "Failed to load properly!", 4u, 6u) {}
+	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
-	Application::Application(const GLuint WIDTH, const GLuint HEIGHT, const string& TITLE, const GLuint contextVersionMajor, const GLuint contextVersionMinor) {
+	Application::Application(const GLuint WIDTH, const GLuint HEIGHT, const string& TITLE, const std::vector<Viewport>& viewports, const GLuint contextVersionMajor, const GLuint contextVersionMinor) {
 		window = NULL;
 		_width = WIDTH; _height = HEIGHT;
 		_title = TITLE;
 		_contextVersionMajor = contextVersionMajor; _contextVersionMinor = contextVersionMinor;
+		_viewports = viewports;
 
 		_clearColour = glm::vec4(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -63,12 +67,12 @@ namespace Cappuccino {
 			SYS_EXIT(-3);
 		}
 
-		#if _DEBUG
+#if _DEBUG
 
 		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
 		CAPP_GL_CALL(glDebugMessageCallback(glDebugMessageCallbackFunc, NULL));
 		CAPP_GL_CALL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, 0, GL_FALSE));
-		
+
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -87,53 +91,75 @@ namespace Cappuccino {
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 0.8f;
 		}
-		
-		#endif
-		
+
+#endif
+
 		SoundSystem::init(R"(.\Assets\Sounds\)");
 		FontManager::init(R"(.\Assets\Fonts\)");
 	}
-	
+
 	void Application::run() {
-		
+
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
 
-		#if SOUNDTEST
+#if SOUNDTEST
 		auto soundRef = SoundSystem::load2DSound("testSound.mp3");
 		auto groupRef = SoundSystem::createChannelGroup("group1");
 
 		SoundSystem::playSound2D(soundRef, groupRef);
-		#endif
+#endif
 
 		CAPP_GL_CALL(glEnable(GL_DEPTH_TEST));
 		CAPP_GL_CALL(glEnable(GL_CULL_FACE));
 		CAPP_GL_CALL(glEnable(GL_BLEND));
+		CAPP_GL_CALL(glEnable(GL_SCISSOR_TEST));
 		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		static GLfloat lastFrame;
-
+		float lag = 0.0f;
+		float turnRate = 1000.0f / 120.0f;
+		turnRate /= 1000.0f;
 		/*
 		Render Loop
 		*/
 		while (!glfwWindowShouldClose(window)) {
+			//https://gameprogrammingpatterns.com/game-loop.html
+
 			const GLfloat currentFrame = static_cast<GLfloat>(glfwGetTime());
 			const GLfloat deltaTime = currentFrame - lastFrame;
+			lag += deltaTime;
 
-			CAPP_GL_CALL(glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w));
-			CAPP_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-			
-			update(deltaTime);
 
-			#if _DEBUG
+			while (lag >= turnRate) {
+				update(turnRate);
+				lag -= turnRate;
+			}
+
+			for (unsigned i = 0; i < _viewports.size(); i++) {
+				_viewports[i].use();
+				for (auto y : GameObjects)
+					if (y->isActive() && y->isVisible() && y->getViewportNum() == i)
+						y->draw();
+				for (auto x : UserInterface::_allUI)
+					x->draw();
+			}
+
+
+#if _DEBUG
 			drawImGui(deltaTime);
-			#endif
+#endif
 
 			// Swap the buffers and poll events for the next frame
-			lastFrame = currentFrame;
 			CAPP_GL_CALL(glfwPollEvents());
 			CAPP_GL_CALL(glfwSwapBuffers(window));
 
+			float delay = turnRate * 1000.0f;
+			long long finalDelay = (long long)(currentFrame + delay - glfwGetTime());
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(finalDelay));
+
+			lastFrame = currentFrame;
 		}
 
 		cleanup();
@@ -141,13 +167,13 @@ namespace Cappuccino {
 
 	void Application::cleanup() {
 
-		#if _DEBUG
+#if _DEBUG
 		// Shutdown imGui
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
-		#endif
-		
+#endif
+
 		// Shutdown GLFW
 		glfwTerminate();
 	}
@@ -157,11 +183,11 @@ namespace Cappuccino {
 	GAME LOOP
 	*/
 	void Application::update(GLfloat dt) {
-		#if _DEBUG
-		if(isEvent(Events::Escape)) {
+#if _DEBUG
+		if (isEvent(Events::Escape)) {
 			glfwSetWindowShouldClose(window, true);
 		}
-		#endif
+#endif
 
 		if (Sedna::XInputManager::controllerConnected(0) || Sedna::XInputManager::controllerConnected(1) ||
 			Sedna::XInputManager::controllerConnected(2) || Sedna::XInputManager::controllerConnected(3)) {
@@ -176,6 +202,7 @@ namespace Cappuccino {
 			if (x->isActive())
 				x->baseUpdate(dt);
 
+
 	}
 
 	void Application::drawImGui(GLfloat dt) {
@@ -186,7 +213,7 @@ namespace Cappuccino {
 		ImGui::Begin("Imgui window");
 
 		// TODO: RENDER IMGUI HERE
-		
+
 		// End the ImGui frame
 		ImGui::End();
 		ImGuiIO& io = ImGui::GetIO();
@@ -212,72 +239,72 @@ namespace Cappuccino {
 
 		std::string message = "OpenGL(0x" + std::string(buffer) + "): ";
 
-		switch(type) {
-			case GL_DEBUG_TYPE_ERROR:
-				message += "ERROR";
-				break;
-			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-				message += "DEPRECATED BEHAVIOUR";
-				break;
-			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-				message += "UNDEFINED BEHAVIOUR";
-				break;
-			case GL_DEBUG_TYPE_PORTABILITY:
-				message += "PORTABILITY ISSUE";
-				break;
-			case GL_DEBUG_TYPE_PERFORMANCE:
-				message += "PERFORMANCE ISSUE";
-				break;
-			case GL_DEBUG_TYPE_MARKER:
-				message += "TYPE MARKER";
-				break;
-			case GL_DEBUG_TYPE_OTHER:
-				message += "OTHER";
-				break;
-			default: break;
+		switch (type) {
+		case GL_DEBUG_TYPE_ERROR:
+			message += "ERROR";
+			break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			message += "DEPRECATED BEHAVIOUR";
+			break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			message += "UNDEFINED BEHAVIOUR";
+			break;
+		case GL_DEBUG_TYPE_PORTABILITY:
+			message += "PORTABILITY ISSUE";
+			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			message += "PERFORMANCE ISSUE";
+			break;
+		case GL_DEBUG_TYPE_MARKER:
+			message += "TYPE MARKER";
+			break;
+		case GL_DEBUG_TYPE_OTHER:
+			message += "OTHER";
+			break;
+		default: break;
 		}
 
 		message += "\nSOURCE: ";
-		switch(source) {
-			case GL_DEBUG_SOURCE_API:
-				message += "API";
-				break;
-			case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-				message += "Window system";
-				break;
-			case GL_DEBUG_SOURCE_SHADER_COMPILER:
-				message += "Shader compiler";
-				break;
-			case GL_DEBUG_SOURCE_THIRD_PARTY:
-				message += "Third party";
-				break;
-			case GL_DEBUG_SOURCE_APPLICATION:
-				message += "Application";
-				break;
-			case GL_DEBUG_SOURCE_OTHER:
-				message += "Other";
-			default: break;
+		switch (source) {
+		case GL_DEBUG_SOURCE_API:
+			message += "API";
+			break;
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+			message += "Window system";
+			break;
+		case GL_DEBUG_SOURCE_SHADER_COMPILER:
+			message += "Shader compiler";
+			break;
+		case GL_DEBUG_SOURCE_THIRD_PARTY:
+			message += "Third party";
+			break;
+		case GL_DEBUG_SOURCE_APPLICATION:
+			message += "Application";
+			break;
+		case GL_DEBUG_SOURCE_OTHER:
+			message += "Other";
+		default: break;
 		}
 
 		message += " \nSEVERITY: ";
-		switch(severity) {
-			case GL_DEBUG_SEVERITY_HIGH:
-				message += "HIGH";
-				break;
-			case GL_DEBUG_SEVERITY_MEDIUM:
-				message += "Medium";
-				break;
-			case GL_DEBUG_SEVERITY_LOW:
-				message += "Low";
-				break;
-			case GL_DEBUG_SEVERITY_NOTIFICATION:
-				message += "Notification";
-			default: break;
+		switch (severity) {
+		case GL_DEBUG_SEVERITY_HIGH:
+			message += "HIGH";
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			message += "Medium";
+			break;
+		case GL_DEBUG_SEVERITY_LOW:
+			message += "Low";
+			break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+			message += "Notification";
+		default: break;
 		}
 
 		message += "\n" + std::string(msg) + "\n";
 
-		if(type == GL_DEBUG_TYPE_ERROR || severity == GL_DEBUG_SEVERITY_HIGH) {
+		if (type == GL_DEBUG_TYPE_ERROR || severity == GL_DEBUG_SEVERITY_HIGH) {
 			CAPP_PRINT_ERROR("%s", message.c_str());
 			__debugbreak();
 		}
@@ -285,5 +312,18 @@ namespace Cappuccino {
 			CAPP_PRINT_WARNING("%s", message.c_str());
 		}
 
+	}
+	Viewport::Viewport(const glm::vec4& borderColour, const glm::vec4& bounds, void(*specialDrawInstructionsCallback)(), GLenum drawMode)
+		:_borderColour(borderColour), _bounds(bounds), _drawMode(drawMode), _callback(specialDrawInstructionsCallback)
+	{
+	}
+	void Viewport::use()
+	{
+		CAPP_GL_CALL(glViewport(_bounds.x, _bounds.y, _bounds.z, _bounds.w));
+		CAPP_GL_CALL(glScissor(_bounds.x, _bounds.y, _bounds.z, _bounds.w));
+		CAPP_GL_CALL(glClearColor(_borderColour.x, _borderColour.y, _borderColour.z, _borderColour.w));
+		CAPP_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, _drawMode));
+		_callback != nullptr ? _callback() : 0;
 	}
 }

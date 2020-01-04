@@ -27,7 +27,10 @@ extern "C" {
 int main() {
 
 	if(!Application::isInstantiated()) {
-		Application* application = new Application(SCR_WIDTH, SCR_HEIGHT, SCR_TITLE);
+
+		Cappuccino::Viewport view{ glm::vec4(0.0f,0.5f,0.0f,1.0f),glm::vec4(0.0f,0.0f,SCR_WIDTH,SCR_HEIGHT),[]() {} };
+
+		Application* application = new Application(SCR_WIDTH, SCR_HEIGHT, SCR_TITLE, {view});
 		application->init();
 
 		// Create your scenes here

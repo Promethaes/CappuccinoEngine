@@ -5,14 +5,26 @@
 
 using namespace Cappuccino;
 
+
 void UIComponent::updateComponent(float dt) {}
 void UIComponent::drawComponent() {}
+
+std::vector<UserInterface*> UserInterface::_allUI = {};
+Cappuccino::UserInterface::UserInterface()
+{
+	_allUI.push_back(this);
+}
 
 void UserInterface::update(float dt)
 {
 	for (int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
 		_uiComponents[i]->updateComponent(dt);
 	}
+
+}
+
+void Cappuccino::UserInterface::draw()
+{
 	for (int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
 		_uiComponents[i]->drawComponent();
 	}
