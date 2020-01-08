@@ -33,15 +33,15 @@ namespace Cappuccino {
 
 		
 		if(drawHitBox) {
-			//CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-			//CAPP_GL_CALL(glDisable(GL_CULL_FACE));
-			//
-			//for(auto& hitBox : _hitBoxes) {
-			////	hitBox.draw();
-			//}
-			//
-			//CAPP_GL_CALL(glEnable(GL_CULL_FACE));
-			//CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
+			
+			for(auto& hitBox : _hitBoxes) {
+				hitBox.draw();
+			}
+			
+			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
+			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 		}
 		
 	}
@@ -104,6 +104,34 @@ namespace Cappuccino {
 		return false;
 	}
 
+	bool RigidBody::willCollide(RigidBody& other, glm::vec3 direction, float dt)
+	{
+		if (_hitBoxes.empty() || other._hitBoxes.empty())
+			return false;
+
+		glm::vec3 temp = _vel;
+		glm::vec3 tempPos = _position;
+		for (unsigned i = 0; i < 3; i++) {
+			temp[i] *= direction[i];
+		}
+		tempPos += temp * dt;
+		if (_hitBoxes.size() > 1)
+		{
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))
+				for (unsigned i = 1; i < _hitBoxes.size(); i++)
+				{
+					for (unsigned n = 1; n < other._hitBoxes.size(); n++)
+					{
+						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, tempPos))
+							return true;
+					}
+				}
+		}
+		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))
+			return true;
+		return false;
+	}
+
 	bool RigidBody::checkCollision(HitBox other,glm::vec3 pos)
 	{
 		if (_hitBoxes.empty())
@@ -116,6 +144,32 @@ namespace Cappuccino {
 						return true;
 		}
 		else if (_hitBoxes[0].checkCollision(other,pos,_position))
+			return true;
+
+		return false;
+	}
+
+	bool RigidBody::willCollide(HitBox other, glm::vec3 pos, glm::vec3 direction, float dt)
+	{
+		if (_hitBoxes.empty())
+			return false;
+		glm::vec3 temp = _vel;
+		glm::vec3 tempPos = _position;
+		for (unsigned i = 0; i < 3; i++) {
+			temp[i] *= direction[i];
+			tempPos[i] *= direction[i];
+		}
+		tempPos += temp*dt;
+			
+		
+		if (_hitBoxes.size() > 1)
+		{
+			if (_hitBoxes[0].checkCollision(other, pos, tempPos))
+				for (unsigned i = 1; i < _hitBoxes.size(); i++)
+					if (_hitBoxes[i].checkCollision(other, pos, tempPos))
+						return true;
+		}
+		else if (_hitBoxes[0].checkCollision(other, pos, tempPos))
 			return true;
 
 		return false;

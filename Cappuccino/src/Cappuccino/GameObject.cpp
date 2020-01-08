@@ -80,20 +80,31 @@ bool GameObject::checkCollision(GameObject* other) {
 	return _rigidBody.checkCollision(other->_rigidBody);
 }
 
+bool Cappuccino::GameObject::willCollide(GameObject* other, const glm::vec3& direction, float dt)
+{
+	return _rigidBody.willCollide(other->_rigidBody, direction,dt);
+}
+
 bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
 	return _rigidBody.checkCollision(other, pos);
+}
+
+bool Cappuccino::GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, float dt)
+{
+	return _rigidBody.willCollide(other,pos, direction,dt);
 }
 
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 
+	collision(dt);
 	_rigidBody.update(dt, _transform._transformMat);
 	_transform._position->x = _rigidBody._position.x;
 	_transform._position->y = _rigidBody._position.y;
 	_transform._position->z = _rigidBody._position.z;
 	_transform.update();
 
-	collision();
+	
 }
 
 
@@ -167,100 +178,20 @@ void GameObject::draw()
 			x->unbind(4);
 	}
 }
-void Cappuccino::GameObject::collision()
+void Cappuccino::GameObject::collision(float dt)
 {
-	collisionData newData;//what hitboxes are colliding
 	if (_rigidBody._moveable)//if this object can move
 		for (auto x : gameObjects){//check the other game objects
-			if (x->isActive() && checkCollision(x) && x != this&&x->_rigidBody._canTouch) {//if the object is active and we are colliding
-				newData = _rigidBody.getData(x->_rigidBody);//get the hitboxes
-				//glm::vec3 vectorData = glm::vec3((_rigidBody._position+newData.one._position)-(x->_rigidBody._position+newData.two._position));
-				//glm::vec3 normalizedData = glm::normalize(vectorData);//old code but may be useful if system is changed
-				/*HitBox ourMiniBoxes[6];//will not work but not deleted just yet
-				HitBox otherMiniBoxes[6];
-				for (unsigned i = 0; i < 6; i++) {//create the miniBoxes for the colliding hitboxes
-					int mult = 1;//this is the multiplier for which side the mini box will be on one axis
-					for (unsigned n = 0; n < i; n++)//for the current iteration we invert the multiplier //does it need to run once more
-						mult *= -1;
-
-					glm::vec3 ourTempSize = newData.one._size;
-					ourTempSize[(i) / 2] /= 2;
-
-					glm::vec3 otherTempSize = newData.two._size;
-					otherTempSize[(i) / 2] /= 2;
-
-					glm::vec3 ourTempPos = newData.one._position;//create temp position data for each minibox
-					ourTempPos[(i) / 2] += (ourTempSize[(i) / 2] * mult);
-
-					glm::vec3 otherTempPos = newData.two._position;
-					otherTempPos[(i) / 2] += (otherTempSize[(i) / 2] * mult);
-
-					ourMiniBoxes[i] = HitBox(ourTempPos,ourTempSize);
-					otherMiniBoxes[i] = HitBox(otherTempPos,otherTempSize);
+			if (x->isActive() && x != this && x->_rigidBody._canTouch) //if the object is active, not this, and can be touched
+			for (unsigned i = 0; i < 3; i++) {//all three dimensions
+				glm::vec3 temp(0,0,0);
+				temp[i] = 1;
+				if (willCollide(x, temp, dt)) {
+					x->_rigidBody._vel[i] = 0.0f;
 				}
-				bool ourDirection[6];
-				bool otherDirection[6];
-				for (unsigned i = 0; i < 6; i++) {
-					ourDirection[i] = x->_rigidBody.checkCollision(ourMiniBoxes[i], _rigidBody._position);
-				}
-				for (unsigned i = 0; i < 6; i++) {
-					otherDirection[i] = _rigidBody.checkCollision(otherMiniBoxes[i], x->_rigidBody._position);
-				}*/
-
-				std::vector<glm::vec3> directions
-				{
-					glm::vec3( 0.0f, 0.0f,  1.0f),
-					glm::vec3( 0.0f, 0.0f, -1.0f),
-					glm::vec3(-1.0f, 0.0f,  0.0f),
-					glm::vec3( 1.0f, 0.0f,  0.0f)
-				};
-				enum Direction : unsigned int
-				{
-					forward = 0,
-					backward,
-					left,
-					right
-				};
-				for (unsigned i = 0; i < newData.collisions; i++)
-				{
-
-				
-					unsigned bestmatch = 0;
-					glm::vec3 displacement((_rigidBody._position + newData.ourBox._position) - (x->_rigidBody._position + newData.otherBox[i]._position));
-					//glm::vec3 displacement = _rigidBody._position - x->_rigidBody._position;
-					float max = 0.0f;
-					for (unsigned i = 0; i < 4; i++) {
-						const float dotProduct = glm::dot(glm::normalize(displacement), directions[i]);
-						if (dotProduct > max)
-						{
-							//std::cout << max << std::endl;
-							max = dotProduct;
-							bestmatch = i;
-						}
-					}
-					const Direction dir = static_cast<Direction>(bestmatch);
-					if (dir == left) {
-						//x-
-						_rigidBody._vel.x = 0.0f;
-						_rigidBody._position.x = x->_rigidBody._position.x + newData.otherBox[i]._position.x - newData.otherBox[i]._size.x / 2  - newData.ourBox._size.x / 2 + newData.ourBox._position.x-0.01;
-					}
-					else if (dir == right) {
-						//x+
-						_rigidBody._vel.x = 0.0f;
-						_rigidBody._position.x = x->_rigidBody._position.x + newData.otherBox[i]._position.x + newData.otherBox[i]._size.x / 2 + newData.ourBox._size.x / 2 + newData.ourBox._position.x + 0.01;
-					}
-					else if (dir == forward) {
-						//z+
-						_rigidBody._vel.z = 0.0f;
-						_rigidBody._position.z = x->_rigidBody._position.z + newData.otherBox[i]._position.z + newData.otherBox[i]._size.z / 2 + newData.ourBox._size.z / 2 + newData.ourBox._position.z + 0.01;
-					}
-					else if (dir == backward) {
-						//z-
-						_rigidBody._vel.z = 0.0f;
-						_rigidBody._position.z = x->_rigidBody._position.z + newData.otherBox[i]._position.z - newData.otherBox[i]._size.z / 2 - newData.ourBox._size.z / 2 + newData.ourBox._position.z - 0.01;
-					}
-				}
+					
 			}
+				
 		}
 
 }

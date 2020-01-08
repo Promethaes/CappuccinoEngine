@@ -56,11 +56,23 @@ namespace Cappuccino {
 		*/
 		bool checkCollision(RigidBody& other);
 		/*
-		Purp: To check collision between a rigidbody and single hitbox
+		Purp: Check if two rigidbodies will collide
+		Pre: Another RigidBody
+		Post: A boolean (True if they Collide)
+		*/
+		bool willCollide(RigidBody& other, glm::vec3 direction, float dt);
+		/*
+		Purp: To check collision between this rigidbody and single hitbox
 		Pre: a hitbox
 		Post: a boolean true if colliding
 		*/
 		bool checkCollision(HitBox other, glm::vec3 pos);
+		/*
+		Purp: To check if the rigidbody will collide with a hitbox
+		Pre: a hitbox
+		Post: a boolean true if they will collide
+		*/
+		bool willCollide(HitBox other, glm::vec3 pos, glm::vec3 direction, float dt);
 		/*
 		Purp: to get the data from a collision
 		Pre: another RigidBody
