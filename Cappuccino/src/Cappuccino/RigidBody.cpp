@@ -15,11 +15,13 @@ namespace Cappuccino {
 
 	void RigidBody::update(const float dt, glm::mat4 model)
 	{
+		
+		addPosition(_vel * dt);
+		addVelocity(_accel*dt);
+		
+
 		if (_grav)
 			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));
-
-		addVelocity(_accel*dt);
-		addPosition(_vel*dt);
 
 		glm::mat4 newModel(1.0f);
 		newModel[3].x = model[3].x;
@@ -173,28 +175,6 @@ namespace Cappuccino {
 			return true;
 
 		return false;
-	}
-
-	collisionData RigidBody::getData(RigidBody& other)
-	{
-		collisionData newData;
-		if (_hitBoxes.size() > 1){
-			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
-				for (unsigned i = 1; i < _hitBoxes.size(); i++){
-					for (unsigned n = 1; n < other._hitBoxes.size(); n++){
-						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position)) {
-							newData.ourBox = _hitBoxes[i];
-							newData.otherBox[newData.collisions] = other._hitBoxes[n];
-							newData.collisions++;
-						}
-					}
-				}
-		}
-		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position)) {
-			newData.ourBox = _hitBoxes[0];
-			newData.otherBox[0] = other._hitBoxes[0];
-		}
-		return newData;
 	}
 
 	void RigidBody::rotateRigid(float angle)

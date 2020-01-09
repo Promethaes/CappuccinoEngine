@@ -96,9 +96,9 @@ bool Cappuccino::GameObject::willCollide(const HitBox& other, const glm::vec3& d
 
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
-
 	collision(dt);
 	_rigidBody.update(dt, _transform._transformMat);
+	
 	_transform._position->x = _rigidBody._position.x;
 	_transform._position->y = _rigidBody._position.y;
 	_transform._position->z = _rigidBody._position.z;
@@ -183,15 +183,15 @@ void Cappuccino::GameObject::collision(float dt)
 	if (_rigidBody._moveable)//if this object can move
 		for (auto x : gameObjects){//check the other game objects
 			if (x->isActive() && x != this && x->_rigidBody._canTouch) //if the object is active, not this, and can be touched
-			for (unsigned i = 0; i < 3; i++) {//all three dimensions
-				glm::vec3 temp(0,0,0);
-				temp[i] = 1;
-				if (willCollide(x, temp, dt)) {
-					_rigidBody._vel[i] = 0.0f;
-					_rigidBody._accel[i] = 0.0f;
+				for (unsigned i = 0; i < 3; i++) {//all three dimensions
+					glm::vec3 temp(0,0,0);
+					temp[i] = 1;
+					if (willCollide(x, temp, dt)) {
+						_rigidBody._vel[i] = 0.0f;
+						_rigidBody._accel[i] = 0.0f;
+					}
+						
 				}
-					
-			}
 				
 		}
 
