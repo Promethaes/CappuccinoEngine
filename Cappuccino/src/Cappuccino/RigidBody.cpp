@@ -35,7 +35,6 @@ namespace Cappuccino {
 		if(drawHitBox) {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
-			
 			for(auto& hitBox : _hitBoxes) {
 				hitBox.draw();
 			}
@@ -108,13 +107,12 @@ namespace Cappuccino {
 	{
 		if (_hitBoxes.empty() || other._hitBoxes.empty())
 			return false;
-
-		glm::vec3 temp = _vel;
+		glm::vec3 tempVel = _vel;
 		glm::vec3 tempPos = _position;
 		for (unsigned i = 0; i < 3; i++) {
-			temp[i] *= direction[i];
+			tempVel[i] *= direction[i];
 		}
-		tempPos += temp * dt;
+		tempPos += tempVel * dt;
 		if (_hitBoxes.size() > 1)
 		{
 			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))

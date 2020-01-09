@@ -82,7 +82,7 @@ bool GameObject::checkCollision(GameObject* other) {
 
 bool Cappuccino::GameObject::willCollide(GameObject* other, const glm::vec3& direction, float dt)
 {
-	return _rigidBody.willCollide(other->_rigidBody, direction,dt);
+	return _rigidBody.willCollide(other->_rigidBody, direction, dt);
 }
 
 bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
@@ -91,7 +91,7 @@ bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) {
 
 bool Cappuccino::GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, float dt)
 {
-	return _rigidBody.willCollide(other,pos, direction,dt);
+	return _rigidBody.willCollide(other, pos, direction, dt);
 }
 
 void GameObject::baseUpdate(float dt) {
@@ -187,7 +187,8 @@ void Cappuccino::GameObject::collision(float dt)
 				glm::vec3 temp(0,0,0);
 				temp[i] = 1;
 				if (willCollide(x, temp, dt)) {
-					x->_rigidBody._vel[i] = 0.0f;
+					_rigidBody._vel[i] = 0.0f;
+					_rigidBody._accel[i] = 0.0f;
 				}
 					
 			}
