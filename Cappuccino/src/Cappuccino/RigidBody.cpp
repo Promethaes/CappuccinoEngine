@@ -112,10 +112,10 @@ namespace Cappuccino {
 		for (unsigned i = 0; i < 3; i++) {
 			tempVel[i] *= direction[i];
 		}
-		tempPos += tempVel * dt;
+		tempPos += (tempVel * dt);
 		if (_hitBoxes.size() > 1)
 		{
-			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos)) {
 				for (unsigned i = 1; i < _hitBoxes.size(); i++)
 				{
 					for (unsigned n = 1; n < other._hitBoxes.size(); n++)
@@ -124,6 +124,8 @@ namespace Cappuccino {
 							return true;
 					}
 				}
+			}
+				
 		}
 		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))
 			return true;
