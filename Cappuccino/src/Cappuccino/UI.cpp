@@ -70,6 +70,9 @@ void UIBar::updateComponent(float dt)
 
 void UIBar::drawComponent()
 {
+	if (!isVisible())
+		return;
+
 	_barShader.use();
 
 	_barShader.setUniform("colour", _colour);
