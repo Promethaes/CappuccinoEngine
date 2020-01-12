@@ -86,4 +86,14 @@ namespace Cappuccino {
 			SYS_EXIT(-1);
 		}
 	}
+	Sound::Sound(const std::string& PATH, const std::optional<std::string>& createGroup)
+	{
+		_sound = SoundSystem::load2DSound(PATH);
+		if (createGroup.has_value())
+			_group = SoundSystem::createChannelGroup(createGroup.value());
+	}
+	Sound::Sound(unsigned soundHandle, unsigned groupHandle)
+		:_sound(soundHandle),_group(groupHandle)
+	{
+	}
 }

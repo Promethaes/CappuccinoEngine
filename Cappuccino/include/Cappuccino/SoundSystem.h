@@ -4,8 +4,27 @@
 
 #include "fmod/fmod.hpp"
 #include "fmod/fmod_errors.h"
+#include <optional>
 
 namespace Cappuccino {
+	/*
+	Purp: make the handling of sounds cleaner, more organized
+	Req: sound and group handles
+	*/
+	class Sound {
+	public:
+		Sound() = default;
+		Sound(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt);
+		Sound(unsigned soundHandle, unsigned groupHandle);
+
+		void setSoundHandle(unsigned soundHandle) { _sound = soundHandle; }
+		void setGroupHandle(unsigned groupHandle) { _group = groupHandle; }
+
+		unsigned getSoundHandle() const { return _sound; }
+		unsigned getGroupHandle() const { return _group; }
+	private:
+		unsigned _sound = 0, _group = 0;
+	};
 	class SoundSystem {
 	public:
 
@@ -39,7 +58,7 @@ namespace Cappuccino {
 		Purp: play a 2D sound at the provided indicies
 		Req: index to the proper sounds and group
 		*/
-		static void playSound2D(unsigned soundsIndex, unsigned groupsIndex,ChannelType type);
+		static void playSound2D(unsigned soundsIndex, unsigned groupsIndex, ChannelType type);
 
 		static void setDefaultPath(const std::string& defaultFilePath) { _soundPath = defaultFilePath; }
 
