@@ -8,12 +8,6 @@
 
 namespace Cappuccino {
 	
-	struct collisionData {
-		HitBox ourBox;
-		HitBox otherBox[8];
-		unsigned collisions = 0;
-	};
-
 	class Physics {
 	public:
 
@@ -56,17 +50,23 @@ namespace Cappuccino {
 		*/
 		bool checkCollision(RigidBody& other);
 		/*
-		Purp: To check collision between a rigidbody and single hitbox
+		Purp: Check if two rigidbodies will collide
+		Pre: Another RigidBody
+		Post: A boolean (True if they Collide)
+		*/
+		bool willCollide(RigidBody& other, glm::vec3 direction, float dt);
+		/*
+		Purp: To check collision between this rigidbody and single hitbox
 		Pre: a hitbox
 		Post: a boolean true if colliding
 		*/
 		bool checkCollision(HitBox other, glm::vec3 pos);
 		/*
-		Purp: to get the data from a collision
-		Pre: another RigidBody
-		Post: a struct of the collisions data
+		Purp: To check if the rigidbody will collide with a hitbox
+		Pre: a hitbox
+		Post: a boolean true if they will collide
 		*/
-		collisionData getData(RigidBody& other);
+		bool willCollide(HitBox other, glm::vec3 pos, glm::vec3 direction, float dt);
 		glm::mat4 getRotation() { return _rotateMat;}
 		std::vector<HitBox> _hitBoxes;
 		glm::vec3 _position;
@@ -87,6 +87,6 @@ namespace Cappuccino {
 		glm::mat4 _rotateMat{ 1.0f };
 		float _mass = 1;
 		glm::vec3 _origin;
-		bool _grav = false;
+		bool _grav = true;
 	};
 }

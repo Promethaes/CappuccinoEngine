@@ -76,6 +76,12 @@ namespace Cappuccino {
 		Post: a boolean true if colliding
 		*/
 		bool checkCollision(GameObject* other);
+		/*
+		Purp: To check if you will collide with another gameobject
+		Pre: another Gameobject
+		Post: a boolean true if they will collide
+		*/
+		bool willCollide(GameObject* other,const glm::vec3& direction, float dt);
 
 		/*
 		Purp: To check collision between a gameobject and hitbox
@@ -83,6 +89,12 @@ namespace Cappuccino {
 		Post: a boolean true if colliding
 		*/
 		bool checkCollision(const HitBox& other, const glm::vec3& pos);
+		/*
+		Purp: To check if you will collide with another hitbox
+		Pre: a hitbox
+		Post: a boolean true if they will collide
+		*/
+		bool willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos,float dt);
 
 		void setActive(bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
@@ -108,7 +120,7 @@ namespace Cappuccino {
 		Pre: None
 		Post: None
 		*/
-		void collision();
+		void collision(float dt);
 		/*
 		Purp: pure virtual function that calls the appropriate child update definition
 		Req: delta time to update properly

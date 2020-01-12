@@ -15,11 +15,13 @@ namespace Cappuccino {
 
 	void RigidBody::update(const float dt, glm::mat4 model)
 	{
+		
+		addPosition(_vel * dt);
+		addVelocity(_accel*dt);
+		
+
 		if (_grav)
 			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));
-
-		addVelocity(_accel*dt);
-		addPosition(_vel*dt);
 
 		glm::mat4 newModel(1.0f);
 		newModel[3].x = model[3].x;
@@ -35,7 +37,6 @@ namespace Cappuccino {
 		if(drawHitBox) {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
-			
 			for(auto& hitBox : _hitBoxes) {
 				hitBox.draw();
 			}
@@ -104,6 +105,35 @@ namespace Cappuccino {
 		return false;
 	}
 
+	bool RigidBody::willCollide(RigidBody& other, glm::vec3 direction, float dt)
+	{
+		if (_hitBoxes.empty() || other._hitBoxes.empty())
+			return false;
+		glm::vec3 tempVel = _vel;
+		glm::vec3 tempPos = _position;
+		for (unsigned i = 0; i < 3; i++) {
+			tempVel[i] *= direction[i];
+		}
+		tempPos += (tempVel * dt);
+		if (_hitBoxes.size() > 1)
+		{
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos)) {
+				for (unsigned i = 1; i < _hitBoxes.size(); i++)
+				{
+					for (unsigned n = 1; n < other._hitBoxes.size(); n++)
+					{
+						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, tempPos))
+							return true;
+					}
+				}
+			}
+				
+		}
+		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))
+			return true;
+		return false;
+	}
+
 	bool RigidBody::checkCollision(HitBox other,glm::vec3 pos)
 	{
 		if (_hitBoxes.empty())
@@ -121,26 +151,30 @@ namespace Cappuccino {
 		return false;
 	}
 
-	collisionData RigidBody::getData(RigidBody& other)
+	bool RigidBody::willCollide(HitBox other, glm::vec3 pos, glm::vec3 direction, float dt)
 	{
-		collisionData newData;
-		if (_hitBoxes.size() > 1){
-			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
-				for (unsigned i = 1; i < _hitBoxes.size(); i++){
-					for (unsigned n = 1; n < other._hitBoxes.size(); n++){
-						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position)) {
-							newData.ourBox = _hitBoxes[i];
-							newData.otherBox[newData.collisions] = other._hitBoxes[n];
-							newData.collisions++;
-						}
-					}
-				}
+		if (_hitBoxes.empty())
+			return false;
+		glm::vec3 temp = _vel;
+		glm::vec3 tempPos = _position;
+		for (unsigned i = 0; i < 3; i++) {
+			temp[i] *= direction[i];
+			tempPos[i] *= direction[i];
 		}
-		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position)) {
-			newData.ourBox = _hitBoxes[0];
-			newData.otherBox[0] = other._hitBoxes[0];
+		tempPos += temp*dt;
+			
+		
+		if (_hitBoxes.size() > 1)
+		{
+			if (_hitBoxes[0].checkCollision(other, pos, tempPos))
+				for (unsigned i = 1; i < _hitBoxes.size(); i++)
+					if (_hitBoxes[i].checkCollision(other, pos, tempPos))
+						return true;
 		}
-		return newData;
+		else if (_hitBoxes[0].checkCollision(other, pos, tempPos))
+			return true;
+
+		return false;
 	}
 
 	void RigidBody::rotateRigid(float angle)
