@@ -146,4 +146,5 @@ glm::vec3 HitBoxLoader::findCenter()
 glm::vec3 Cappuccino::HitBoxLoader::findSize()
 {
 	//TODO
+	return glm::vec3();
 }

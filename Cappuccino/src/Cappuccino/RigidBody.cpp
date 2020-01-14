@@ -24,9 +24,6 @@ namespace Cappuccino {
 			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));
 
 		glm::mat4 newModel(1.0f);
-		newModel[3].x = model[3].x;
-		newModel[3].y = model[3].y;
-		newModel[3].z = model[3].z;
 
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
@@ -38,6 +35,10 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
 			for(auto& hitBox : _hitBoxes) {
+				newModel = hitBox._rotationMatrix;
+				newModel[3].x = model[3].x;
+				newModel[3].y = model[3].y;
+				newModel[3].z = model[3].z;
 				hitBox.draw();
 			}
 			

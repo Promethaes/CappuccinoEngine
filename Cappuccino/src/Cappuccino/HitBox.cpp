@@ -324,6 +324,7 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 
 void Cappuccino::HitBox::draw()
 {
+
 	CAPP_GL_CALL(glBindVertexArray(_VAO));
 	CAPP_GL_CALL(glDrawArrays(GL_TRIANGLES, 0, _numVerts / 3));	
 }
