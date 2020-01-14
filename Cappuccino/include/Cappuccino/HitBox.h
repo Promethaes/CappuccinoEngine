@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Ray.h"
+#include <cmath>
 namespace Cappuccino {
 	class HitBox {
 	public:
@@ -15,6 +17,11 @@ namespace Cappuccino {
 		Pre: A Vec3 of where, relative to the rigidbody, the hitbox is and a vec3 of the size of the Cube
 		*/
 		HitBox(glm::vec3& newPos, glm::vec3& newSize);
+		/*
+		Purp: Constructor for an OBB collider
+		Pre: A Vec3 of it's position, a vec3 for it's size, a mat 4x4 rotation matrix
+		*/
+		HitBox(glm::vec3& newPos,glm::vec3& newSize, glm::mat4 & newRotation);
 		/*
 		Purp: This function checks if the hitbox is colliding with another hitbox
 		Pre: Another hitbox object, a vec3 of its connected Rigid Body location, and our Rigid Body location
@@ -53,9 +60,9 @@ namespace Cappuccino {
 		void rebindVBO(glm::vec3& newPos, glm::vec3& newSize);
 		glm::vec3 _position = glm::vec3(0, 0, 0);
 		float _radius = 0;
-		float _scale = 1;
 		glm::vec3 _size = glm::vec3(0, 0, 0);
-		glm::vec3 _rotationAround = glm::vec3(0, 0, 0);
+		glm::mat4 _rotationMatrix = glm::mat4(1.0f);
+		bool _OBB = false;
 
 	protected:
 		unsigned _VAO = 0;
@@ -80,29 +87,14 @@ namespace Cappuccino {
 		Post: A boolean (true for collision)
 		*/
 		float checkDist(float circ, float boxPos, float boxSize);
-	};
 
-	enum class angle
-	{
-		x, y, z
-	};
-	class Capsule
-	{
-	public:
 		/*
-		Purp: This is the contructor for a capsule
-		Pre: A vec3 of it's position relative to the rigidbody, a vec2 for the length(x) and thickness(y), and an enum of x,y,z for the orientation of the capsule
-		Post: None
+		Purp: To see if we can stick a plane between the two OBB boxes
+		Pre: 
+		Post: 
 		*/
-		Capsule(glm::vec3& pos, glm::vec2& size, angle orientation);
-		/*
-		Purp: This function checks if the hitbox is colliding with another hitbox
-		Pre: Another hitbox object, a vec3 of its connected Rigid Body location, and our Rigid Body location
-		Post: A boolean (True for collision)
-		*/
-		bool checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc);
-	protected:
-		HitBox hitBox[3];
-		angle _orientation = angle::x;
+		bool checkPlane(glm::vec3 dist,glm::vec3 plane, HitBox other);
+
+
 	};
 }

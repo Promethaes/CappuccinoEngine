@@ -144,6 +144,83 @@ HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize)
 	CAPP_GL_CALL(glBindVertexArray(0));
 }
 
+Cappuccino::HitBox::HitBox(glm::vec3& newPos, glm::vec3& newSize, glm::mat4& newRotation)
+{
+	_OBB = true;
+	_position = newPos;
+	_size = newSize;
+	_rotationMatrix = newRotation;
+
+	std::vector<glm::vec3> data;
+	CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
+	CAPP_GL_CALL(glBindVertexArray(_VAO));
+	CAPP_GL_CALL(glGenBuffers(1, &_VBO));
+	CAPP_GL_CALL(glEnableVertexAttribArray(0));
+	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _VBO));
+
+	glm::vec3 p1(newPos.x - (newSize.x / 2.0f), newPos.y + (newSize.y / 2.0f), newPos.z + (newSize.z / 2.0f));
+	glm::vec3 p2(newPos.x + (newSize.x / 2.0f), newPos.y + (newSize.y / 2.0f), newPos.z + (newSize.z / 2.0f));
+	glm::vec3 p3(newPos.x - (newSize.x / 2.0f), newPos.y - (newSize.y / 2.0f), newPos.z + (newSize.z / 2.0f));
+	glm::vec3 p4(newPos.x + (newSize.x / 2.0f), newPos.y - (newSize.y / 2.0f), newPos.z + (newSize.z / 2.0f));
+	glm::vec3 p5(newPos.x - (newSize.x / 2.0f), newPos.y + (newSize.y / 2.0f), newPos.z - (newSize.z / 2.0f));
+	glm::vec3 p6(newPos.x + (newSize.x / 2.0f), newPos.y + (newSize.y / 2.0f), newPos.z - (newSize.z / 2.0f));
+	glm::vec3 p7(newPos.x - (newSize.x / 2.0f), newPos.y - (newSize.y / 2.0f), newPos.z - (newSize.z / 2.0f));
+	glm::vec3 p8(newPos.x + (newSize.x / 2.0f), newPos.y - (newSize.y / 2.0f), newPos.z - (newSize.z / 2.0f));
+
+	data.push_back(p1);
+	data.push_back(p2);
+	data.push_back(p4);
+	data.push_back(p1);
+	data.push_back(p3);
+	data.push_back(p4);
+	data.push_back(p5);
+	data.push_back(p6);
+	data.push_back(p8);
+	data.push_back(p5);
+	data.push_back(p7);
+	data.push_back(p8);
+	data.push_back(p5);
+	data.push_back(p6);
+	data.push_back(p2);
+	data.push_back(p5);
+	data.push_back(p1);
+	data.push_back(p2);
+	data.push_back(p3);
+	data.push_back(p7);
+	data.push_back(p8);
+	data.push_back(p3);
+	data.push_back(p4);
+	data.push_back(p8);
+	data.push_back(p1);
+	data.push_back(p5);
+	data.push_back(p7);
+	data.push_back(p1);
+	data.push_back(p3);
+	data.push_back(p7);
+	data.push_back(p2);
+	data.push_back(p6);
+	data.push_back(p8);
+	data.push_back(p2);
+	data.push_back(p4);
+	data.push_back(p8);
+
+	std::vector <float> data2;
+	for (unsigned i = 0; i < data.size(); i++)
+	{
+		data2.push_back(data[i].x);
+		data2.push_back(data[i].y);
+		data2.push_back(data[i].z);
+	}
+
+	_numVerts = data2.size();
+
+	CAPP_GL_CALL(glBufferData(GL_ARRAY_BUFFER, data2.size() * sizeof(float), &data2[0], GL_STATIC_DRAW));
+	CAPP_GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0));
+
+	CAPP_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	CAPP_GL_CALL(glBindVertexArray(0));
+}
+
 bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc)
 {
 	if (_radius) {
@@ -156,6 +233,10 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 			if (totaldist < distanceMin)
 				return true;
 		}
+		else if (_OBB)
+		{
+			//TODO
+		}
 		else {
 			//circle then box
 			float dist = checkCircleBox(ourRigidLoc + _position, rigidLoc + other._position, other._size);
@@ -163,13 +244,75 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 				return true;
 		}
 	}
-	else
-	{
+	else if (_OBB) {
+		if (_radius) {// OBB sphere
+			//TODO
+		}
+		else if (_OBB) {//OBB OBB collision
+			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
+			return !(
+				checkPlane(dist, _rotationMatrix[0], other) ||
+				checkPlane(dist, _rotationMatrix[1], other) ||
+				checkPlane(dist, _rotationMatrix[2], other) ||
+				checkPlane(dist, other._rotationMatrix[0], other) ||
+				checkPlane(dist, other._rotationMatrix[1], other) ||
+				checkPlane(dist, other._rotationMatrix[2], other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other));
+		}
+		else//OBB AABB collision
+		{
+			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
+			return !(
+				checkPlane(dist, _rotationMatrix[0], other) ||
+				checkPlane(dist, _rotationMatrix[1], other) ||
+				checkPlane(dist, _rotationMatrix[2], other) ||
+				checkPlane(dist, other._rotationMatrix[0], other) ||
+				checkPlane(dist, other._rotationMatrix[1], other) ||
+				checkPlane(dist, other._rotationMatrix[2], other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other));
+		}
+	}
+	else{
 		if (other._radius) {
 			//box then circle
 			float dist = checkCircleBox(rigidLoc + other._position, ourRigidLoc + _position, _size);
 			if (dist <= (other._radius * other._radius))
 				return true;
+		}
+		else if (_OBB){//AABB OBB collision
+			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
+			return !(
+				checkPlane(dist, _rotationMatrix[0], other) ||
+				checkPlane(dist, _rotationMatrix[1], other) ||
+				checkPlane(dist, _rotationMatrix[2], other) ||
+				checkPlane(dist, other._rotationMatrix[0], other) ||
+				checkPlane(dist, other._rotationMatrix[1], other) ||
+				checkPlane(dist, other._rotationMatrix[2], other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[0][0], _rotationMatrix[0][1], _rotationMatrix[0][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
+				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other));
 		}
 		else {//box box
 			if (checkSize((_position.x + ourRigidLoc.x), _size.x, (other._position.x + rigidLoc.x), other._size.x) && checkSize((_position.y + ourRigidLoc.y), _size.y, (other._position.y + rigidLoc.y), other._size.y) && checkSize((_position.z + ourRigidLoc.z), _size.z, (other._position.z + rigidLoc.z), other._size.z))
@@ -220,6 +363,10 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 
 		return true;
 	}
+	else if (_OBB)//RAY / OBB
+	{
+		//TODO
+	}
 	else
 	{
 		//TODO RAY/SPHERE
@@ -229,25 +376,31 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 
 void Cappuccino::HitBox::rotateBox(float angle)
 {
-	if (angle/90.0f == 1.0f)
-	{
-		_size = glm::vec3(_size.z, _size.y, _size.x);
-		_position = glm::vec3(_position.z,_position.y,-_position.x);
+	if (!_OBB) {
+		if (angle / 90.0f == 1.0f)
+		{
+			_size = glm::vec3(_size.z, _size.y, _size.x);
+			_position = glm::vec3(_position.z, _position.y, -_position.x);
+		}
+		else if (angle / 90.0f == 2.0f)
+		{
+			_position.x *= -1;
+			_position.z *= -1;
+		}
+		else if (angle / 90.0f == 3.0f)
+		{
+			_size = glm::vec3(_size.z, _size.y, _size.x);
+			_position = glm::vec3(-_position.z, _position.y, _position.x);
+		}
+		if (_radius)
+			rebindVBO(_position, _radius);
+		else
+			rebindVBO(_position, _size);
 	}
-	else if (angle / 90.0f == 2.0f)
-	{
-		_position.x *= -1;
-		_position.z *= -1;
-	}
-	else if (angle / 90.0f == 3.0f)
-	{
-		_size = glm::vec3(_size.z,_size.y,_size.x);
-		_position = glm::vec3(-_position.z, _position.y, _position.x);
-	}
-	if (_radius)
-		rebindVBO(_position, _radius);
 	else
-		rebindVBO(_position,_size);
+	{
+		_rotationMatrix = glm::rotate(_rotationMatrix,glm::radians(angle),glm::vec3(0,0,1));
+	}
 }
 
 void Cappuccino::HitBox::rebindVBO(glm::vec3& newPos, float newRadius)
@@ -408,36 +561,27 @@ float Cappuccino::HitBox::checkDist(float circ, float boxPos, float boxSize)
 	return dist;
 }
 
-Cappuccino::Capsule::Capsule(glm::vec3& pos, glm::vec2& size, angle orientation)
+bool Cappuccino::HitBox::checkPlane(glm::vec3 dist, glm::vec3 plane, HitBox other)
 {
-	_orientation = orientation;//this is the way that the capsule will lie across
-	//the size is a vec2 as the sphere must be the same radius in both dimensions, the x handles the distance between the spheres while the y handles the size of the spheres
-	if (_orientation == angle::x)
-	{
-		hitBox[0] = HitBox(pos, glm::vec3(size, size.y));//the cube , the two sides must be the same size
-		hitBox[1] = HitBox(glm::vec3(pos.x - (size.x / 2), pos.y, pos.z), size.y / 2);
-		hitBox[2] = HitBox(glm::vec3(pos.x + (size.x / 2), pos.y, pos.z), size.y / 2);
-	}
-	else if (_orientation == angle::y)
-	{
-		hitBox[0] = HitBox(pos, glm::vec3(size.y, size.x, size.y));
-		hitBox[1] = HitBox(glm::vec3(pos.x, pos.y - (size.x / 2), pos.z), size.y / 2);
-		hitBox[2] = HitBox(glm::vec3(pos.x, pos.y + (size.x / 2), pos.z), size.y / 2);
-	}
-	else if (_orientation == angle::z)
-	{
-		hitBox[0] = HitBox(pos, glm::vec3(size.y, size.y, size.x));
-		hitBox[1] = HitBox(glm::vec3(pos.x, pos.y, pos.z - (size.x / 2)), size.y / 2);
-		hitBox[2] = HitBox(glm::vec3(pos.x, pos.y, pos.z - (size.x / 2)), size.y / 2);
-	}
+	return (std::fabs(glm::dot(dist, plane)) > 
+		(
+			 fabs(glm::dot((glm::vec3(_rotationMatrix[0])*(_size.x/2)),plane))+
+			 fabs(glm::dot((glm::vec3(_rotationMatrix[1])*(_size.y/2)),plane))+
+			 fabs(glm::dot((glm::vec3(_rotationMatrix[2])*(_size.z/2)),plane))+
+			 fabs(glm::dot((glm::vec3(other._rotationMatrix[0])*(other._size.x/2)),plane))+
+			 fabs(glm::dot((glm::vec3(other._rotationMatrix[1])*(other._size.y/2)),plane))+
+			 fabs(glm::dot((glm::vec3(other._rotationMatrix[2])*(other._size.z/2)),plane))
+		));
+
+	//return ((dist*plane).length()>(
+	//	((glm::vec3(_rotationMatrix[0][0],_rotationMatrix[0][1], _rotationMatrix[0][2])*(_size/2.0f))*plane).length() +
+	//	((glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]) * (_size / 2.0f)) * plane).length() +
+	//	((glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]) * (_size / 2.0f)) * plane).length() +
+	//	((glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2]) * (other._size / 2.0f)) * plane).length() +
+	//	((glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2]) * (other._size / 2.0f)) * plane).length() +
+	//	((glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2]) * (other._size / 2.0f)) * plane).length()
+	//	));
+
+	//https://gamedev.stackexchange.com/questions/112883/simple-3d-obb-collision-directx9-c for help
 }
 
-bool Cappuccino::Capsule::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRigidLoc)
-{
-	for (unsigned i = 0; i < 3; i++)
-	{
-		if (hitBox[i].checkCollision(other, rigidLoc, ourRigidLoc))
-			return true;
-	}
-	return false;
-}

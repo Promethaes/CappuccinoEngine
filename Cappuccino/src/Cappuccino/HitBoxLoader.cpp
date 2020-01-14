@@ -142,3 +142,8 @@ glm::vec3 HitBoxLoader::findCenter()
 	                 tempHigh.y / 2 + tempLow.y / 2,
 	                 tempHigh.z / 2 + tempLow.z / 2);
 }
+
+glm::vec3 Cappuccino::HitBoxLoader::findSize()
+{
+	//TODO
+}
