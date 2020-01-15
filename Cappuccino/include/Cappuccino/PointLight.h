@@ -37,6 +37,9 @@ namespace Cappuccino {
 
 		Shader _pointLightShader;
 	protected:
+		bool _UI = false;
+		
+		//Shader active is used when a lot of uniforms are being sent at once so that the shader doesn't get rebound every iteration
 		bool shaderActive = false;
 		glm::vec2 _windowSize;
 		std::vector<glm::vec3> _positions;
