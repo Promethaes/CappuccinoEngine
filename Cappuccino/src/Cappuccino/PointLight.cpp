@@ -18,17 +18,22 @@ namespace Cappuccino {
 
 		_positions = positions;
 
+		_pointLightShader.use();
+		shaderActive = true;
 		for (unsigned i = 0; i < _positions.size(); i++) {
 
 			setPosition(_positions[i], i);
 			setAmbient(ambientColour, i);
 			setDiffuse(diffuseColour, i);
 			setSpecular(specularColour, i);
+			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].UI", _UI);
 			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].constant", 1.0f);
 			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].linear", 0.0001f);
 			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].quadratic", 0.001f);
 		}
-			setShininess(shininess);
+		setShininess(shininess);
+
+		shaderActive = false;
 
 		_windowSize = windowSize;
 
@@ -58,42 +63,72 @@ namespace Cappuccino {
 
 	void PointLight::updateViewPos(const glm::vec3& cameraPos)
 	{
-		_pointLightShader.use();
+		if (!shaderActive)
+			_pointLightShader.use();
 		_pointLightShader.setUniform("viewPos", cameraPos);
 	}
 
 	void PointLight::setPosition(const glm::vec3& pos, unsigned index)
 	{
-		_pointLightShader.use();
+		if (!shaderActive)
+			_pointLightShader.use();
 		_positions[index] = pos;
 		_pointLightShader.setUniform("pointLight[" + std::to_string(index) + "].position", _positions[index]);
 	}
 
 	void PointLight::setAmbient(const glm::vec3& colour, unsigned index)
 	{
-		_pointLightShader.use();
+		if (!shaderActive)
+			_pointLightShader.use();
 		_ambientColour = colour;
 		_pointLightShader.setUniform("pointLight[" + std::to_string(index) + "].ambient", _ambientColour);
 	}
 
 	void PointLight::setDiffuse(const glm::vec3& colour, unsigned index)
 	{
-		_pointLightShader.use();
+		if (!shaderActive)
+			_pointLightShader.use();
 		_diffuseColour = colour;
 		_pointLightShader.setUniform("pointLight[" + std::to_string(index) + "].diffuse", _diffuseColour);
 	}
 
 	void PointLight::setSpecular(const glm::vec3& colour, unsigned index)
 	{
-		_pointLightShader.use();
+		if (!shaderActive)
+			_pointLightShader.use();
 		_specularColour = colour;
 		_pointLightShader.setUniform("pointLight[" + std::to_string(index) + "].specular", _specularColour);
 	}
 
 	void PointLight::setShininess(float scalar)
 	{
-		_pointLightShader.use();
+		if (!shaderActive)
+			_pointLightShader.use();
 		_shininess = scalar;
 		_pointLightShader.setUniform("material.shininess", _shininess);
+	}
+	void PointLight::resendLights()
+	{
+		if (!shaderActive)
+			_pointLightShader.use();
+		//set the new number of the lights
+		_pointLightShader.setUniform("numLights", (int)_positions.size());
+
+		shaderActive = true;
+		for (unsigned i = 0; i < _positions.size(); i++) {
+
+			setPosition(_positions[i], i);
+			setAmbient(_ambientColour, i);
+			setDiffuse(_diffuseColour, i);
+			setSpecular(_specularColour, i);
+			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].UI", _UI);
+			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].constant", 1.0f);
+			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].linear", 0.0001f);
+			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].quadratic", 0.001f);
+		}
+		setShininess(_shininess);
+
+		shaderActive = false;
+
 	}
 }

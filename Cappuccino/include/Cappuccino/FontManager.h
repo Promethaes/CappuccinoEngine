@@ -53,6 +53,7 @@ namespace Cappuccino {
 
 		glm::vec3 getColour() const { return _colour; }
 		glm::vec2& getPosition() { return _position; }
+		std::string& getText() { return _text; }
 	protected:
 		glm::vec2 _windowSize;
 		float _scale;
