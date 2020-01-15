@@ -28,7 +28,7 @@ namespace Cappuccino {
 			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].linear", 0.0001f);
 			_pointLightShader.setUniform("pointLight[" + std::to_string(i) + "].quadratic", 0.001f);
 		}
-			setShininess(shininess);
+		setShininess(shininess);
 
 		_windowSize = windowSize;
 
@@ -95,5 +95,11 @@ namespace Cappuccino {
 		_pointLightShader.use();
 		_shininess = scalar;
 		_pointLightShader.setUniform("material.shininess", _shininess);
+	}
+	void PointLight::resendLights()
+	{
+		for (unsigned i = 0; i < _positions.size(); i++) {
+			setPosition(_positions[i], i);
+		}
 	}
 }

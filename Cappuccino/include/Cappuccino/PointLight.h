@@ -27,6 +27,8 @@ namespace Cappuccino {
 		void setSpecular(const glm::vec3& colour,unsigned index);
 		void setShininess(float scalar);
 
+		void resendLights();
+
 		std::vector <glm::vec3>& getPositions() { return _positions; }
 		glm::vec3& getAmbient() { return _ambientColour; }
 		glm::vec3& getDiffuse() { return _diffuseColour; }

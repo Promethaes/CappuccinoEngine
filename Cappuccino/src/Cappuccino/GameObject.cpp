@@ -5,10 +5,10 @@ using namespace Cappuccino;
 std::vector<GameObject*> GameObject::gameObjects = {};
 
 Texture* GameObject::defaultEmission = nullptr;
-Texture* GameObject::defaultNormal   = nullptr;
-Texture* GameObject::defaultHeight   = nullptr;
+Texture* GameObject::defaultNormal = nullptr;
+Texture* GameObject::defaultHeight = nullptr;
 
-GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass,unsigned viewportNum)
+GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass, unsigned viewportNum)
 	:_shader(_shader), _rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z),
 		glm::vec3(0, 0, 0),
 		mass.has_value() ? mass.value() : 1)
@@ -21,7 +21,7 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 	this->_textures = textures;
 	this->_meshes = _meshs;
 
-	bool hasNormal = false, hasEmission = false,hasHeight = false;
+	bool hasNormal = false, hasEmission = false, hasHeight = false;
 	for (unsigned i = 0; i < this->_textures.size(); i++) {
 		if (_textures[i]->type == TextureType::EmissionMap)
 			hasEmission = true;
@@ -38,7 +38,7 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 		defaultEmission = new Texture("defaultEmission.png", TextureType::EmissionMap);
 		defaultNormal = new Texture("defaultNorm.png", TextureType::NormalMap);
 		defaultHeight = new Texture("defaultHeight.png", TextureType::HeightMap);
-	
+
 		//after all maps are init one time, never do it again
 		initDefaultMaps = true;
 	}
@@ -98,13 +98,13 @@ void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 	collision(dt);
 	_rigidBody.update(dt, _transform._transformMat);
-	
+
 	_transform._position->x = _rigidBody._position.x;
 	_transform._position->y = _rigidBody._position.y;
 	_transform._position->z = _rigidBody._position.z;
 	_transform.update();
 
-	
+
 }
 
 
@@ -143,56 +143,61 @@ void GameObject::draw()
 	//set active shader
 	glUseProgram(_shader.getID());
 
-	//bind the textures to their proper slots
-	for (auto x : _textures) {
-		if (x->type == TextureType::DiffuseMap)
-			x->bind(0);
-		else if (x->type == TextureType::SpecularMap)
-			x->bind(1);
-		else if (x->type == TextureType::NormalMap)
-			x->bind(2);
-		else if (x->type == TextureType::EmissionMap)
-			x->bind(3);
-		else if (x->type == TextureType::HeightMap)
-			x->bind(4);
-	}
+	for (unsigned i = 0; i < _meshes.size();i++) {
 
-	_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
+		//bind the textures to their proper slots
+		for (auto x : _textures) {
+			if (x->getTextureIndex() != i)
+				continue;
+
+			if (x->type == TextureType::DiffuseMap)
+				x->bind(0);
+			else if (x->type == TextureType::SpecularMap)
+				x->bind(1);
+			else if (x->type == TextureType::NormalMap)
+				x->bind(2);
+			else if (x->type == TextureType::EmissionMap)
+				x->bind(3);
+			else if (x->type == TextureType::HeightMap)
+				x->bind(4);
+		}
+
+		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
 
 
-	for (auto x : _meshes)
-		x->draw();
+		_meshes[i]->draw();
 
 
-	//unloads the textures
-	for (auto x : _textures) {
-		if (x->type == TextureType::DiffuseMap)
-			x->unbind(0);
-		else if (x->type == TextureType::SpecularMap)
-			x->unbind(1);
-		else if (x->type == TextureType::NormalMap)
-			x->unbind(2);
-		else if (x->type == TextureType::EmissionMap)
-			x->unbind(3);
-		else if (x->type == TextureType::HeightMap)
-			x->unbind(4);
+		//unloads the textures
+		for (auto x : _textures) {
+			if (x->type == TextureType::DiffuseMap)
+				x->unbind(0);
+			else if (x->type == TextureType::SpecularMap)
+				x->unbind(1);
+			else if (x->type == TextureType::NormalMap)
+				x->unbind(2);
+			else if (x->type == TextureType::EmissionMap)
+				x->unbind(3);
+			else if (x->type == TextureType::HeightMap)
+				x->unbind(4);
+		}
 	}
 }
 void Cappuccino::GameObject::collision(float dt)
 {
 	if (_rigidBody._moveable)//if this object can move
-		for (auto x : gameObjects){//check the other game objects
+		for (auto x : gameObjects) {//check the other game objects
 			if (x->isActive() && x != this && x->_rigidBody._canTouch) //if the object is active, not this, and can be touched
 				for (unsigned i = 0; i < 3; i++) {//all three dimensions
-					glm::vec3 temp(0,0,0);
+					glm::vec3 temp(0, 0, 0);
 					temp[i] = 1;
 					if (willCollide(x, temp, dt)) {
 						_rigidBody._vel[i] = 0.0f;
 						_rigidBody._accel[i] = 0.0f;
 					}
-						
+
 				}
-				
+
 		}
 
 }

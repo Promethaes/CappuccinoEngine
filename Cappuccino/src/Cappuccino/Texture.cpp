@@ -14,7 +14,8 @@ using namespace Cappuccino;
 
 string Texture::_textureDirectory = "./Assets/Textures/";
 
-Texture::Texture(const std::string& PATH, const TextureType& ID) : type(ID), _data(nullptr), _path(PATH), _texture(0) {
+Texture::Texture(const std::string& PATH, const TextureType& ID,unsigned textureIndex) : type(ID), _data(nullptr), _path(PATH), _texture(0) {
+	_textureIndex = textureIndex;
 	load();
 	ResourceManager::_allTextures.push_back(this);
 }
