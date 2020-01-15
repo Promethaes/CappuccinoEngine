@@ -46,14 +46,22 @@ project "Externals"
         "glfw3/src/input.c",
         "glfw3/src/monitor.c",
         "glfw3/src/vulkan.c",
-        "glfw3/src/window.c"
+        "glfw3/src/window.c",
+
+        "json/include/json/json.hpp",
+
+        "tiny/include/tiny_gltf.h",
+        "tiny/src/tiny_impl.cpp"
+
 	}
 	
 	includedirs {
 		"glad/include",
 		"glfw3/include",
 		"imgui/include/imgui",
-		"stb/include/stb"
+        "stb/include/stb",
+        "tiny/include/",
+        "json/include/"
 	}
 	
 	links {
