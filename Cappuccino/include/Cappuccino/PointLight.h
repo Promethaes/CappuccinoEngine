@@ -37,6 +37,7 @@ namespace Cappuccino {
 
 		Shader _pointLightShader;
 	protected:
+		bool shaderActive = false;
 		glm::vec2 _windowSize;
 		std::vector<glm::vec3> _positions;
 		glm::vec3 _ambientColour;
