@@ -58,7 +58,9 @@ project "CappuccinoEngine"
 		"Externals/glfw3/include",
 		"Externals/glm/include",
 		"Externals/imgui/include",
-		"Externals/stb/include"
+		"Externals/stb/include",
+		"Externals/json/include",
+		"Externals/tiny/include"
 	}
 	
 	libdirs {
