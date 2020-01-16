@@ -27,7 +27,9 @@ namespace Cappuccino {
 		Pre: A float of the time between frames, a mat4 for the hitBox shader's model
 		Post: None
 		*/
-		void update(float dt, glm::mat4 model);
+		void update(float dt, glm::mat4& model);
+
+		void draw();
 
 		void setViewProjMat(glm::mat4 &view, glm::mat4 &projection) { _view = view; _projection = projection; };
 		void setAccel(const glm::vec3& force);
@@ -82,6 +84,8 @@ namespace Cappuccino {
 		bool _moveable = false;
 		bool _canTouch= true;
 	private:
+		glm::mat4 _tempModel{ 1.0f };
+
 		bool _collision = false;
 		glm::vec3 _scale{ 0 };
 		glm::mat4 _rotateMat{ 1.0f };
