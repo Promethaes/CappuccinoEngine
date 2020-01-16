@@ -13,7 +13,7 @@ namespace Cappuccino {
 		: _position(transformPosition), _mass(mass), _origin(origin), _grav(gravity) {}
 
 
-	void RigidBody::update(const float dt, glm::mat4 model)
+	void RigidBody::update(const float dt, glm::mat4& model)
 	{
 		
 		addPosition(_vel * dt);
@@ -23,29 +23,34 @@ namespace Cappuccino {
 		if (_grav)
 			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));
 
+		_tempModel = model;
+		
+	}
+
+	void RigidBody::draw()
+	{
 		glm::mat4 newModel(1.0f);
 
 		_shader.use();
 		_shader.loadModelMatrix(newModel);
-		_shader.setUniform("view",_view);
+		_shader.setUniform("view", _view);
 		_shader.setUniform("projection", _projection);
 
-		
-		if(drawHitBox) {
+
+		if (drawHitBox) {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
-			for(auto& hitBox : _hitBoxes) {
+			for (auto& hitBox : _hitBoxes) {
 				newModel = hitBox._rotationMatrix;
-				newModel[3].x = model[3].x;
-				newModel[3].y = model[3].y;
-				newModel[3].z = model[3].z;
+				newModel[3].x = _tempModel[3].x;
+				newModel[3].y = _tempModel[3].y;
+				newModel[3].z = _tempModel[3].z;
 				hitBox.draw();
 			}
 			
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 		}
-		
 	}
 
 	void RigidBody::addAccel(const glm::vec3& force)

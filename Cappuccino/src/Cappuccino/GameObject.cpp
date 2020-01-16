@@ -182,6 +182,8 @@ void GameObject::draw()
 				x->unbind(4);
 		}
 	}
+
+	_rigidBody.draw();
 }
 void Cappuccino::GameObject::collision(float dt)
 {
