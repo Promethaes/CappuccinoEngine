@@ -27,7 +27,7 @@ namespace Cappuccino {
 		Pre: A float of the time between frames, a mat4 for the hitBox shader's model
 		Post: None
 		*/
-		void update(float dt, glm::mat4& model);
+		void update(float dt);
 
 		void draw();
 
@@ -81,14 +81,17 @@ namespace Cappuccino {
 		static glm::mat4 _projection;
 		Shader _shader{ "hitBox.vert","hitBox.frag" };
 		void rotateRigid(float angle);
+
+
 		bool _moveable = false;
 		bool _canTouch= true;
+		bool bounce = false;
+		bool _creature = false;
 	private:
 		glm::mat4 _tempModel{ 1.0f };
-
 		bool _collision = false;
 		glm::vec3 _scale{ 0 };
-		glm::mat4 _rotateMat{ 1.0f };
+		glm::mat4 _rotateMat;
 		float _mass = 1;
 		glm::vec3 _origin;
 		bool _grav = true;
