@@ -36,7 +36,7 @@ namespace Cappuccino {
 
 		glm::mat4 _transformMat{ 1.0f };
 
-		glm::vec4* _position;
+		glm::vec4* _position = nullptr;
 
 		glm::mat4 _translateMat{ 1.0f };
 		glm::mat4 _scaleMat{ 1.0f };
