@@ -7,24 +7,7 @@
 #include <optional>
 
 namespace Cappuccino {
-	/*
-	Purp: make the handling of sounds cleaner, more organized
-	Req: sound and group handles
-	*/
-	class Sound {
-	public:
-		Sound() = default;
-		Sound(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt);
-		Sound(unsigned soundHandle, unsigned groupHandle);
-
-		void setSoundHandle(unsigned soundHandle) { _sound = soundHandle; }
-		void setGroupHandle(unsigned groupHandle) { _group = groupHandle; }
-
-		unsigned getSoundHandle() const { return _sound; }
-		unsigned getGroupHandle() const { return _group; }
-	private:
-		unsigned _sound = 0, _group = 0;
-	};
+	
 	class SoundSystem {
 	public:
 
@@ -81,5 +64,28 @@ namespace Cappuccino {
 		static std::vector<FMOD::Channel*>_channels;
 		static FMOD::System* _system;
 		static FMOD_RESULT _result;
+	};
+
+	/*
+	Purp: make the handling of sounds cleaner, more organized
+	Req: sound and group handles
+	*/
+	class Sound {
+	public:
+		Sound() = default;
+		Sound(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt, SoundSystem::ChannelType type = SoundSystem::ChannelType::SoundEffect);
+		Sound(unsigned soundHandle, unsigned groupHandle);
+
+		//default play function, uses default sound manager play
+		void play();
+
+		void setSoundHandle(unsigned soundHandle) { _sound = soundHandle; }
+		void setGroupHandle(unsigned groupHandle) { _group = groupHandle; }
+
+		unsigned getSoundHandle() const { return _sound; }
+		unsigned getGroupHandle() const { return _group; }
+	private:
+		unsigned _sound = 0, _group = 0;
+		SoundSystem::ChannelType _type;
 	};
 }

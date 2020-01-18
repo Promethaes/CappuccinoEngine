@@ -335,7 +335,7 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 	if (!_radius)
 	{
 		float txMin, txMax, tyMin, tyMax, tzMin, tzMax;
-		auto inverseDir = 1.0f / (*ray._rayDir);
+		auto inverseDir = 1.0f / (ray._rayDir);
 
 		glm::vec3 bounds[2]{ pos + _position - _size / 2.0f,pos + _position + _size / 2.0f };
 		std::vector<int> sign;
@@ -344,14 +344,14 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 		sign.push_back((inverseDir.y < 0));
 		sign.push_back((inverseDir.z < 0));
 
-		txMin = (bounds[sign[0]].x - ray._rayPos->x) * inverseDir.x;
-		txMax = (bounds[1 - sign[0]].x - ray._rayPos->x) * inverseDir.x;
+		txMin = (bounds[sign[0]].x - ray._rayPos.x) * inverseDir.x;
+		txMax = (bounds[1 - sign[0]].x - ray._rayPos.x) * inverseDir.x;
 
-		tyMin = (bounds[sign[1]].y - ray._rayPos->y) * inverseDir.y;
-		tyMax = (bounds[1 - sign[1]].y - ray._rayPos->y) * inverseDir.y;
+		tyMin = (bounds[sign[1]].y - ray._rayPos.y) * inverseDir.y;
+		tyMax = (bounds[1 - sign[1]].y - ray._rayPos.y) * inverseDir.y;
 
-		tzMin = (bounds[sign[2]].z - ray._rayPos->z) * inverseDir.z;
-		tzMax = (bounds[1 - sign[2]].z - ray._rayPos->z) * inverseDir.z;
+		tzMin = (bounds[sign[2]].z - ray._rayPos.z) * inverseDir.z;
+		tzMax = (bounds[1 - sign[2]].z - ray._rayPos.z) * inverseDir.z;
 
 		if ((txMin > tyMax) || (tyMin > txMax))
 			return false;
