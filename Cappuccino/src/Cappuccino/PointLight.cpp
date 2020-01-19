@@ -21,7 +21,9 @@ namespace Cappuccino {
 		_pointLightShader.use();
 		shaderActive = true;
 		for (unsigned i = 0; i < _positions.size(); i++) {
+			_active.push_back(true);
 
+			setActive(i, _active[i]);
 			setPosition(_positions[i], i);
 			setAmbient(ambientColour, i);
 			setDiffuse(diffuseColour, i);
@@ -73,6 +75,7 @@ namespace Cappuccino {
 		if (!shaderActive)
 			_pointLightShader.use();
 		_positions[index] = pos;
+		_positions[index].z -= 5.0f;
 		_pointLightShader.setUniform("pointLight[" + std::to_string(index) + "].position", _positions[index]);
 	}
 
@@ -107,6 +110,35 @@ namespace Cappuccino {
 		_shininess = scalar;
 		_pointLightShader.setUniform("material.shininess", _shininess);
 	}
+	void PointLight::setActive(unsigned index, bool active)
+	{
+		if (!shaderActive)
+			_pointLightShader.use();
+		if (index > _active.size() - 1) {
+			printf("PointLight::Set active index out of range!\n");
+			__debugbreak();
+		}
+
+		_active[index] = active;
+		_pointLightShader.setUniform("pointLight[" + std::to_string(index) + "].active", active);
+	}
+	bool PointLight::isActive(unsigned index)
+	{
+		if (index > _active.size() - 1) {
+			printf("PointLight::Is active index out of range!\n");
+			__debugbreak();
+		}
+		return _active[index];
+	}
+	void PointLight::setActive(unsigned index, bool active, const glm::vec3& newPos)
+	{
+		setActive(index, active);
+		if (!shaderActive)
+			_pointLightShader.use();
+		shaderActive = true;
+		setPosition(newPos, index);
+		shaderActive = false;
+	}
 	void PointLight::resendLights()
 	{
 		if (!shaderActive)
@@ -115,8 +147,15 @@ namespace Cappuccino {
 		_pointLightShader.setUniform("numLights", (int)_positions.size());
 
 		shaderActive = true;
+
+		//make sure that actives and positions are the same size
+		while (_active.size() < _positions.size()) 
+			_active.push_back(true);
+		
+
 		for (unsigned i = 0; i < _positions.size(); i++) {
 
+			setActive(i, _active[i]);
 			setPosition(_positions[i], i);
 			setAmbient(_ambientColour, i);
 			setDiffuse(_diffuseColour, i);
