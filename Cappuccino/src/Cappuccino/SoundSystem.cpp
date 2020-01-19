@@ -86,8 +86,9 @@ namespace Cappuccino {
 			SYS_EXIT(-1);
 		}
 	}
-	Sound::Sound(const std::string& PATH, const std::optional<std::string>& createGroup)
+	Sound::Sound(const std::string& PATH, const std::optional<std::string>& createGroup, SoundSystem::ChannelType type)
 	{
+		_type = type;
 		_sound = SoundSystem::load2DSound(PATH);
 		if (createGroup.has_value())
 			_group = SoundSystem::createChannelGroup(createGroup.value());
@@ -95,5 +96,9 @@ namespace Cappuccino {
 	Sound::Sound(unsigned soundHandle, unsigned groupHandle)
 		:_sound(soundHandle),_group(groupHandle)
 	{
+	}
+	void Sound::play()
+	{
+		SoundSystem::playSound2D(_sound, _group, _type);
 	}
 }
