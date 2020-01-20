@@ -22,9 +22,9 @@ namespace Cappuccino {
 
 		if (_grav)
 			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));		
-	}
-
-	void RigidBody::draw()
+	}
+
+	void RigidBody::draw()
 	{
 		_shader.use();
 		_shader.setUniform("view", _view);
@@ -35,14 +35,15 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
 			for (auto& hitBox : _hitBoxes) {
-				_tempModel = hitBox._rotationMatrix;
-				glm::translate(_tempModel,_position+hitBox._position);
-				_shader.loadModelMatrix(_tempModel);
-				hitBox.draw();
+				newModel = hitBox._rotationMatrix;
+				newModel[3].x = _tempModel[3].x;
+				newModel[3].y = _tempModel[3].y;
+				newModel[3].z = _tempModel[3].z;
+			//	hitBox.draw();
 			}
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-		}
+		}
 	}
 
 	void RigidBody::addAccel(const glm::vec3& force)

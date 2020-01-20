@@ -20,15 +20,28 @@ namespace Cappuccino {
 		Req: the camera position
 		*/
 		void updateViewPos(const glm::vec3& cameraPos);
-		
-		void setPosition(const glm::vec3& pos   ,unsigned index);
-		void setAmbient(const glm::vec3& colour ,unsigned index);
-		void setDiffuse(const glm::vec3& colour ,unsigned index);
-		void setSpecular(const glm::vec3& colour,unsigned index);
+
+		void setPosition(const glm::vec3& pos, unsigned index);
+		void setAmbient(const glm::vec3& colour, unsigned index);
+		void setDiffuse(const glm::vec3& colour, unsigned index);
+		void setSpecular(const glm::vec3& colour, unsigned index);
 		void setShininess(float scalar);
+
+		/*
+		Purp: make the light at index active/inactive
+		*/
+		void setActive(unsigned index, bool active);
+		bool isActive(unsigned index);
+
+		/*
+		Purp: make the light at index active/inactive, and set its position
+		*/
+		void setActive(unsigned index, bool active, const glm::vec3& newPos);
 
 		void resendLights();
 
+		//returns a vector of booleans that determine whether or not the light is on
+		std::vector <bool>& getActives() { return _active; }
 		std::vector <glm::vec3>& getPositions() { return _positions; }
 		glm::vec3& getAmbient() { return _ambientColour; }
 		glm::vec3& getDiffuse() { return _diffuseColour; }
@@ -38,11 +51,12 @@ namespace Cappuccino {
 		Shader _pointLightShader;
 	protected:
 		bool _UI = false;
-		
+
 		//Shader active is used when a lot of uniforms are being sent at once so that the shader doesn't get rebound every iteration
 		bool shaderActive = false;
 		glm::vec2 _windowSize;
 		std::vector<glm::vec3> _positions;
+		std::vector<bool> _active;
 		glm::vec3 _ambientColour;
 		glm::vec3 _diffuseColour;
 		glm::vec3 _specularColour;
