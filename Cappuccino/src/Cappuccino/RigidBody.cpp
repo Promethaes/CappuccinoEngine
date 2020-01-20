@@ -45,7 +45,7 @@ namespace Cappuccino {
 				newModel[3].x = _tempModel[3].x;
 				newModel[3].y = _tempModel[3].y;
 				newModel[3].z = _tempModel[3].z;
-				hitBox.draw();
+			//	hitBox.draw();
 			}
 			
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
