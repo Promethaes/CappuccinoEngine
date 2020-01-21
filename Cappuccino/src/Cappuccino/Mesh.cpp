@@ -81,6 +81,9 @@ namespace Cappuccino {
 			else
 				continue;
 		}
+
+
+
 		//add the data to the vectors
 		for (unsigned i = 0; i < faces.size(); i++) {
 			for (unsigned j = 0; j < 3; j++) {
@@ -104,18 +107,64 @@ namespace Cappuccino {
 		_numFaces = faces.size();
 		_numVerts = _numFaces * 3;
 
+		//https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+		//https://gitlab.com/ShawnM427/florp/blob/master/src/florp/graphics/MeshBuilder.cpp
+
+		//it works!
+		std::vector<glm::vec3> tangs;
+		std::vector<glm::vec3> biTangs;
+
+		for (unsigned i = 0; i < _numFaces; i++) {
+			std::vector<glm::vec3> tCalcPos;
+			std::vector<glm::vec2> tCalcUV;
+
+			for (unsigned j = 0; j < 3; j++) {
+				tCalcPos.push_back(vertexData[faces[i].vertexData[j] - 1]);
+				tCalcUV.push_back(textureData[faces[i].textureData[j] - 1]);
+
+			}
+			glm::vec3 deltaPos = tCalcPos[1] - tCalcPos[0];
+			glm::vec3 deltaPos2 = tCalcPos[2] - tCalcPos[0];
+
+			glm::vec2 deltaUV = tCalcUV[1] - tCalcUV[0];
+			glm::vec2 deltaUV2 = tCalcUV[2] - tCalcUV[0];
+
+			float f = 1.0f / (deltaUV.x * deltaUV2.y - deltaUV.y * deltaUV2.x);
+			glm::vec3 tang = (deltaPos * deltaUV2.y - deltaPos2 * deltaUV.y) * f;
+			glm::vec3 biTang = (deltaPos2 * deltaUV.x - deltaPos * deltaUV2.x) * f;
+
+			for (unsigned j = 0; j < 3; j++) {
+				tangs.push_back(tang);
+				biTangs.push_back(biTang);
+
+			}
+
+		}
+
+
 		for (unsigned i = 0; i < unPvertexData.size(); i++) {
 			master.push_back(unPvertexData[i]);
-			verts.push_back(unPvertexData[i]);
+			//verts.push_back(unPvertexData[i]);
 		}
 		for (unsigned i = 0; i < unPtextureData.size(); i++) {
 			master.push_back(unPtextureData[i]);
-			texts.push_back(unPtextureData[i]);
+			//texts.push_back(unPtextureData[i]);
 		}
 		for (unsigned i = 0; i < unPnormalData.size(); i++) {
 			master.push_back(unPnormalData[i]);
-			norms.push_back(unPnormalData[i]);
+			//norms.push_back(unPnormalData[i]);
 		}
+		for (unsigned i = 0; i < tangs.size(); i++) {
+			master.push_back(tangs[i].x);
+			master.push_back(tangs[i].y);
+			master.push_back(tangs[i].z);
+		}
+		for (unsigned i = 0; i < biTangs.size(); i++) {
+			master.push_back(biTangs[i].x);
+			master.push_back(biTangs[i].y);
+			master.push_back(biTangs[i].z);
+		}
+
 
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);
@@ -127,13 +176,22 @@ namespace Cappuccino {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
 
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		//vertex
 		glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_STATIC_DRAW);
+		//verts
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		//texts
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(unPvertexData.size() * sizeof(float)));
+		//norms
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size()) * sizeof(float)));
+		//tangents
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size() + unPnormalData.size()) * sizeof(float)));
+		//bitangents
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size() + unPnormalData.size() + (3*tangs.size())) * sizeof(float)));
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
