@@ -110,6 +110,7 @@ namespace Cappuccino {
 		//https://learnopengl.com/Advanced-Lighting/Normal-Mapping
 		//https://gitlab.com/ShawnM427/florp/blob/master/src/florp/graphics/MeshBuilder.cpp
 
+		//it works!
 		std::vector<glm::vec3> tangs;
 		std::vector<glm::vec3> biTangs;
 
