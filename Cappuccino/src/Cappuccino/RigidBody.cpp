@@ -35,7 +35,7 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
 			for (auto& hitBox : _hitBoxes) {
-				newModel = hitBox._rotationMatrix;
+				glm::mat4 newModel = hitBox._rotationMatrix;
 				newModel[3].x = _tempModel[3].x;
 				newModel[3].y = _tempModel[3].y;
 				newModel[3].z = _tempModel[3].z;
