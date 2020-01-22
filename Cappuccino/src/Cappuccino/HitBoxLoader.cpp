@@ -1,4 +1,5 @@
 #include "Cappuccino/HitBoxLoader.h"
+#include <iostream>
 using namespace Cappuccino;
 
 HitBoxLoader::HitBoxLoader(const char* filename)
@@ -31,7 +32,19 @@ HitBoxLoader::HitBoxLoader(const char* filename)
 			{
 				tempBox = HitBox(findCenter(), findBox());
 				_boxes[0] = tempBox;
-			}			
+			}
+			else if (tempName[0] == 'R')
+			{
+				std::string rotationString = tempName;
+				rotationString = rotationString.substr(rotationString.find_first_of('_') + 1, rotationString.find_last_of('_') - 5);
+				glm::mat4 tempRotation = { 0.7071068,  0.0000000,  0.7071068,0.0f,
+					 0.0000000,  1.0000000,  0.0000000 ,0.0f,
+					-0.7071068,  0.0000000, 0.7071068 , 0.0f,
+					0.0f,0.0f,0.0f,1.0f };
+				//glm::mat4 tempRotation = glm::rotate(tempBox._rotationMatrix, std::stof(rotationString), glm::vec3(0, 1, 0));
+				tempBox = HitBox(findCenter(), findBox(), tempRotation);
+				_boxes.push_back(tempBox);
+			}
 			_tempVerts.clear();
 			moreFile ^= 1;
 		}
@@ -55,6 +68,25 @@ HitBoxLoader::HitBoxLoader(const char* filename)
 				{
 					tempBox = HitBox(findCenter(), findBox());
 					_boxes[0] = tempBox;
+				}
+				else if (tempName[0] == 'R')
+				{
+					std::string rotationString = tempName;
+					rotationString = rotationString.substr(rotationString.find_first_of('_') + 1, rotationString.find_last_of('_') - 5);
+					glm::mat4 tempRotation = { 0.7071068,  0.0000000,  0.7071068,0.0f,
+					 0.0000000,  1.0000000,  0.0000000 ,0.0f,
+					-0.7071068,  0.0000000, 0.7071068 , 0.0f,
+					0.0f,0.0f,0.0f,1.0f };
+					// glm::rotate(tempBox._rotationMatrix, std::stof(rotationString), glm::vec3(0, 1, 0));
+					tempBox = HitBox(findCenter(), findBox(), tempRotation);
+
+					//for (unsigned i = 0; i < 4; i++) {
+					//	for (unsigned j = 0; j < 4; j++) {
+					//		std::cout << tempRotation[i][j]<<" ";
+					//	}
+					//	std::cout << std::endl;
+					//}
+					_boxes.push_back(tempBox);
 				}
 				//hitBox creation
 				fscanf(file, "%s\n", &tempName);

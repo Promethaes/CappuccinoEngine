@@ -233,7 +233,7 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 			if (totaldist < distanceMin)
 				return true;
 		}
-		else if (_OBB)
+		else if (other._OBB)
 		{
 			//TODO
 		}
@@ -248,7 +248,7 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 		if (_radius) {// OBB sphere
 			//TODO
 		}
-		else if (_OBB) {//OBB OBB collision
+		else if (other._OBB) {//OBB OBB collision
 			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
 			return !(
 				checkPlane(dist, _rotationMatrix[0], other) ||
@@ -295,7 +295,7 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 			if (dist <= (other._radius * other._radius))
 				return true;
 		}
-		else if (_OBB){//AABB OBB collision
+		else if (other._OBB){//AABB OBB collision
 			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
 			return !(
 				checkPlane(dist, _rotationMatrix[0], other) ||
@@ -400,7 +400,20 @@ void Cappuccino::HitBox::rotateBox(float angle)
 	}
 	else
 	{
-		_rotationMatrix = glm::rotate(_rotationMatrix,glm::radians(angle),glm::vec3(0,0,1));
+		if (angle / 90.0f == 1.0f)
+		{
+			_position = glm::vec3(_position.z, _position.y, -_position.x);
+		}
+		else if (angle / 90.0f == 2.0f)
+		{
+			_position.x *= -1;
+			_position.z *= -1;
+		}
+		else if (angle / 90.0f == 3.0f)
+		{
+			_position = glm::vec3(-_position.z, _position.y, _position.x);
+		}
+		_rotationMatrix = glm::rotate(_rotationMatrix,glm::radians(angle),glm::vec3(0,1,0));
 	}
 }
 
@@ -573,16 +586,6 @@ bool Cappuccino::HitBox::checkPlane(glm::vec3 dist, glm::vec3 plane, HitBox othe
 			 fabs(glm::dot((glm::vec3(other._rotationMatrix[1])*(other._size.y/2)),plane))+
 			 fabs(glm::dot((glm::vec3(other._rotationMatrix[2])*(other._size.z/2)),plane))
 		));
-
-	//return ((dist*plane).length()>(
-	//	((glm::vec3(_rotationMatrix[0][0],_rotationMatrix[0][1], _rotationMatrix[0][2])*(_size/2.0f))*plane).length() +
-	//	((glm::vec3(_rotationMatrix[1][0], _rotationMatrix[1][1], _rotationMatrix[1][2]) * (_size / 2.0f)) * plane).length() +
-	//	((glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]) * (_size / 2.0f)) * plane).length() +
-	//	((glm::vec3(other._rotationMatrix[0][0], other._rotationMatrix[0][1], other._rotationMatrix[0][2]) * (other._size / 2.0f)) * plane).length() +
-	//	((glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2]) * (other._size / 2.0f)) * plane).length() +
-	//	((glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2]) * (other._size / 2.0f)) * plane).length()
-	//	));
-
 	//https://gamedev.stackexchange.com/questions/112883/simple-3d-obb-collision-directx9-c for help
 }
 
