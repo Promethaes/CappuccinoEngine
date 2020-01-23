@@ -83,6 +83,7 @@ namespace Cappuccino {
 		void rotateRigid(float angle);
 
 
+		std::string myType = "";
 		bool _moveable = false;
 		bool _canTouch= true;
 		bool bounce = false;
