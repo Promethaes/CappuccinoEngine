@@ -40,7 +40,7 @@ namespace Cappuccino {
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
-		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+		//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		window = glfwCreateWindow(_width, _height, _title.c_str(), NULL, NULL);
@@ -322,7 +322,7 @@ namespace Cappuccino {
 	{
 		CAPP_GL_CALL(glViewport(_bounds.x, _bounds.y, _bounds.z, _bounds.w));
 		CAPP_GL_CALL(glScissor(_bounds.x, _bounds.y, _bounds.z, _bounds.w));
-			//CAPP_GL_CALL(glClearColor(_borderColour.x, _borderColour.y, _borderColour.z, 0.0f));
+		CAPP_GL_CALL(glClearColor(_borderColour.x, _borderColour.y, _borderColour.z, 0.0f));
 		CAPP_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, _drawMode));
 		_callback != nullptr ? _callback() : 0;
