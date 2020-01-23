@@ -190,12 +190,12 @@ void Cappuccino::GameObject::collision(float dt)
 	if (_rigidBody._moveable)//if this object can move
 		for (auto x : gameObjects) {//check the other game objects
 			if (x->isActive() && x != this && x->_rigidBody._canTouch) //if the object is active, not this, and can be touched
-				if (_rigidBody.myType == "" || _rigidBody.myType != x->_rigidBody.myType)
+				if (_rigidBody.myType == "" || _rigidBody.myType != x->_rigidBody.myType)//if default type or not the same type as other object
 					for (unsigned i = 0; i < 3; i++) {//all three dimensions
 						glm::vec3 temp(0, 0, 0);
 						temp[i] = 1;
-						if (willCollide(x, temp, dt) && !x->_rigidBody._creature) {
-							if (_rigidBody.bounce) {
+						if (willCollide(x, temp, dt)) {
+							if (_rigidBody._bounce) {
 								_rigidBody._vel[i] *= -1.0f;
 								_rigidBody._accel[i] *= -1.0f;
 							}
