@@ -83,10 +83,14 @@ namespace Cappuccino {
 		void rotateRigid(float angle);
 
 
-		bool _moveable = false;
-		bool _canTouch= true;
-		bool bounce = false;
+		std::string myType = "";//objects that should not collide with eachother should be called the same type (ex. bullet)
+		bool _moveable = false;//if this object can move around the scene
+		bool _canTouch= true;//if the object can touch other objects
+		bool _bounce = false;//if the object should bounce instead of stopping
 		bool _creature = false;
+
+		bool _projectile = false;
+		bool _hitWall = false;
 	private:
 		glm::mat4 _tempModel{ 1.0f };
 		bool _collision = false;
