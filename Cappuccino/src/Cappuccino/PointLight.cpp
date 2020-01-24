@@ -63,13 +63,6 @@ namespace Cappuccino {
 		}
 	}
 
-	void PointLight::updateViewPos(const glm::vec3& cameraPos)
-	{
-		if (!shaderActive)
-			_pointLightShader.use();
-		_pointLightShader.setUniform("viewPos", cameraPos);
-	}
-
 	void PointLight::setPosition(const glm::vec3& pos, unsigned index)
 	{
 		if (!shaderActive)
@@ -149,9 +142,9 @@ namespace Cappuccino {
 		shaderActive = true;
 
 		//make sure that actives and positions are the same size
-		while (_active.size() < _positions.size()) 
+		while (_active.size() < _positions.size())
 			_active.push_back(true);
-		
+
 
 		for (unsigned i = 0; i < _positions.size(); i++) {
 
