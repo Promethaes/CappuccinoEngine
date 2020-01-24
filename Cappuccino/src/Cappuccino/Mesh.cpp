@@ -131,11 +131,11 @@ namespace Cappuccino {
 
 			float f = 1.0f / (deltaUV.x * deltaUV2.y - deltaUV.y * deltaUV2.x);
 			glm::vec3 tang = (deltaPos * deltaUV2.y - deltaPos2 * deltaUV.y) * f;
-			glm::vec3 biTang = (deltaPos2 * deltaUV.x - deltaPos * deltaUV2.x) * f;
+		//	glm::vec3 biTang = (deltaPos2 * deltaUV.x - deltaPos * deltaUV2.x) * f;
 
 			for (unsigned j = 0; j < 3; j++) {
 				tangs.push_back(tang);
-				biTangs.push_back(biTang);
+			//	biTangs.push_back(biTang);
 
 			}
 
@@ -177,7 +177,7 @@ namespace Cappuccino {
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 		glEnableVertexAttribArray(3);
-		glEnableVertexAttribArray(4);
+	//	glEnableVertexAttribArray(4);
 
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		//vertex
@@ -191,7 +191,7 @@ namespace Cappuccino {
 		//tangents
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size() + unPnormalData.size()) * sizeof(float)));
 		//bitangents
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size() + unPnormalData.size() + (3*tangs.size())) * sizeof(float)));
+		//glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size() + unPnormalData.size() + (3*tangs.size())) * sizeof(float)));
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
