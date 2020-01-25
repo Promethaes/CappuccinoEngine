@@ -151,7 +151,7 @@ namespace Cappuccino {
 				})";
 
 		///FRAMEBUFFER SHADERS
-		Shader fbShader{ vertShader,fragShader };
+		Shader fbShader{ true,vertShader,fragShader };
 
 		//https://learnopengl.com/code_viewer_gh.php?code=src/4.advanced_opengl/5.1.framebuffers/framebuffers.cpp
 		//took these from learnopengl cause i didnt wanna write it all out myself

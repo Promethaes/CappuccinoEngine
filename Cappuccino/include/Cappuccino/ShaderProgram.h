@@ -31,8 +31,9 @@ namespace Cappuccino {
 
 		/*
 		Make a shader with raw strings instead of from a file
+		cstring bool is a dummy param so c++ doesnt fuck me over
 		*/
-		Shader(char* vertShader, char* fragShader, char* geoShader = nullptr);
+		Shader(bool cstring, char* vertShader, char* fragShader, char* geoShader = nullptr);
 
 		/*
 		 * Purp.: Activates the shader for use
@@ -83,9 +84,9 @@ namespace Cappuccino {
 		static void compileShader(const char* shaderPath, const ShaderType& type, GLuint& shader);
 
 		//compile shader input c string, not from file. f is a dummy param
-		static void compileShader(char* input, const ShaderType& type, GLuint& shader,int f = 0);
-		
-		
+		static void compileShader(char* input, const ShaderType& type, GLuint& shader, int f);
+
+
 		// Function to link shaders together after compilation
 		void createProgram(GLuint vertex, GLuint fragment, std::optional<GLuint> geometry = std::nullopt);
 

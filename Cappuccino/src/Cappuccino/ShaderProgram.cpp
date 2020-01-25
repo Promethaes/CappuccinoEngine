@@ -30,7 +30,7 @@ Shader::Shader(const string& vertShaderPath, const string& fragShaderPath, const
 	ResourceManager::_allShaders.push_back(this);
 }
 
-Cappuccino::Shader::Shader(char* vertShader, char* fragShader, char* geoShader)
+Cappuccino::Shader::Shader(bool cstring,char* vertShader, char* fragShader, char* geoShader)
 {
 	_programID = 0;
 
