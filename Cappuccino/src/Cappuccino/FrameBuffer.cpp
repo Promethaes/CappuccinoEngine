@@ -3,7 +3,7 @@
 #include "Cappuccino/CappMacros.h"
 using namespace Cappuccino;
 std::vector<Framebuffer*> Framebuffer::_framebuffers = {};
-Cappuccino::Framebuffer::Framebuffer(const glm::vec3& windowSize, bool attachColour, bool attachDepth, bool attachStencil, void(*instructionsCallback)())
+Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, bool attachColour, bool attachDepth, bool attachStencil, void(*instructionsCallback)())
 	:_windowSize(windowSize), _callback(instructionsCallback)
 {
 

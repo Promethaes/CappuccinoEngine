@@ -6,7 +6,7 @@ namespace Cappuccino {
 
 	class Framebuffer {
 	public:
-		Framebuffer(const glm::vec3& windowSize,bool attachColour,bool attachDepth,bool attachStencil = false, void(*instructionsCallback)() = nullptr);
+		Framebuffer(const glm::vec2& windowSize,bool attachColour,bool attachDepth,bool attachStencil = false, void(*instructionsCallback)() = nullptr);
 		
 		static std::vector<Framebuffer*> _framebuffers;
 		
@@ -27,6 +27,6 @@ namespace Cappuccino {
 		unsigned _colourBuffer = 0,_depthBuffer = 0,_stencilBuffer = 0;
 		unsigned _depthStencilBuffer = 0;
 
-		glm::vec3 _windowSize;
+		glm::vec2 _windowSize;
 	};
 }
