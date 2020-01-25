@@ -1,12 +1,16 @@
 #pragma once
 #include "glm/common.hpp"
+#include "ShaderProgram.h"
 #include <vector>
+#include <optional>
 
 namespace Cappuccino {
 
+	//framebuffer class, currently only supports colour buffer as a texture and depth/stencil buffer as a renderbuffer
 	class Framebuffer {
 	public:
-		Framebuffer(const glm::vec2& windowSize,bool attachColour,bool attachDepth,bool attachStencil = false, void(*instructionsCallback)() = nullptr);
+		//enable your depth testing, blending, and what not with a callback given in this constructor
+		Framebuffer(const glm::vec2& windowSize, void(*instructionsCallback)() = nullptr, const std::optional<char*>& vertShader = std::nullopt, const std::optional<char*>& fragShader = std::nullopt);
 		
 		static std::vector<Framebuffer*> _framebuffers;
 		
@@ -14,7 +18,14 @@ namespace Cappuccino {
 		void unbind();
 		void(*_callback)();
 		unsigned& getColourBuffer() { return _colourBuffer; }
+
+		//pointer so it can be initialized properly later
+		Shader* _fbShader;
 	private:
+		char* _vertShader;
+
+		char* _fragShader;
+
 		void generate(unsigned& fbo);
 		void generateTextureAttachment(unsigned& handle);
 

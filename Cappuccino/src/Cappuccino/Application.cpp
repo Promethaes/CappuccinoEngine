@@ -123,35 +123,6 @@ namespace Cappuccino {
 		float turnRate = 1000.0f / 120.0f;
 		turnRate /= 1000.0f;
 
-		//https://learnopengl.com/Advanced-OpenGL/Framebuffers
-		char* vertShader =
-			R"(#version 420 core
-				layout (location = 0) in vec2 aPos;
-				layout (location = 1) in vec2 aTexCoords;
-
-				out vec2 TexCoords;
-
-				void main()
-				{
-					gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
-					TexCoords = aTexCoords;
-				}  )";
-
-		char* fragShader =
-			R"(#version 420 core
-				out vec4 FragColor;
-  
-				in vec2 TexCoords;
-
-				uniform sampler2D screenTexture;
-
-				void main()
-				{ 
-				    FragColor = texture(screenTexture, TexCoords);
-				})";
-
-		///FRAMEBUFFER SHADERS
-		Shader fbShader{ true,vertShader,fragShader };
 
 		//https://learnopengl.com/code_viewer_gh.php?code=src/4.advanced_opengl/5.1.framebuffers/framebuffers.cpp
 		//took these from learnopengl cause i didnt wanna write it all out myself
@@ -192,6 +163,9 @@ namespace Cappuccino {
 				update(turnRate);
 				lag -= turnRate;
 			}
+
+			//need to replace this, causes performance issues for sure.
+			//for some reason even if i try to do the gl calls manually, nothing renders
 			_viewports[0].use();
 
 			//if there are user defined framebuffers
@@ -201,7 +175,7 @@ namespace Cappuccino {
 
 					k->bind();
 					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
-					k->_callback();
+					k->_callback != nullptr ? k->_callback() : 0;
 
 					for (auto y : GameObjects)
 						if (y->isActive() && y->isVisible())
@@ -212,7 +186,7 @@ namespace Cappuccino {
 					glDisable(GL_DEPTH_TEST);
 					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
 					glClear(GL_COLOR_BUFFER_BIT);
-					fbShader.use();
+					k->_fbShader->use();
 					glBindVertexArray(quadVAO);
 					glBindTexture(GL_TEXTURE_2D, k->getColourBuffer());
 					glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -258,7 +232,7 @@ namespace Cappuccino {
 
 		// Shutdown GLFW
 		glfwTerminate();
-	}
+}
 
 
 	/*
