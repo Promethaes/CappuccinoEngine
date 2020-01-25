@@ -1,5 +1,6 @@
 #include "Cappuccino/Application.h"
 #include "Cappuccino/UI.h"
+#include "Cappuccino/FrameBuffer.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
@@ -121,6 +122,62 @@ namespace Cappuccino {
 		float lag = 0.0f;
 		float turnRate = 1000.0f / 120.0f;
 		turnRate /= 1000.0f;
+
+		//https://learnopengl.com/Advanced-OpenGL/Framebuffers
+		char* vertShader =
+			R"(#version 420 core
+				layout (location = 0) in vec2 aPos;
+				layout (location = 1) in vec2 aTexCoords;
+
+				out vec2 TexCoords;
+
+				void main()
+				{
+					gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+					TexCoords = aTexCoords;
+				}  )";
+
+		char* fragShader =
+			R"(#version 420 core
+				out vec4 FragColor;
+  
+				in vec2 TexCoords;
+
+				uniform sampler2D screenTexture;
+
+				void main()
+				{ 
+				    FragColor = texture(screenTexture, TexCoords);
+				})";
+
+		///FRAMEBUFFER SHADERS
+		Shader fbShader{ vertShader,fragShader };
+
+		//https://learnopengl.com/code_viewer_gh.php?code=src/4.advanced_opengl/5.1.framebuffers/framebuffers.cpp
+		//took these from learnopengl cause i didnt wanna write it all out myself
+		float quadVertices[] = {
+			// positions   // texCoords
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f,  1.0f, 1.0f
+		};
+		// screen quad VAO
+		unsigned int quadVAO, quadVBO;
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+
 		/*
 		Render Loop
 		*/
@@ -137,10 +194,33 @@ namespace Cappuccino {
 				lag -= turnRate;
 			}
 
-			for (unsigned i = 0; i < _viewports.size(); i++) {
-				_viewports[i].use();
+			//if there are user defined framebuffers
+			if (Framebuffer::_framebuffers.size() > 0) {
+
+				for (auto k : Framebuffer::_framebuffers) {
+
+					k->bind();
+					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
+					k->_callback();
+
+					for (auto y : GameObjects)
+						if (y->isActive() && y->isVisible())
+							y->draw();
+					for (auto x : UserInterface::_allUI)
+						x->draw();
+					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
+					k->unbind();
+					glClear(GL_COLOR_BUFFER_BIT);
+					fbShader.use();
+					glBindVertexArray(quadVAO);
+					glBindTexture(GL_TEXTURE_2D, k->getColourBuffer());	
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				}
+			}
+			else {
 				for (auto y : GameObjects)
-					if (y->isActive() && y->isVisible() && y->getViewportNum() == i)
+					if (y->isActive() && y->isVisible())
 						y->draw();
 				for (auto x : UserInterface::_allUI)
 					x->draw();

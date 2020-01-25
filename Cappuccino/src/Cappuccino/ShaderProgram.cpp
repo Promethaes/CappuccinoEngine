@@ -30,6 +30,22 @@ Shader::Shader(const string& vertShaderPath, const string& fragShaderPath, const
 	ResourceManager::_allShaders.push_back(this);
 }
 
+Cappuccino::Shader::Shader(char* vertShader, char* fragShader, char* geoShader)
+{
+	_programID = 0;
+
+	GLuint vertShaderu = 0, fragShaderu = 0, geoShaderu = 0;
+
+	//dummy int at the end to specify which compile shader to use
+	compileShader(vertShader, ShaderType::VERTEX, vertShaderu,0);
+	compileShader(fragShader, ShaderType::FRAGMENT, fragShaderu,0);
+	compileShader(geoShader, ShaderType::FRAGMENT, geoShaderu,0);
+
+	createProgram(vertShaderu, fragShaderu, geoShaderu);
+
+	ResourceManager::_allShaders.push_back(this);
+}
+
 void Shader::createShader() {
 	GLuint vertShader = 0, fragShader = 0, geomShader = 0;
 
@@ -112,6 +128,42 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 
 		CAPP_PRINT_ERROR("Failed to compile shader!");
 		CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
+		CAPP_PRINT_ERROR("%s", infoLog);
+	}
+}
+
+void Cappuccino::Shader::compileShader(char* input, const ShaderType& type, GLuint& shader, int f)
+{
+
+	GLint success;
+	GLuint shaderType = NULL;
+
+	switch (type) {
+	case ShaderType::VERTEX:
+		shaderType = GL_VERTEX_SHADER;
+		break;
+
+	case ShaderType::FRAGMENT:
+		shaderType = GL_FRAGMENT_SHADER;
+		break;
+
+	case ShaderType::GEOMETRY:
+		shaderType = GL_GEOMETRY_SHADER;
+		break;
+	}
+
+	auto shaderFinal = input;
+
+	CAPP_GL_CALL(shader = glCreateShader(shaderType));
+	CAPP_GL_CALL(glShaderSource(shader, 1, &shaderFinal, NULL));
+	CAPP_GL_CALL(glCompileShader(shader));
+
+	CAPP_GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
+	if (!success) {
+		GLchar infoLog[512];
+		CAPP_GL_CALL(glGetShaderInfoLog(shader, 512, NULL, infoLog));
+
+		CAPP_PRINT_ERROR("Failed to compile c string shader!");
 		CAPP_PRINT_ERROR("%s", infoLog);
 	}
 }

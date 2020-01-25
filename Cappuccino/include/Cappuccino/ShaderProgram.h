@@ -30,6 +30,11 @@ namespace Cappuccino {
 		Shader(const std::string& vertShaderPath, const std::string& fragShaderPath, const std::string& geoShaderPath = "");
 
 		/*
+		Make a shader with raw strings instead of from a file
+		*/
+		Shader(char* vertShader, char* fragShader, char* geoShader = nullptr);
+
+		/*
 		 * Purp.: Activates the shader for use
 		 * Req.: No parameters
 		 * Returns: void
@@ -73,8 +78,14 @@ namespace Cappuccino {
 
 		// Function to load files as strings (used for shader source code)
 		static bool loadFileAsString(const std::string& file, std::string& output);
+
 		// Function to compile shaders in the constructor
 		static void compileShader(const char* shaderPath, const ShaderType& type, GLuint& shader);
+
+		//compile shader input c string, not from file. f is a dummy param
+		static void compileShader(char* input, const ShaderType& type, GLuint& shader,int f = 0);
+		
+		
 		// Function to link shaders together after compilation
 		void createProgram(GLuint vertex, GLuint fragment, std::optional<GLuint> geometry = std::nullopt);
 
