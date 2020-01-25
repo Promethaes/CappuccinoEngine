@@ -4,16 +4,20 @@ using namespace Cappuccino;
 
 HitBoxLoader::HitBoxLoader(const char* filename)
 {
-	char tempName[256];
+	char tempName[256] = " ";
 	bool start = true;
 	_boxes.push_back(HitBox(glm::vec3(0),glm::vec3(0)));
 	FILE* file = fopen(filename, "r");
-	if (file == NULL)
-		printf("Failed to open file\n");
 	bool moreFile = true;
+	if (file == NULL) {
+		printf("Failed to open file\n");
+		moreFile = false;
+	}
+		
+	
 	while (moreFile)
 	{
-		char line[1024];
+		char line[1024] = {0};
 		int lineNumber = fscanf(file, "%s", line);
 		if (lineNumber == EOF)
 		{
@@ -73,7 +77,7 @@ HitBoxLoader::HitBoxLoader(const char* filename)
 				{
 					std::string rotationString = tempName;
 					rotationString = rotationString.substr(rotationString.find_first_of('_') + 1, rotationString.find_last_of('_') - 5);
-					glm::mat4 tempRotation = { 0.7071068,  0.0000000,  0.7071068,0.0f,
+					glm::mat4 tempRotation = { 0.7071068,  0.0000000,  0.7071068,0.0f,//very hard coded
 					 0.0000000,  1.0000000,  0.0000000 ,0.0f,
 					-0.7071068,  0.0000000, 0.7071068 , 0.0f,
 					0.0f,0.0f,0.0f,1.0f };
@@ -89,25 +93,23 @@ HitBoxLoader::HitBoxLoader(const char* filename)
 					_boxes.push_back(tempBox);
 				}
 				//hitBox creation
-				fscanf(file, "%s\n", &tempName);
+				int errorThing = fscanf(file, "%s\n", &tempName);
 				_tempVerts.clear();
 			}
 			else
 			{
-				fscanf(file, "%s\n", &tempName);
+				int errorThing = fscanf(file, "%s\n", &tempName);
 				start ^= 1;
 			}
 			
 		}
 		else if (strcmp(line, "v") == 0) {
 			glm::vec3 vertex;
-			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+			int errorThing = fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 			_tempVerts.push_back(vertex);
 		}
-		
-
 	}
-	
+	_tempVerts.clear();
 }
 
 float HitBoxLoader::findRadius()
@@ -173,10 +175,4 @@ glm::vec3 HitBoxLoader::findCenter()
 	return glm::vec3(tempHigh.x / 2 + tempLow.x / 2,
 	                 tempHigh.y / 2 + tempLow.y / 2,
 	                 tempHigh.z / 2 + tempLow.z / 2);
-}
-
-glm::vec3 Cappuccino::HitBoxLoader::findSize()
-{
-	//TODO
-	return glm::vec3();
 }

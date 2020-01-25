@@ -12,7 +12,7 @@ HitBox::HitBox(glm::vec3& newPos, float newRadius)
 	_position = newPos;
 	_radius = newRadius;
 
-	std::vector<glm::vec3> data;
+	std::vector<glm::vec3> data;//this creates a box you can see
 	CAPP_GL_CALL(glGenVertexArrays(1, &_VAO));
 	CAPP_GL_CALL(glGenBuffers(1, &_VBO));
 	CAPP_GL_CALL(glBindVertexArray(_VAO));
@@ -233,12 +233,11 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 			if (totaldist < distanceMin)
 				return true;
 		}
-		else if (other._OBB)
+		else if (other._OBB)//circle OBB
 		{
 			//TODO
 		}
-		else {
-			//circle then box
+		else {//circle ABB
 			float dist = checkCircleBox(ourRigidLoc + _position, rigidLoc + other._position, other._size);
 			if (dist <= _radius * _radius)
 				return true;
@@ -248,7 +247,7 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 		if (_radius) {// OBB sphere
 			//TODO
 		}
-		else if (other._OBB) {//OBB OBB collision
+		else if (other._OBB) {//OBB OBB
 			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
 			return !(
 				checkPlane(dist, _rotationMatrix[0], other) ||
@@ -267,7 +266,7 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
 				checkPlane(dist, glm::cross(glm::vec3(_rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other));
 		}
-		else//OBB AABB collision
+		else//OBB AABB
 		{
 			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
 			return !(
@@ -289,13 +288,12 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 		}
 	}
 	else{
-		if (other._radius) {
-			//box then circle
+		if (other._radius) {//AABB circle
 			float dist = checkCircleBox(rigidLoc + other._position, ourRigidLoc + _position, _size);
 			if (dist <= (other._radius * other._radius))
 				return true;
 		}
-		else if (other._OBB){//AABB OBB collision
+		else if (other._OBB){//AABB OBB
 			glm::vec3 dist = (ourRigidLoc + _position) - (rigidLoc + other._position);
 			return !(
 				checkPlane(dist, _rotationMatrix[0], other) ||
@@ -314,7 +312,7 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[1][0], other._rotationMatrix[1][1], other._rotationMatrix[1][2])), other) ||
 				checkPlane(dist, glm::cross(glm::vec3( _rotationMatrix[2][0], _rotationMatrix[2][1], _rotationMatrix[2][2]), glm::vec3(other._rotationMatrix[2][0], other._rotationMatrix[2][1], other._rotationMatrix[2][2])), other));
 		}
-		else {//box box
+		else {//AABB AABB
 			if (checkSize((_position.x + ourRigidLoc.x), _size.x, (other._position.x + rigidLoc.x), other._size.x) && checkSize((_position.y + ourRigidLoc.y), _size.y, (other._position.y + rigidLoc.y), other._size.y) && checkSize((_position.z + ourRigidLoc.z), _size.z, (other._position.z + rigidLoc.z), other._size.z))
 				return true;
 		}
@@ -325,14 +323,14 @@ bool HitBox::checkCollision(HitBox& other, glm::vec3& rigidLoc, glm::vec3& ourRi
 void Cappuccino::HitBox::draw()
 {
 
-	CAPP_GL_CALL(glBindVertexArray(_VAO));
-	CAPP_GL_CALL(glDrawArrays(GL_TRIANGLES, 0, _numVerts / 3));	
+	CAPP_GL_CALL(glBindVertexArray(_VAO));//bind the data
+	CAPP_GL_CALL(glDrawArrays(GL_TRIANGLES, 0, _numVerts / 3));//draw
 }
 
 bool HitBox::intersecting(const Ray& ray, glm::vec3& pos)
 {
 https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
-	if (!_radius)
+	if (!_radius&&!_OBB)
 	{
 		float txMin, txMax, tyMin, tyMax, tzMin, tzMax;
 		auto inverseDir = 1.0f / (ray._rayDir);
@@ -368,9 +366,9 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 	{
 		//TODO
 	}
-	else
+	else//RAY / SPHERE
 	{
-		//TODO RAY/SPHERE
+		//TODO 
 		return false;
 	}
 }

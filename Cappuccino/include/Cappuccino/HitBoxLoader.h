@@ -28,15 +28,8 @@ namespace Cappuccino
 		Post: A vec3 of the position of the hitbox relative to the rigidbody location
 		*/
 		glm::vec3 findCenter();
-		/*
-		Purp: To find the size of a rotated OBB hitbox
-		Pre: None
-		Post: A vec3 representing the position of the hitbox relative to the rigidbody	
-		*/
-		glm::vec3 findSize();
 		std::vector <HitBox> _boxes;
 	private:
-
 		std::vector <glm::vec3> _tempVerts;
 	};
 }
