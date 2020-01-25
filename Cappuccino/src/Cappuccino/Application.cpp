@@ -177,7 +177,6 @@ namespace Cappuccino {
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
-
 		/*
 		Render Loop
 		*/
@@ -193,6 +192,7 @@ namespace Cappuccino {
 				update(turnRate);
 				lag -= turnRate;
 			}
+			_viewports[0].use();
 
 			//if there are user defined framebuffers
 			if (Framebuffer::_framebuffers.size() > 0) {
@@ -208,12 +208,13 @@ namespace Cappuccino {
 							y->draw();
 					for (auto x : UserInterface::_allUI)
 						x->draw();
-					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
 					k->unbind();
+					glDisable(GL_DEPTH_TEST);
+					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
 					glClear(GL_COLOR_BUFFER_BIT);
 					fbShader.use();
 					glBindVertexArray(quadVAO);
-					glBindTexture(GL_TEXTURE_2D, k->getColourBuffer());	
+					glBindTexture(GL_TEXTURE_2D, k->getColourBuffer());
 					glDrawArrays(GL_TRIANGLES, 0, 6);
 
 				}
