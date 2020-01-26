@@ -69,6 +69,10 @@ namespace Cappuccino {
 		Post: a boolean true if they will collide
 		*/
 		bool willCollide(HitBox other, glm::vec3 pos, glm::vec3 direction, float dt);
+
+		/*
+		Getter
+		*/
 		glm::mat4 getRotation() { return _rotateMat;}
 		std::vector<HitBox> _hitBoxes;
 		glm::vec3 _position;
@@ -83,14 +87,14 @@ namespace Cappuccino {
 		void rotateRigid(float angle);
 
 
-		std::string myType = "";//objects that should not collide with eachother should be called the same type (ex. bullet)
-		bool _moveable = false;//if this object can move around the scene
-		bool _canTouch= true;//if the object can touch other objects
-		bool _bounce = false;//if the object should bounce instead of stopping
-		bool _creature = false;
+		std::string myType = "";//objects that should not collide with eachother should be called the same type (bullet/loot)
+		bool _moveable = false;//if this object can move around the scene(enemy/bullet/player)
+		bool _canTouch= true;//if the object can touch other objects(almost everything)
+		bool _bounce = false;//if the object should bounce instead of stopping (grenade?)
+		bool _creature = false;//if the object is a creature (enemy/player)
 
-		bool _projectile = false;
-		bool _hitWall = false;
+		bool _projectile = false;//if the object is a bullet of some sort
+		bool _hitWall = false;//for bullets only
 	private:
 		glm::mat4 _tempModel{ 1.0f };
 		bool _collision = false;

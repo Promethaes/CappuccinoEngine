@@ -59,11 +59,12 @@ namespace Cappuccino {
 		*/
 		void rebindVBO(glm::vec3& newPos, glm::vec3& newSize);
 		glm::vec3 _position = glm::vec3(0, 0, 0);
-		float _radius = 0;
+		
 		glm::vec3 _size = glm::vec3(0, 0, 0);
 		glm::mat4 _rotationMatrix = glm::mat4(1.0f);
-		bool _OBB = false;
 
+		bool _OBB = false;
+		float _radius = 0.0f;
 	protected:
 		unsigned _VAO = 0;
 		unsigned _VBO = 0;
@@ -87,14 +88,11 @@ namespace Cappuccino {
 		Post: A boolean (true for collision)
 		*/
 		float checkDist(float circ, float boxPos, float boxSize);
-
 		/*
 		Purp: To see if we can stick a plane between the two OBB boxes
 		Pre: 
 		Post: 
 		*/
 		bool checkPlane(glm::vec3 dist,glm::vec3 plane, HitBox other);
-
-
 	};
 }
