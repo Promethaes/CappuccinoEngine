@@ -9,40 +9,48 @@ namespace Cappuccino {
 	float Physics::gravity = -98.0f;
 	float Physics::UniversalG = 6.67f * static_cast<float>(pow(10, -11));
 	
-	RigidBody::RigidBody(const glm::vec3& transformPosition, const glm::vec3& origin, const float mass, bool gravity)
-		: _position(transformPosition), _mass(mass), _origin(origin), _grav(gravity) {}
+	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, bool gravity)
+		: _position(transformPosition), _mass(mass), _grav(gravity) {}
 
 
 	void RigidBody::update(const float dt)
 	{
-		
+		//physics calculations for movement
 		addPosition(_vel * dt);
 		addVelocity(_accel*dt);
 		
-
 		if (_grav)
-			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));		
+			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));	
+
+		if(_velCap<glm::length(_vel))
+			_vel = glm::normalize(_vel)*_velCap;
+
+		if (_accelCap < glm::length(_accel))
+			_accel = glm::normalize(_accel) * _accelCap;
+
 	}
 
 	void RigidBody::draw()
 	{
 		_shader.use();
-		_shader.setUniform("view", _view);
+		_shader.setUniform("view", _view);//shader uniforms
 		_shader.setUniform("projection", _projection);
 
 
 		if (drawHitBox) {
-			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));//wireframe mode
 			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
 			for (auto& hitBox : _hitBoxes) {
 				glm::mat4 newModel = hitBox._rotationMatrix;
-				newModel[3].x = _tempModel[3].x;
-				newModel[3].y = _tempModel[3].y;
-				newModel[3].z = _tempModel[3].z;
-			//	hitBox.draw();
+				newModel[3].x = _tempModel[3].x+_position.x;
+				newModel[3].y = _tempModel[3].y+_position.y;
+				newModel[3].z = _tempModel[3].z+_position.z;
+				_shader.loadModelMatrix(newModel);
+				hitBox.draw();//drawing hitboxes
+				
 			}
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
-			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));//set back to normal draw mode
 		}
 	}
 
@@ -83,22 +91,19 @@ namespace Cappuccino {
 
 	bool RigidBody::checkCollision(RigidBody& other)
 	{
-		if (_hitBoxes.empty() || other._hitBoxes.empty())
+		if (_hitBoxes.empty() || other._hitBoxes.empty())//if no hitboxes
 			return false;
 		
-		if (_hitBoxes.size() > 1)
-		{
-			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
-				for (unsigned i = 1; i < _hitBoxes.size(); i++)
-				{
-					for (unsigned n = 1; n < other._hitBoxes.size(); n++)
-					{
-						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position))
+		if (_hitBoxes.size() > 1){
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))//if the two bounding boxes collide they might be colliding
+				for (unsigned i = 1; i < _hitBoxes.size(); i++){
+					for (unsigned n = 1; n < other._hitBoxes.size(); n++){
+						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, _position))//if any hitboxes are colliding we know we are colliding
 							return true;
 					}
 				}
 		}
-		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))
+		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, _position))//if they both only have one hitbox
 			return true;
 
 		return false;
@@ -106,45 +111,42 @@ namespace Cappuccino {
 
 	bool RigidBody::willCollide(RigidBody& other, glm::vec3 direction, float dt)
 	{
-		if (_hitBoxes.empty() || other._hitBoxes.empty())
+		if (_hitBoxes.empty() || other._hitBoxes.empty())//if no hitboxes
 			return false;
 		glm::vec3 tempVel = _vel;
 		glm::vec3 tempPos = _position;
-		for (unsigned i = 0; i < 3; i++) {
+		for (unsigned i = 0; i < 3; i++) {//for all three dimensions
 			tempVel[i] *= direction[i];
 		}
-		tempPos += (tempVel * dt);
-		if (_hitBoxes.size() > 1)
-		{
-			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos)) {
-				for (unsigned i = 1; i < _hitBoxes.size(); i++)
-				{
-					for (unsigned n = 1; n < other._hitBoxes.size(); n++)
-					{
-						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, tempPos))
+		tempPos += (tempVel * dt);//our future position
+		if (_hitBoxes.size() > 1){
+			if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos)){//now check collision
+				for (unsigned i = 1; i < _hitBoxes.size(); i++){
+					for (unsigned n = 1; n < other._hitBoxes.size(); n++){
+						if (_hitBoxes[i].checkCollision(other._hitBoxes[n], other._position, tempPos))//if they will collide
 							return true;
 					}
 				}
 			}
 				
 		}
-		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))
+		else if (_hitBoxes[0].checkCollision(other._hitBoxes[0], other._position, tempPos))//if only one hitbox each
 			return true;
 		return false;
 	}
 
 	bool RigidBody::checkCollision(HitBox other,glm::vec3 pos)
 	{
-		if (_hitBoxes.empty())
+		if (_hitBoxes.empty())//if we have no hitboxes
 			return false;
 		if (_hitBoxes.size() > 1)
 		{
-			if (_hitBoxes[0].checkCollision(other, pos, _position))
-				for (unsigned i = 1; i < _hitBoxes.size(); i++)
-					if (_hitBoxes[i].checkCollision(other, pos, _position))
+			if (_hitBoxes[0].checkCollision(other, pos, _position))//if our bounding box is colliding
+				for (unsigned i = 1; i < _hitBoxes.size(); i++)//check rest of boxes
+					if (_hitBoxes[i].checkCollision(other, pos, _position))//if any are colliding we are colliding
 						return true;
 		}
-		else if (_hitBoxes[0].checkCollision(other,pos,_position))
+		else if (_hitBoxes[0].checkCollision(other,pos,_position))//if we only have one hitbox as well
 			return true;
 
 		return false;
@@ -152,25 +154,24 @@ namespace Cappuccino {
 
 	bool RigidBody::willCollide(HitBox other, glm::vec3 pos, glm::vec3 direction, float dt)
 	{
-		if (_hitBoxes.empty())
+		if (_hitBoxes.empty())//if we have not hitboxes
 			return false;
 		glm::vec3 temp = _vel;
 		glm::vec3 tempPos = _position;
-		for (unsigned i = 0; i < 3; i++) {
+		for (unsigned i = 0; i < 3; i++){//all dimensions
 			temp[i] *= direction[i];
 			tempPos[i] *= direction[i];
 		}
 		tempPos += temp*dt;
 			
 		
-		if (_hitBoxes.size() > 1)
-		{
-			if (_hitBoxes[0].checkCollision(other, pos, tempPos))
+		if (_hitBoxes.size() > 1){
+			if (_hitBoxes[0].checkCollision(other, pos, tempPos))//if bounding box is colliding
 				for (unsigned i = 1; i < _hitBoxes.size(); i++)
-					if (_hitBoxes[i].checkCollision(other, pos, tempPos))
+					if (_hitBoxes[i].checkCollision(other, pos, tempPos))//if any boxes touch
 						return true;
 		}
-		else if (_hitBoxes[0].checkCollision(other, pos, tempPos))
+		else if (_hitBoxes[0].checkCollision(other, pos, tempPos))//if we only have one hitbox
 			return true;
 
 		return false;
@@ -178,8 +179,8 @@ namespace Cappuccino {
 
 	void RigidBody::rotateRigid(float angle)
 	{
-		for(auto& hitBox : _hitBoxes) {
-			hitBox.rotateBox(angle);
+		for(auto& hitBox : _hitBoxes){
+			hitBox.rotateBox(angle);//all hitboxes will change shape and position
 		}
 	}
 

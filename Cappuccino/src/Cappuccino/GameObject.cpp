@@ -10,7 +10,6 @@ Texture* GameObject::defaultHeight = nullptr;
 
 GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass, unsigned viewportNum)
 	:_shader(_shader), _rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z),
-		glm::vec3(0, 0, 0),
 		mass.has_value() ? mass.value() : 1)
 {
 	_viewportNum = viewportNum;
