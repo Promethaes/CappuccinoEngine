@@ -7,8 +7,8 @@ namespace Cappuccino {
 		_morphTargets = morphTargets;
 
 		_originalVerts = _morphTargets[0]->verts;
-		_originalTexts = _morphTargets[0]->texts;
 		_originalNorms = _morphTargets[0]->norms;
+		_originalTangs = _morphTargets[0]->tangs;
 	}
 	void Animation::animate(float dt)
 	{
@@ -21,8 +21,9 @@ namespace Cappuccino {
 			t = 0.0f;
 
 			_originalVerts = _morphTargets[index]->verts;
-			_originalTexts = _morphTargets[index]->texts;
 			_originalNorms = _morphTargets[index]->norms;
+			_originalTangs = _morphTargets[index]->tangs;
+
 			index++;
 			if (index > _morphTargets.size() - 1)
 				stop = true;
@@ -33,18 +34,18 @@ namespace Cappuccino {
 				tempVerts.push_back(Math::lerp(_originalVerts[i], _morphTargets[index]->verts[i], t));
 
 			}
-			std::vector<float> tempTexts;
-			for (unsigned i = 0; i < _originalTexts.size(); i++) {
-				tempTexts.push_back(Math::lerp(_originalTexts[i], _morphTargets[index]->texts[i], t));
-
-			}
 			std::vector<float> tempNorms;
 			for (unsigned i = 0; i < _originalNorms.size(); i++) {
 				tempNorms.push_back(Math::lerp(_originalNorms[i], _morphTargets[index]->norms[i], t));
 
 			}
+			std::vector<float> tempTangs;
+			for (unsigned i = 0; i < _originalTangs.size(); i++) {
+				tempTangs.push_back(Math::lerp(_originalTangs[i], _morphTargets[index]->tangs[i], t));
 
-			_morphTargets[0]->reload(tempVerts, tempTexts, tempNorms);
+			}
+
+			_morphTargets[0]->reload(tempVerts, tempNorms,tempTangs);
 		}
 
 	}

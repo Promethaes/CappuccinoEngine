@@ -17,7 +17,7 @@ namespace Cappuccino {
 		*/
 		bool loadMesh();
 
-		void reload(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS);
+		void reload(const std::vector<float>& VERTS,const std::vector<float>& NORMS,const std::vector<float>& TANGS);
 
 		/*
 		Purpose: This function will wipe all the data of the object
@@ -49,6 +49,7 @@ namespace Cappuccino {
 		std::vector<float> verts;
 		std::vector<float> texts;
 		std::vector<float> norms;
+		std::vector<float> tangs;
 
 	protected:
 

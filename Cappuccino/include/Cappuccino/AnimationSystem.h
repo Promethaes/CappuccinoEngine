@@ -15,7 +15,7 @@ namespace Cappuccino {
 		float t = 0.0f;
 		std::vector<Mesh*> _morphTargets;
 		std::vector<float> _originalVerts;
-		std::vector<float> _originalTexts;
+		std::vector<float> _originalTangs;
 		std::vector<float> _originalNorms;
 	};
 }
