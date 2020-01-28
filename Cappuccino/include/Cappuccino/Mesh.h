@@ -11,11 +11,21 @@ namespace Cappuccino {
 		Mesh(const std::string& path);
 
 		/*
+		Purp: create mesh from data rather than loading from file, useful for animation calss
+		*/
+		Mesh(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS);
+
+		/*
 		Purpose: The mesh will be loaded off of the filepath provided in the contructor
 		Req.: None
 		Returns: A boolean representing if the load succeeded or not
 		*/
 		bool loadMesh();
+
+		/*
+		Purp: load the mesh without external input (using class members)
+		*/
+		void loadFromData();
 
 		void reload(const std::vector<float>& VERTS,const std::vector<float>& NORMS,const std::vector<float>& TANGS);
 

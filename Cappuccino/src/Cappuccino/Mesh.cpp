@@ -25,6 +25,14 @@ namespace Cappuccino {
 		ResourceManager::_allMeshes.push_back(this);
 	}
 
+	Mesh::Mesh(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS)
+	{
+		verts = VERTS;
+		texts = TEXTS;
+		norms = NORMS;
+		tangs = TANGS;
+	}
+
 	bool Mesh::loadMesh()
 	{
 		if (loaded)
@@ -189,11 +197,50 @@ namespace Cappuccino {
 		return loaded = true;
 	}
 
+	void Mesh::loadFromData()
+	{
+		master.clear();
+		for (unsigned i = 0; i < verts.size(); i++)
+			master.push_back(verts[i]);
+
+		for (unsigned i = 0; i < texts.size(); i++)
+			master.push_back(texts[i]);
+
+		for (unsigned i = 0; i < norms.size(); i++)
+			master.push_back(norms[i]);
+
+		for (unsigned i = 0; i < tangs.size(); i++)
+			master.push_back(tangs[i]);
+
+
+
+		glBindVertexArray(_VAO);
+
+		//enable slots
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+
+		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+		//vertex
+		glBufferData(GL_ARRAY_BUFFER, master.size() * sizeof(float), &master[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(verts.size() * sizeof(float)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size()) * sizeof(float)));
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size() + norms.size()) * sizeof(float)));
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
 	void Mesh::reload(const std::vector<float>& VERTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS)
 	{
 		master.clear();
 		verts.clear();
 		norms.clear();
+		tangs.clear();
 
 
 
@@ -208,6 +255,10 @@ namespace Cappuccino {
 			master.push_back(NORMS[i]);
 			norms.push_back(NORMS[i]);
 		}
+		for (unsigned i = 0; i < TANGS.size(); i++) {
+			master.push_back(TANGS[i]);
+			tangs.push_back(TANGS[i]);
+		}
 
 
 		glBindVertexArray(_VAO);
@@ -216,6 +267,7 @@ namespace Cappuccino {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		//vertex
@@ -223,6 +275,7 @@ namespace Cappuccino {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(verts.size() * sizeof(float)));
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size()) * sizeof(float)));
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size() + norms.size()) * sizeof(float)));
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
