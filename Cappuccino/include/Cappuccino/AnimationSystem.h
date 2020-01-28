@@ -50,6 +50,8 @@ namespace Cappuccino {
 		*/
 		void addAnimation(Animation& animation);
 
+		void playAnimation(AnimationType type,float dt);
+
 		/*
 		Purp: deletes an animation at the type given
 		Req: type as an index

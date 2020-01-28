@@ -68,6 +68,10 @@ namespace Cappuccino {
 	{
 		_animations[(int)animation.getAnimationType()] = &animation;
 	}
+	void Animator::playAnimation(AnimationType type,float dt)
+	{
+		_animations[(int)type]->play(dt);
+	}
 	void Animator::clearAnimation(AnimationType type)
 	{
 		delete _animations[(int)type];
