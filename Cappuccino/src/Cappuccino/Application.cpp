@@ -1,5 +1,6 @@
 #include "Cappuccino/Application.h"
 #include "Cappuccino/UI.h"
+#include "Cappuccino/FrameBuffer.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "imgui/imgui.h"
@@ -40,7 +41,7 @@ namespace Cappuccino {
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _contextVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
-		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+		//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		window = glfwCreateWindow(_width, _height, _title.c_str(), NULL, NULL);
@@ -121,6 +122,32 @@ namespace Cappuccino {
 		float lag = 0.0f;
 		float turnRate = 1000.0f / 120.0f;
 		turnRate /= 1000.0f;
+
+
+		//https://learnopengl.com/code_viewer_gh.php?code=src/4.advanced_opengl/5.1.framebuffers/framebuffers.cpp
+		//took these from learnopengl cause i didnt wanna write it all out myself
+		float quadVertices[] = {
+			// positions   // texCoords
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f,  1.0f, 1.0f
+		};
+		// screen quad VAO
+		unsigned int quadVAO, quadVBO;
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 		/*
 		Render Loop
 		*/
@@ -137,10 +164,38 @@ namespace Cappuccino {
 				lag -= turnRate;
 			}
 
-			for (unsigned i = 0; i < _viewports.size(); i++) {
-				_viewports[i].use();
+			//need to replace this, causes performance issues for sure.
+			//for some reason even if i try to do the gl calls manually, nothing renders
+			_viewports[0].use();
+
+			//if there are user defined framebuffers
+			if (Framebuffer::_framebuffers.size() > 0) {
+
+				for (auto k : Framebuffer::_framebuffers) {
+
+					k->bind();
+					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
+					k->_callback != nullptr ? k->_callback() : 0;
+
+					for (auto y : GameObjects)
+						if (y->isActive() && y->isVisible())
+							y->draw();
+					for (auto x : UserInterface::_allUI)
+						x->draw();
+					k->unbind();
+					glDisable(GL_DEPTH_TEST);
+					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
+					glClear(GL_COLOR_BUFFER_BIT);
+					k->_fbShader->use();
+					glBindVertexArray(quadVAO);
+					glBindTexture(GL_TEXTURE_2D, k->getColourBuffer());
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				}
+			}
+			else {
 				for (auto y : GameObjects)
-					if (y->isActive() && y->isVisible() && y->getViewportNum() == i)
+					if (y->isActive() && y->isVisible())
 						y->draw();
 				for (auto x : UserInterface::_allUI)
 					x->draw();
@@ -177,7 +232,7 @@ namespace Cappuccino {
 
 		// Shutdown GLFW
 		glfwTerminate();
-	}
+}
 
 
 	/*
@@ -322,7 +377,7 @@ namespace Cappuccino {
 	{
 		CAPP_GL_CALL(glViewport(_bounds.x, _bounds.y, _bounds.z, _bounds.w));
 		CAPP_GL_CALL(glScissor(_bounds.x, _bounds.y, _bounds.z, _bounds.w));
-			//CAPP_GL_CALL(glClearColor(_borderColour.x, _borderColour.y, _borderColour.z, 0.0f));
+		CAPP_GL_CALL(glClearColor(_borderColour.x, _borderColour.y, _borderColour.z, 0.0f));
 		CAPP_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, _drawMode));
 		_callback != nullptr ? _callback() : 0;

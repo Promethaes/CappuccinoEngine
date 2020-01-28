@@ -30,6 +30,31 @@ Shader::Shader(const string& vertShaderPath, const string& fragShaderPath, const
 	ResourceManager::_allShaders.push_back(this);
 }
 
+Cappuccino::Shader::Shader(bool cstring, char* vertShader, char* fragShader, char* geoShader)
+{
+	_programID = 0;
+
+	GLuint vertShaderu = 0, fragShaderu = 0, geoShaderu = 0;
+
+	//dummy int at the end to specify which compile shader to use
+	compileShader(vertShader, ShaderType::VERTEX, vertShaderu, 0);
+	compileShader(fragShader, ShaderType::FRAGMENT, fragShaderu, 0);
+
+	std::optional<unsigned> g;
+	if (geoShader != nullptr) {
+
+		compileShader(geoShader, ShaderType::FRAGMENT, geoShaderu, 0);
+		g = geoShaderu;
+	}
+
+	if (g.has_value())
+		createProgram(vertShaderu, fragShaderu, g.value());
+	else
+		createProgram(vertShaderu, fragShaderu);
+
+	ResourceManager::_allShaders.push_back(this);
+}
+
 void Shader::createShader() {
 	GLuint vertShader = 0, fragShader = 0, geomShader = 0;
 
@@ -86,17 +111,17 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 	GLuint shaderType = NULL;
 
 	switch (type) {
-		case ShaderType::VERTEX:
-			shaderType = GL_VERTEX_SHADER;
-			break;
+	case ShaderType::VERTEX:
+		shaderType = GL_VERTEX_SHADER;
+		break;
 
-		case ShaderType::FRAGMENT:
-			shaderType = GL_FRAGMENT_SHADER;
-			break;
+	case ShaderType::FRAGMENT:
+		shaderType = GL_FRAGMENT_SHADER;
+		break;
 
-		case ShaderType::GEOMETRY:
-			shaderType = GL_GEOMETRY_SHADER;
-			break;
+	case ShaderType::GEOMETRY:
+		shaderType = GL_GEOMETRY_SHADER;
+		break;
 	}
 
 	auto shaderFinal = shaderString.c_str();
@@ -112,6 +137,42 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 
 		CAPP_PRINT_ERROR("Failed to compile shader!");
 		CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
+		CAPP_PRINT_ERROR("%s", infoLog);
+	}
+}
+
+void Cappuccino::Shader::compileShader(char* input, const ShaderType& type, GLuint& shader, int f)
+{
+
+	GLint success;
+	GLuint shaderType = NULL;
+
+	switch (type) {
+	case ShaderType::VERTEX:
+		shaderType = GL_VERTEX_SHADER;
+		break;
+
+	case ShaderType::FRAGMENT:
+		shaderType = GL_FRAGMENT_SHADER;
+		break;
+
+	case ShaderType::GEOMETRY:
+		shaderType = GL_GEOMETRY_SHADER;
+		break;
+	}
+
+	auto shaderFinal = input;
+
+	CAPP_GL_CALL(shader = glCreateShader(shaderType));
+	CAPP_GL_CALL(glShaderSource(shader, 1, &shaderFinal, NULL));
+	CAPP_GL_CALL(glCompileShader(shader));
+
+	CAPP_GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
+	if (!success) {
+		GLchar infoLog[512];
+		CAPP_GL_CALL(glGetShaderInfoLog(shader, 512, NULL, infoLog));
+
+		CAPP_PRINT_ERROR("Failed to compile c string shader!");
 		CAPP_PRINT_ERROR("%s", infoLog);
 	}
 }
@@ -133,15 +194,15 @@ void Shader::createProgram(const GLuint vertex, const GLuint fragment, std::opti
 		CAPP_PRINT_WARNING("No fragment shader linked!");
 	}
 
-	if(geometry.has_value()) {
-		
+	if (geometry.has_value()) {
+
 		if (geometry.value()) {
 			CAPP_GL_CALL(glAttachShader(_programID, geometry.value()));
 		}
 		else {
 			CAPP_PRINT_WARNING("No geometry shader linked!");
 		}
-		
+
 	}
 
 	GLint success;
@@ -162,7 +223,7 @@ void Shader::createProgram(const GLuint vertex, const GLuint fragment, std::opti
 	if (fragment) {
 		CAPP_GL_CALL(glDeleteShader(fragment));
 	}
-	if(geometry.has_value()) {
+	if (geometry.has_value()) {
 		if (geometry.value()) {
 			CAPP_GL_CALL(glDeleteShader(geometry.value()));
 		}
@@ -206,8 +267,8 @@ void Shader::loadOrthoProjectionMatrix(float width, float height)
 
 void Shader::setUniform(const std::string& name, const bool value) const {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-		
-	if(location != -1) {
+
+	if (location != -1) {
 		CAPP_GL_CALL(glUniform1i(location, static_cast<GLint>(value)));
 	}
 	else {
@@ -217,8 +278,8 @@ void Shader::setUniform(const std::string& name, const bool value) const {
 
 void Shader::setUniform(const std::string& name, const GLint value) const {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-		
-	if(location != -1) {
+
+	if (location != -1) {
 		CAPP_GL_CALL(glUniform1i(location, value));
 	}
 	else {
@@ -229,7 +290,7 @@ void Shader::setUniform(const std::string& name, const GLint value) const {
 void Shader::setUniform(const std::string& name, const GLfloat value) const {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
 
-	if(location != -1) {
+	if (location != -1) {
 		CAPP_GL_CALL(glUniform1f(location, value));
 	}
 	else {
@@ -240,7 +301,7 @@ void Shader::setUniform(const std::string& name, const GLfloat value) const {
 void Shader::setUniform(const std::string& name, const glm::vec3& value) const {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
 
-	if(location != -1) {
+	if (location != -1) {
 		CAPP_GL_CALL(glUniform3fv(location, 1, &value[0]));
 	}
 	else {
@@ -251,7 +312,7 @@ void Shader::setUniform(const std::string& name, const glm::vec3& value) const {
 void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat y, const GLfloat z) const {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
 
-	if(location != -1) {
+	if (location != -1) {
 		CAPP_GL_CALL(glUniform3fv(location, 1, &glm::vec3(x, y, z)[0]));
 	}
 	else {
@@ -262,7 +323,7 @@ void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat 
 void Shader::setUniform(const std::string& name, const glm::vec4& value) const {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
 
-	if(location != -1) {
+	if (location != -1) {
 		CAPP_GL_CALL(glUniform4fv(location, 1, &value[0]));
 	}
 	else {
@@ -273,7 +334,7 @@ void Shader::setUniform(const std::string& name, const glm::vec4& value) const {
 void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat w) const {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
 
-	if(location != -1) {
+	if (location != -1) {
 		CAPP_GL_CALL(glUniform4fv(location, 1, &glm::vec4(x, y, z, w)[0]));
 	}
 	else {
@@ -284,7 +345,7 @@ void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat 
 void Shader::setUniform(const std::string& name, const glm::mat4& value) {
 	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
 
-	if(location != -1) {
+	if (location != -1) {
 		CAPP_GL_CALL(glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]));
 	}
 	else {

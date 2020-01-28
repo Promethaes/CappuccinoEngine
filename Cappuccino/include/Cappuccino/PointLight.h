@@ -15,11 +15,6 @@ namespace Cappuccino {
 
 		void recompile();
 
-		/*
-		Purp: update the view position, should be called every frame
-		Req: the camera position
-		*/
-		void updateViewPos(const glm::vec3& cameraPos);
 
 		void setPosition(const glm::vec3& pos, unsigned index);
 		void setAmbient(const glm::vec3& colour, unsigned index);
