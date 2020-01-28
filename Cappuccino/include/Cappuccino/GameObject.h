@@ -5,32 +5,13 @@
 #include "Cappuccino/ShaderProgram.h"
 #include "Cappuccino/Texture.h"
 #include "Cappuccino/Transform.h"
+#include "Cappuccino/AnimationSystem.h"
 
 #include <string>
 #include <vector>
 #include <optional>
 
 namespace Cappuccino {
-
-	/*
-	Purp: state machine, override virtual functions to get most out of this
-	*/
-	class GameObject;
-	class State {
-	public:
-
-		//some example states...
-		/*enum States {
-			JUMP,
-			SHOOT,
-			HURT
-		};*/
-
-		virtual void update(float dt, GameObject* go) {};
-		virtual void onEnter(float dt, GameObject* go) {};
-		virtual void onExit(float dt, GameObject* go) {};
-
-	};
 
 	class GameObject {
 	public:
@@ -54,19 +35,6 @@ namespace Cappuccino {
 		static Texture* defaultHeight;
 
 		std::string id;
-
-
-		//these functions might need to be deleted... see f16 file
-		void setPosition(const glm::vec3& newPos);
-
-		void rotateX(const float rotateBy);
-		void rotateY(const float rotateBy);
-		void rotateZ(const float rotateBy);
-
-		void scaleX(const float sizeScalar);
-		void scaleY(const float sizeScalar);
-		void scaleZ(const float sizeScalar);
-
 
 		Transform _transform;
 		RigidBody _rigidBody;
@@ -106,9 +74,9 @@ namespace Cappuccino {
 		//returns which viewport the object should be drawn in
 		unsigned getViewportNum() { return _viewportNum; }
 	protected:
+		Animator _animator;
+
 		unsigned _viewportNum;
-		//a temporary state variable to store a state before the checkChangeState can be called
-		bool stateChangeFlag = false;
 
 		std::vector<Texture*> _textures;
 		std::vector<Mesh*> _meshes;

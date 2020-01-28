@@ -106,37 +106,6 @@ void GameObject::baseUpdate(float dt) {
 
 }
 
-
-void GameObject::setPosition(const glm::vec3& newPos)
-{
-	//_rigidBody.updatePosition(position = _transform.translate(newPos));
-}
-void GameObject::rotateX(const float rotateBy)
-{
-	_transform.rotate(glm::vec3(1, 0, 0), rotateBy);
-}
-void GameObject::rotateY(const float rotateBy)
-{
-	_transform.rotate(glm::vec3(0, 1, 0), rotateBy);
-}
-void GameObject::rotateZ(const float rotateBy)
-{
-	_transform.rotate(glm::vec3(0, 0, 1), rotateBy);
-}
-void GameObject::scaleX(const float sizeScalar)
-{
-	_transform.scale(glm::vec3(1, 0, 0), sizeScalar);
-}
-void GameObject::scaleY(const float sizeScalar)
-{
-	_transform.scale(glm::vec3(0, 1, 0), sizeScalar);
-}
-void GameObject::scaleZ(const float sizeScalar)
-{
-	_transform.scale(glm::vec3(0, 0, 1), sizeScalar);
-}
-
-
 void GameObject::draw()
 {
 	//set active shader
