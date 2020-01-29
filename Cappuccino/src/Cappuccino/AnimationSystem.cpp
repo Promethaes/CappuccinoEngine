@@ -84,7 +84,7 @@ namespace Cappuccino {
 	}
 	Animator::Animator()
 	{
-		for (unsigned i = 0; i < 7; i++)
+		for (unsigned i = 0; i < (int)AnimationType::NumTypes; i++)
 			_animations.push_back(nullptr);
 	}
 	void Animator::addAnimation(Animation* animation)

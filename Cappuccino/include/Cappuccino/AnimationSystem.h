@@ -10,7 +10,8 @@ enum class AnimationType {
 	Death,
 	Walk,
 	Dance,
-	Interact
+	Interact,
+	NumTypes
 };
 namespace Cappuccino {
 
