@@ -26,7 +26,7 @@ namespace Cappuccino {
 		static bool stop = false;
 		if (stop)
 			return;
-		t += dt;
+		t += dt*_speed;
 
 		if (t >= 1.0f) {
 			t = 0.0f;
@@ -51,7 +51,7 @@ namespace Cappuccino {
 		else {
 			std::vector<float> tempVerts;
 			for (unsigned i = 0; i < _currentVerts.size(); i += 3) {
-				auto e = (glm::lerp(glm::vec3(_currentVerts[i], _currentVerts[i + 1], _currentVerts[i + 2]), glm::vec3(_keyFrames[index]->verts[i], _keyFrames[index]->verts[i + 1], _keyFrames[index]->verts[i + 2]), t));
+				auto e = (glm::slerp(glm::quat(1.0f,_currentVerts[i], _currentVerts[i + 1], _currentVerts[i + 2]), glm::quat(1.0f,_keyFrames[index]->verts[i], _keyFrames[index]->verts[i + 1], _keyFrames[index]->verts[i + 2]), t));
 				tempVerts.push_back(e.x);
 				tempVerts.push_back(e.y);
 				tempVerts.push_back(e.z);
@@ -59,7 +59,7 @@ namespace Cappuccino {
 			}
 			std::vector<float> tempNorms;
 			for (unsigned i = 0; i < _currentNorms.size(); i += 3) {
-				auto e = (glm::lerp(glm::vec3(_currentNorms[i], _currentNorms[i + 1], _currentNorms[i + 2]), glm::vec3(_keyFrames[index]->norms[i], _keyFrames[index]->norms[i + 1], _keyFrames[index]->norms[i + 2]), t));
+				auto e = (glm::slerp(glm::quat(1.0f,_currentNorms[i], _currentNorms[i + 1], _currentNorms[i + 2]), glm::quat(1.0f,_keyFrames[index]->norms[i], _keyFrames[index]->norms[i + 1], _keyFrames[index]->norms[i + 2]), t));
 				tempNorms.push_back(e.x);
 				tempNorms.push_back(e.y);
 				tempNorms.push_back(e.z);
@@ -67,7 +67,7 @@ namespace Cappuccino {
 			}
 			std::vector<float> tempTangs;
 			for (unsigned i = 0; i < _currentTangs.size(); i += 3) {
-				auto e = (glm::lerp(glm::vec3(_currentTangs[i], _currentTangs[i + 1], _currentTangs[i + 2]), glm::vec3(_keyFrames[index]->tangs[i], _keyFrames[index]->tangs[i + 1], _keyFrames[index]->tangs[i + 2]), t));
+				auto e = (glm::slerp(glm::quat(1.0f,_currentTangs[i], _currentTangs[i + 1], _currentTangs[i + 2]), glm::quat(1.0f,_keyFrames[index]->tangs[i], _keyFrames[index]->tangs[i + 1], _keyFrames[index]->tangs[i + 2]), t));
 				tempTangs.push_back(e.x);
 				tempTangs.push_back(e.y);
 				tempTangs.push_back(e.z);
@@ -104,5 +104,9 @@ namespace Cappuccino {
 	void Animator::setLoop(AnimationType type, bool yn)
 	{
 		_animations[(int)type]->setLoop(yn);
+	}
+	void Animator::setSpeed(AnimationType type, float speed)
+	{ 
+		_animations[(int)type]->setSpeed(speed);
 	}
 }

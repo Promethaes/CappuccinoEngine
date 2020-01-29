@@ -25,12 +25,14 @@ namespace Cappuccino {
 
 		AnimationType getAnimationType() { return _type; }
 
+		void setSpeed(float speed) { _speed = speed; }
 	private:
 		bool _shouldPlay = true;
 		bool _loop = false;
 		AnimationType _type;
 		int index = 1;
 		float t = 0.0f;
+		float _speed = 1.0f;
 		std::vector<Mesh*> _keyFrames;
 		std::vector<float> _currentVerts;
 		std::vector<float> _currentTangs;
@@ -63,6 +65,8 @@ namespace Cappuccino {
 
 		//set the animation at the index to loop
 		void setLoop(AnimationType type,bool yn);
+		//set the animation speed at the index
+		void setSpeed(AnimationType type, float speed);
 
 	private:
 		bool _playingAnimation = false;
