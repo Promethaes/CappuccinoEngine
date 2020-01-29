@@ -162,6 +162,9 @@ namespace Cappuccino {
 			master.push_back(tangs[i].x);
 			master.push_back(tangs[i].y);
 			master.push_back(tangs[i].z);
+			this->tangs.push_back(tangs[i].x);
+			this->tangs.push_back(tangs[i].y);
+			this->tangs.push_back(tangs[i].z);
 		}
 
 

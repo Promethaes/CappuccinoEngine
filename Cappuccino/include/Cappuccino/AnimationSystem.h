@@ -1,30 +1,31 @@
 #pragma once
 #include "Cappuccino/Mesh.h"
 #include <vector>
+enum class AnimationType {
+	Idle = 0,
+	Attack,
+	Run,
+	Crouch,
+	Jump,
+	Death,
+	Walk,
+	Dance
+};
 namespace Cappuccino {
-	
-	enum class AnimationType {
-		Idle = 0,
-		Attack,
-		Run,
-		Crouch,
-		Jump,
-		Death,
-		Walk,
-		Dance
-	};
+
 	class Animation {
 	public:
 		//a list of key frames and the type of animation is required
-		Animation(const std::vector<Mesh*>& keyFrames,AnimationType type);
+		Animation(const std::vector<Mesh*>& keyFrames, AnimationType type);
 
-
+		void setLoop(bool yn) { _loop = yn; }
 		void play(float dt);
 		Mesh& getOriginalMesh();
 
 		AnimationType getAnimationType() { return _type; }
 
 	private:
+		bool _loop = false;
 		AnimationType _type;
 		int index = 1;
 		float t = 0.0f;
@@ -48,15 +49,18 @@ namespace Cappuccino {
 
 		Req: an animation
 		*/
-		void addAnimation(Animation& animation);
+		void addAnimation(Animation* animation);
 
-		void playAnimation(AnimationType type,float dt);
+		void playAnimation(AnimationType type, float dt);
 
 		/*
 		Purp: deletes an animation at the type given
 		Req: type as an index
 		*/
 		void clearAnimation(AnimationType type);
+
+		//set the animation at the index to loop
+		void setLoop(AnimationType type,bool yn);
 
 	private:
 		std::vector<Animation*> _animations;

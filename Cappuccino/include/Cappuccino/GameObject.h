@@ -73,8 +73,8 @@ namespace Cappuccino {
 
 		//returns which viewport the object should be drawn in
 		unsigned getViewportNum() { return _viewportNum; }
-	protected:
 		Animator _animator;
+	protected:
 
 		unsigned _viewportNum;
 

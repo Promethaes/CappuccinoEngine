@@ -2,8 +2,8 @@
 #include "Cappuccino/CappMath.h"
 
 namespace Cappuccino {
-	Animation::Animation(const std::vector<Mesh*>& keyFrames,AnimationType type)
-		: _originalMesh({}, {}, {}, {}),_type(type)
+	Animation::Animation(const std::vector<Mesh*>& keyFrames, AnimationType type)
+		: _originalMesh({}, {}, {}, {}), _type(type)
 	{
 		_keyFrames = keyFrames;
 
@@ -31,8 +31,16 @@ namespace Cappuccino {
 			_currentTangs = _keyFrames[index]->tangs;
 
 			index++;
-			if (index > _keyFrames.size() - 1)
-				stop = true;
+			if (index > _keyFrames.size() - 1) {
+				if (_loop) {
+					_currentVerts = _originalMesh.verts;
+					_currentNorms = _originalMesh.norms;
+					_currentTangs = _originalMesh.tangs;
+					index = 1;
+				}
+				else
+					stop = true;
+			}
 		}
 		else {
 			std::vector<float> tempVerts;
@@ -64,11 +72,11 @@ namespace Cappuccino {
 		for (unsigned i = 0; i < 7; i++)
 			_animations.push_back(nullptr);
 	}
-	void Animator::addAnimation(Animation& animation)
+	void Animator::addAnimation(Animation* animation)
 	{
-		_animations[(int)animation.getAnimationType()] = &animation;
+		_animations[(int)animation->getAnimationType()] = animation;
 	}
-	void Animator::playAnimation(AnimationType type,float dt)
+	void Animator::playAnimation(AnimationType type, float dt)
 	{
 		_animations[(int)type]->play(dt);
 	}
@@ -76,5 +84,9 @@ namespace Cappuccino {
 	{
 		delete _animations[(int)type];
 		_animations[(int)type] = nullptr;
+	}
+	void Animator::setLoop(AnimationType type,bool yn)
+	{
+		_animations[(int)type]->setLoop(yn);
 	}
 }
