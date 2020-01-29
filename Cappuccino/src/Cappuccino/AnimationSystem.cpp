@@ -18,6 +18,9 @@ namespace Cappuccino {
 	}
 	void Animation::play(float dt)
 	{
+		if (!_shouldPlay)
+			return;
+
 		static bool stop = false;
 		if (stop)
 			return;
@@ -79,6 +82,7 @@ namespace Cappuccino {
 	void Animator::playAnimation(AnimationType type, float dt)
 	{
 		_animations[(int)type]->play(dt);
+		_playingAnimation = true;
 	}
 	void Animator::clearAnimation(AnimationType type)
 	{

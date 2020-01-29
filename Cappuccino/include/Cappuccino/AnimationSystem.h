@@ -9,7 +9,8 @@ enum class AnimationType {
 	Jump,
 	Death,
 	Walk,
-	Dance
+	Dance,
+	Interact
 };
 namespace Cappuccino {
 
@@ -25,6 +26,7 @@ namespace Cappuccino {
 		AnimationType getAnimationType() { return _type; }
 
 	private:
+		bool _shouldPlay = true;
 		bool _loop = false;
 		AnimationType _type;
 		int index = 1;
@@ -63,6 +65,7 @@ namespace Cappuccino {
 		void setLoop(AnimationType type,bool yn);
 
 	private:
+		bool _playingAnimation = false;
 		std::vector<Animation*> _animations;
 	};
 }
