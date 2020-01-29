@@ -8,10 +8,11 @@ namespace Cappuccino {
 	class Mesh {
 	public:
 
-		Mesh(const std::string& path);
+		Mesh(const std::string& name, const std::string& path);
+		virtual ~Mesh();
 
 		/*
-		Purpose: The mesh will be loaded off of the filepath provided in the contructor
+		Purpose: The mesh will be loaded off of the filepath provided in the constructor
 		Req.: None
 		Returns: A boolean representing if the load succeeded or not
 		*/
@@ -37,6 +38,8 @@ namespace Cappuccino {
 		 */
 		static void setDefaultPath(const std::string& directory);
 
+
+		const std::string& getName() const { return _name; }
 		
 		unsigned _VAO = 0;
 		unsigned _VBO = 0;
@@ -57,6 +60,7 @@ namespace Cappuccino {
 		unsigned _numFaces = 0;
 		unsigned _numVerts = 0;
 		std::string _path;
+		std::string _name;
 
 	};
 }

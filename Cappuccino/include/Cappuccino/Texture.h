@@ -18,8 +18,7 @@ namespace Cappuccino {
 	public:
 		//texture index (for game objects) applies this texture to the mesh at that index
 		//eg GameObject has 2 meshes, texture index is 1, apply this texture to the second mesh
-		Texture(const std::string& PATH, const TextureType& type,unsigned textureIndex = 0);
-		Texture() = default;
+		Texture(const std::string& name, const std::string& path, const TextureType& type, unsigned textureIndex = 0);
 		/*
 		Purp: loads the texture into memory
 		returns: bool if it was successful or not
@@ -54,6 +53,8 @@ namespace Cappuccino {
 
 		unsigned getTextureIndex() const { return _textureIndex; }
 
+		const std::string& getName() const { return _name; }
+
 	private:
 		unsigned _textureIndex = 6969;
 
@@ -62,6 +63,7 @@ namespace Cappuccino {
 		unsigned char* _data;
 
 		std::string _path;
+		std::string _name;
 		unsigned _texture;
 		bool _loaded = false;
 	};

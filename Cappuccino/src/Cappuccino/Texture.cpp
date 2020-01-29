@@ -14,23 +14,22 @@ using namespace Cappuccino;
 
 string Texture::_textureDirectory = "./Assets/Textures/";
 
-Texture::Texture(const std::string& PATH, const TextureType& ID,unsigned textureIndex) : type(ID), _data(nullptr), _path(PATH), _texture(0) {
-	_textureIndex = textureIndex;
+Texture::Texture(const std::string& name, const std::string& path, const TextureType& type, unsigned textureIndex) :
+	type(type), _textureIndex(textureIndex), _data(nullptr), _path(path), _name(name), _texture(0) {
 	load();
-	ResourceManager::_allTextures.push_back(this);
 }
 
 bool Texture::load() {
 	// Again, 100,000,000% not mine
 	// I got this code from learnopengl.com: https://learnopengl.com/code_viewer_gh.php?code=src/2.lighting/5.3.light_casters_spot/light_casters_spot.cpp
-	CAPP_GL_CALL(glGenTextures(1, &_texture));	
+	glGenTextures(1, &_texture);	
 	stbi_set_flip_vertically_on_load(true);
 
 	int width, height, nrComponents;
 	_data = stbi_load(std::string(_textureDirectory + _path).c_str(), &width, &height, &nrComponents, 0);
 	
 	if (_data) {
-		GLenum format;
+		GLenum format = 0;
 		if (nrComponents == 1)
 			format = GL_RED;
 		else if (nrComponents == 3)
@@ -38,15 +37,15 @@ bool Texture::load() {
 		else if (nrComponents == 4)
 			format = GL_RGBA;
 
-		CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture));
-		CAPP_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, _data));
-		CAPP_GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
-			
-		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-		CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		CAPP_GL_CALL(glTextureParameterf(_texture, GL_TEXTURE_MAX_ANISOTROPY, 16.0f));
+		glBindTexture(GL_TEXTURE_2D, _texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, _data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameterf(_texture, GL_TEXTURE_MAX_ANISOTROPY, 16.0f);
 
 		//delete the stored data
 		stbi_image_free(_data);
@@ -78,11 +77,11 @@ void Texture::setDefaultPath(const string& directory) {
 }
 
 void Texture::bind(const unsigned textureSlot) const {
-	CAPP_GL_CALL(glActiveTexture(GL_TEXTURE0 + textureSlot));
-	CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture));
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	glBindTexture(GL_TEXTURE_2D, _texture);
 }
 
 void Texture::unbind(const unsigned textureSlot) const {
-	CAPP_GL_CALL(glActiveTexture(GL_TEXTURE0 + textureSlot));
-	CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

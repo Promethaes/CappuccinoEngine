@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+
 #include <optional>
 #include <string>
 
@@ -25,15 +26,15 @@ namespace Cappuccino {
 		 * Req.:
 		 *    vertShaderPath: The path to the vertex shader
 		 *    fragShaderPath: the file path to the fragment shader
-		 *    geoShaderPath: the file path to the geometry shader (empty by default)
+		 *    geomShaderPath: the file path to the geometry shader (empty by default)
 		 */
-		Shader(const std::string& vertShaderPath, const std::string& fragShaderPath, const std::string& geoShaderPath = "");
+		Shader(const std::string& name, const std::string& vertShaderPath, const std::string& fragShaderPath, const std::optional<std::string>& geomShaderPath = std::nullopt);
 
 		/*
 		Make a shader with raw strings instead of from a file
-		cstring bool is a dummy param so c++ doesnt fuck me over
+		cString bool is a dummy param so c++ doesn't fuck me over
 		*/
-		Shader(bool cstring, char* vertShader, char* fragShader, char* geoShader = nullptr);
+		explicit Shader(bool cString, const char* vertShader, const char* fragShader, const char* geoShader = nullptr);
 
 		/*
 		 * Purp.: Activates the shader for use
@@ -62,18 +63,26 @@ namespace Cappuccino {
 		void setUniform(const std::string& name, bool value) const;
 		void setUniform(const std::string& name, GLint value) const;
 		void setUniform(const std::string& name, GLfloat value) const;
+		void setUniform(const std::string& name, const glm::vec2& value) const;
+		void setUniform(const std::string& name, GLfloat x, GLfloat y) const;
 		void setUniform(const std::string& name, const glm::vec3& value) const;
 		void setUniform(const std::string& name, GLfloat x, GLfloat y, GLfloat z) const;
 		void setUniform(const std::string& name, const glm::vec4& value) const;
 		void setUniform(const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLfloat w) const;
-		void setUniform(const std::string& name, const glm::mat4& value);
+		void setUniform(const std::string& name, const glm::mat3& value) const;
+		void setUniform(const std::string& name, const glm::mat4& value) const;
 
 		GLuint getID() const;
 		glm::mat4 loadModelMatrix(const glm::mat4& modelMatrix);
+		/**
+		 * @deprecated Don't try to do the transformations from this function
+		 */
 		glm::mat4 loadModelMatrix(const std::optional<glm::vec3>& translation, const std::optional<float>& scaleBy, const std::optional<glm::vec3>& rotateBy, const std::optional<float>& rotateAngle);
 		void loadViewMatrix(Camera& defaultCamera);
 		void loadProjectionMatrix(float width, float height);
 		void loadOrthoProjectionMatrix(float width, float height);
+
+		const std::string& getName() const { return _name; }
 
 	private:
 
@@ -84,15 +93,18 @@ namespace Cappuccino {
 		static void compileShader(const char* shaderPath, const ShaderType& type, GLuint& shader);
 
 		//compile shader input c string, not from file. f is a dummy param
-		static void compileShader(char* input, const ShaderType& type, GLuint& shader, int f);
-
+		static void compileShader(const char* input, const ShaderType& type, GLuint& shader, int f);
 
 		// Function to link shaders together after compilation
-		void createProgram(GLuint vertex, GLuint fragment, std::optional<GLuint> geometry = std::nullopt);
+		void createProgram(unsigned vertex, unsigned fragment, const std::optional<unsigned>& geometry = std::nullopt);
+
+		// Checker for uniform locations
+		int getUniformLocation(const std::string& uniformName) const;
 
 		GLuint _programID;
 		static std::string _shaderDirectory;
 
+		std::string _name;
 		std::string _vertexShaderPath;
 		std::string _fragmentShaderPath;
 		std::string _geometryShaderPath;
