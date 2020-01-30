@@ -10,6 +10,7 @@ namespace Cappuccino {
 	class Framebuffer {
 	public:
 		//enable your depth testing, blending, and what not with a callback given in this constructor
+		//only change the vert/frag shaders if you want to change the post processing shader. the shader is static.
 		Framebuffer(const glm::vec2& windowSize, unsigned numColourBuffers = 1, void(*instructionsCallback)() = nullptr, const std::optional<char*>& vertShader = std::nullopt, const std::optional<char*>& fragShader = std::nullopt);
 
 		static std::vector<Framebuffer*> _framebuffers;
@@ -20,11 +21,11 @@ namespace Cappuccino {
 		std::vector<unsigned>& getColourBuffers() { return _colourBuffers; }
 
 		//pointer so it can be initialized properly later
-		Shader* _fbShader;
+		static Shader* _fbShader;
 	private:
-		char* _vertShader;
+		static char* _vertShader;
 
-		char* _fragShader;
+		static char* _fragShader;
 
 		void generate(unsigned& fbo);
 		void generateTextureAttachment();

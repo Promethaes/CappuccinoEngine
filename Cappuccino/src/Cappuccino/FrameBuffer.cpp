@@ -4,6 +4,9 @@
 using namespace Cappuccino;
 std::vector<Framebuffer*> Framebuffer::_framebuffers = {};
 
+char* Framebuffer::_vertShader = "";
+char* Framebuffer::_fragShader = "";
+Shader* Framebuffer::_fbShader = nullptr;
 Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numColourBuffers, void(*instructionsCallback)(), const std::optional<char*>& vertShader, const std::optional<char*>& fragShader)
 	:_windowSize(windowSize), _callback(instructionsCallback)
 {
@@ -36,8 +39,8 @@ Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numCo
 		_vertShader = vertShader.value();
 	if (fragShader.has_value())
 		_fragShader = fragShader.value();
-
-	_fbShader = new Shader(true, _vertShader, _fragShader);
+	if (_fbShader == nullptr)
+		_fbShader = new Shader(true, _vertShader, _fragShader);
 
 	generate(_fbo);
 	bind();
@@ -46,7 +49,7 @@ Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numCo
 			break;
 		generateTextureAttachment();
 	}
-	
+
 	//attach colour as a texture (important for post proccessing)
 	attachTextures();
 
@@ -86,7 +89,7 @@ void Cappuccino::Framebuffer::generateTextureAttachment()
 	_colourBuffers.push_back(0);
 	CAPP_GL_CALL(glGenTextures(1, &_colourBuffers.back()));
 	CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, _colourBuffers.back()));
-	CAPP_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _windowSize.x, _windowSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+	CAPP_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _windowSize.x, _windowSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
 	CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
@@ -103,7 +106,7 @@ void Cappuccino::Framebuffer::attachTextures()
 		glFramebufferTexture2D(GL_FRAMEBUFFER, e[i], GL_TEXTURE_2D, _colourBuffers[i], 0);
 	}
 	//activate the buffers
-	glDrawBuffers(_colourBuffers.size(),e.data());
+	glDrawBuffers(_colourBuffers.size(), e.data());
 }
 
 void Cappuccino::Framebuffer::generateRenderBufferAttachment(unsigned& handle)
