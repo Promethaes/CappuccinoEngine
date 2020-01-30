@@ -3,7 +3,8 @@
 #include "Cappuccino/CappMacros.h"
 using namespace Cappuccino;
 std::vector<Framebuffer*> Framebuffer::_framebuffers = {};
-Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, void(*instructionsCallback)(), const std::optional<char*>& vertShader, const std::optional<char*>& fragShader)
+
+Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numColourBuffers, void(*instructionsCallback)(), const std::optional<char*>& vertShader, const std::optional<char*>& fragShader)
 	:_windowSize(windowSize), _callback(instructionsCallback)
 {
 	_vertShader =
@@ -40,10 +41,14 @@ Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, void(*instruct
 
 	generate(_fbo);
 	bind();
-	generateTextureAttachment(_colourBuffer);
-
+	for (unsigned i = 0; i < numColourBuffers; i++) {
+		if (i > 7)
+			break;
+		generateTextureAttachment();
+	}
+	
 	//attach colour as a texture (important for post proccessing)
-	CAPP_GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colourBuffer, 0));
+	attachTextures();
 
 	generateRenderBufferAttachment(_depthStencilBuffer);
 	CAPP_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilBuffer));
@@ -75,17 +80,30 @@ void Cappuccino::Framebuffer::unbind()
 	CAPP_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void Cappuccino::Framebuffer::generateTextureAttachment(unsigned& handle)
+void Cappuccino::Framebuffer::generateTextureAttachment()
 {
 	//generate the texture to bind to the framebuffer
-	CAPP_GL_CALL(glGenTextures(1, &handle));
-	CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, handle));
+	_colourBuffers.push_back(0);
+	CAPP_GL_CALL(glGenTextures(1, &_colourBuffers.back()));
+	CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, _colourBuffers.back()));
 	CAPP_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _windowSize.x, _windowSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
 	CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	CAPP_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	CAPP_GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
 
 	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, handle, 0);
+}
+
+void Cappuccino::Framebuffer::attachTextures()
+{
+	std::vector<GLenum> e;
+
+	for (unsigned i = 0; i < _colourBuffers.size(); i++) {
+		e.push_back(GL_COLOR_ATTACHMENT0 + i);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, e[i], GL_TEXTURE_2D, _colourBuffers[i], 0);
+	}
+	//activate the buffers
+	glDrawBuffers(_colourBuffers.size(),e.data());
 }
 
 void Cappuccino::Framebuffer::generateRenderBufferAttachment(unsigned& handle)

@@ -188,8 +188,10 @@ namespace Cappuccino {
 					glClear(GL_COLOR_BUFFER_BIT);
 					k->_fbShader->use();
 					glBindVertexArray(quadVAO);
-					glBindTexture(GL_TEXTURE_2D, k->getColourBuffer());
+					for (auto t : k->getColourBuffers())
+						glBindTexture(GL_TEXTURE_2D, t);
 					glDrawArrays(GL_TRIANGLES, 0, 6);
+					glBindTexture(GL_TEXTURE_2D, 0);
 
 				}
 			}
@@ -232,7 +234,7 @@ namespace Cappuccino {
 
 		// Shutdown GLFW
 		glfwTerminate();
-}
+	}
 
 
 	/*
@@ -242,7 +244,7 @@ namespace Cappuccino {
 #if _DEBUG
 		if (isEvent(Events::Escape)) {
 			glfwSetWindowShouldClose(window, true);
-		}
+}
 #endif
 
 		if (Sedna::XInputManager::controllerConnected(0) || Sedna::XInputManager::controllerConnected(1) ||
