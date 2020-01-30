@@ -7,6 +7,7 @@ std::vector<Framebuffer*> Framebuffer::_framebuffers = {};
 char* Framebuffer::_vertShader = "";
 char* Framebuffer::_fragShader = "";
 Shader* Framebuffer::_fbShader = nullptr;
+std::vector<unsigned> Framebuffer::_colourBuffers = {};
 Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numColourBuffers, void(*instructionsCallback)(), const std::optional<char*>& vertShader, const std::optional<char*>& fragShader)
 	:_windowSize(windowSize), _callback(instructionsCallback)
 {
@@ -99,14 +100,10 @@ void Cappuccino::Framebuffer::generateTextureAttachment()
 
 void Cappuccino::Framebuffer::attachTextures()
 {
-	std::vector<GLenum> e;
-
-	for (unsigned i = 0; i < _colourBuffers.size(); i++) {
-		e.push_back(GL_COLOR_ATTACHMENT0 + i);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, e[i], GL_TEXTURE_2D, _colourBuffers[i], 0);
-	}
+	GLenum e[] = { GL_COLOR_ATTACHMENT0 };
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colourBuffers.back(), 0);
 	//activate the buffers
-	glDrawBuffers(_colourBuffers.size(), e.data());
+	glDrawBuffers(1, e);
 }
 
 void Cappuccino::Framebuffer::generateRenderBufferAttachment(unsigned& handle)

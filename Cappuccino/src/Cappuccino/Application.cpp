@@ -180,7 +180,7 @@ namespace Cappuccino {
 					for (auto y : GameObjects)
 						if (y->isActive() && y->isVisible())
 							y->draw();
-					
+
 					k->unbind();
 
 				}
@@ -189,20 +189,16 @@ namespace Cappuccino {
 				glClear(GL_COLOR_BUFFER_BIT);
 				Framebuffer::_fbShader->use();
 
-				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-						glActiveTexture(GL_TEXTURE0 + j);
-						glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
-					}
+				for (unsigned j = 0; j < Framebuffer::_colourBuffers.size(); j++) {
+					glActiveTexture(GL_TEXTURE0 + j);
+					glBindTexture(GL_TEXTURE_2D, Framebuffer::_colourBuffers[j]);
 				}
 				glBindVertexArray(quadVAO);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
-				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-						glActiveTexture(GL_TEXTURE0 + j);
-						glBindTexture(GL_TEXTURE_2D, 0);
-					}
+				for (unsigned j = 0; j < Framebuffer::_colourBuffers.size(); j++) {
+					glActiveTexture(GL_TEXTURE0 + j);
+					glBindTexture(GL_TEXTURE_2D, 0);
 				}
 				for (auto x : UserInterface::_allUI)
 					x->draw();
@@ -262,7 +258,7 @@ namespace Cappuccino {
 		if (Sedna::XInputManager::controllerConnected(0) || Sedna::XInputManager::controllerConnected(1) ||
 			Sedna::XInputManager::controllerConnected(2) || Sedna::XInputManager::controllerConnected(3)) {
 			Sedna::XInputManager::update();
-		}
+	}
 
 		SoundSystem::update();
 
@@ -273,7 +269,7 @@ namespace Cappuccino {
 				x->baseUpdate(dt);
 
 
-	}
+}
 
 	void Application::drawImGui(GLfloat dt) {
 		// Start new ImGui frame

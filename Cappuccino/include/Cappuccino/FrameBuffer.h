@@ -18,7 +18,7 @@ namespace Cappuccino {
 		void bind();
 		void unbind();
 		void(*_callback)();
-		std::vector<unsigned>& getColourBuffers() { return _colourBuffers; }
+		static std::vector<unsigned> _colourBuffers;
 
 		//pointer so it can be initialized properly later
 		static Shader* _fbShader;
@@ -37,7 +37,6 @@ namespace Cappuccino {
 		//framebuffer object handle
 		unsigned _fbo = 0;
 
-		std::vector<unsigned> _colourBuffers;
 
 		unsigned _depthBuffer = 0, _stencilBuffer = 0;
 		unsigned _depthStencilBuffer = 0;
