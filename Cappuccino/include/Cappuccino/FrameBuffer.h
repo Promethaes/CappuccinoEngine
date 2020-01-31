@@ -18,11 +18,12 @@ namespace Cappuccino {
 		void bind();
 		void unbind();
 		void(*_callback)();
-		static std::vector<unsigned> _colourBuffers;
+		std::vector<unsigned>& getColourBuffers() { return _colourBuffers; }
 
 		//pointer so it can be initialized properly later
 		static Shader* _fbShader;
 	private:
+		std::vector<unsigned> _colourBuffers;
 		static char* _vertShader;
 
 		static char* _fragShader;
