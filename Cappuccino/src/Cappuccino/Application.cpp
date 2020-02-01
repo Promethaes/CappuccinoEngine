@@ -185,30 +185,26 @@ namespace Cappuccino {
 
 				}
 
-				//for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-				//	for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-				//		glActiveTexture(GL_TEXTURE0 + j);
-				//		glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
-				//	}
-				//}
-
 				glClear(GL_COLOR_BUFFER_BIT);
 				Framebuffer::_fbShader->use();
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers.back()->getColourBuffers()[0]);
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers.back()->getColourBuffers()[1]);
+				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
+					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
+						glActiveTexture(GL_TEXTURE0 + j + i);
+						glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
+					}
+				}
+				
 				Framebuffer::_fbShader->setUniform("screenTexture",0);
 				Framebuffer::_fbShader->setUniform("bloom",1);
 				glBindVertexArray(quadVAO);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
-				//for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-				//	for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-				//		glActiveTexture(GL_TEXTURE0 + j);
-				//		glBindTexture(GL_TEXTURE_2D, 0);
-				//	}
-				//}
+				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
+					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
+						glActiveTexture(GL_TEXTURE0 + j + i);
+						glBindTexture(GL_TEXTURE_2D, 0);
+					}
+				}
 				for (auto x : UserInterface::_allUI)
 					x->draw();
 			}
