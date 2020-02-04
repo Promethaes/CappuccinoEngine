@@ -16,22 +16,14 @@ using namespace Cappuccino;
 
 string Shader::_shaderDirectory = "./Assets/Shaders/";
 
-Shader::Shader() : _programID(0), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
+Shader::Shader() : _programID(0), _name(""), _vertexShaderPath(""), _fragmentShaderPath(""), _geometryShaderPath("") {}
 
-Shader::Shader(const string& vertShaderPath, const string& fragShaderPath, const string& geoShaderPath) {
-	_programID = 0;
-
-	_vertexShaderPath = vertShaderPath;
-	_fragmentShaderPath = fragShaderPath;
-	_geometryShaderPath = geoShaderPath;
-
+Shader::Shader(const std::string& name, const string& vertShaderPath, const string& fragShaderPath, const std::optional<string>& geomShaderPath) :
+	_programID(0), _name(name), _vertexShaderPath(vertShaderPath), _fragmentShaderPath(fragShaderPath), _geometryShaderPath(geomShaderPath ? geomShaderPath.value() : "") {
 	createShader();
-
-	ResourceManager::_allShaders.push_back(this);
 }
 
-Cappuccino::Shader::Shader(bool cstring, char* vertShader, char* fragShader, char* geoShader)
-{
+Shader::Shader(bool cString, const char* vertShader, const char* fragShader, const char* geoShader) {
 	_programID = 0;
 
 	GLuint vertShaderu = 0, fragShaderu = 0, geoShaderu = 0;
@@ -42,17 +34,16 @@ Cappuccino::Shader::Shader(bool cstring, char* vertShader, char* fragShader, cha
 
 	std::optional<unsigned> g;
 	if (geoShader != nullptr) {
-
-		compileShader(geoShader, ShaderType::FRAGMENT, geoShaderu, 0);
+		compileShader(geoShader, ShaderType::GEOMETRY, geoShaderu, 0);
 		g = geoShaderu;
 	}
 
-	if (g.has_value())
+	if (g.has_value()) {
 		createProgram(vertShaderu, fragShaderu, g.value());
-	else
+	}
+	else {
 		createProgram(vertShaderu, fragShaderu);
-
-	ResourceManager::_allShaders.push_back(this);
+	}
 }
 
 void Shader::createShader() {
@@ -69,11 +60,11 @@ void Shader::createShader() {
 	}
 }
 
-void Shader::use() const { CAPP_GL_CALL(glUseProgram(_programID)); }
+void Shader::use() const { (glUseProgram(_programID)); }
 
 void Shader::setDefaultPath(const string& directory) {
 	string dir = directory;
-	std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
+	std::transform(dir.begin(), dir.end(), dir.begin(), tolower);
 
 	if (dir == "default")
 		_shaderDirectory = "./Assets/Shaders/";
@@ -111,29 +102,29 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 	GLuint shaderType = NULL;
 
 	switch (type) {
-	case ShaderType::VERTEX:
-		shaderType = GL_VERTEX_SHADER;
-		break;
+		case ShaderType::VERTEX:
+			shaderType = GL_VERTEX_SHADER;
+			break;
 
-	case ShaderType::FRAGMENT:
-		shaderType = GL_FRAGMENT_SHADER;
-		break;
+		case ShaderType::FRAGMENT:
+			shaderType = GL_FRAGMENT_SHADER;
+			break;
 
-	case ShaderType::GEOMETRY:
-		shaderType = GL_GEOMETRY_SHADER;
-		break;
+		case ShaderType::GEOMETRY:
+			shaderType = GL_GEOMETRY_SHADER;
+			break;
 	}
 
 	auto shaderFinal = shaderString.c_str();
 
-	CAPP_GL_CALL(shader = glCreateShader(shaderType));
-	CAPP_GL_CALL(glShaderSource(shader, 1, &shaderFinal, NULL));
-	CAPP_GL_CALL(glCompileShader(shader));
+	shader = glCreateShader(shaderType);
+	glShaderSource(shader, 1, &shaderFinal, NULL);
+	glCompileShader(shader);
 
-	CAPP_GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		GLchar infoLog[512];
-		CAPP_GL_CALL(glGetShaderInfoLog(shader, 512, NULL, infoLog));
+		glGetShaderInfoLog(shader, 512, NULL, infoLog);
 
 		CAPP_PRINT_ERROR("Failed to compile shader!");
 		CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
@@ -141,63 +132,63 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 	}
 }
 
-void Cappuccino::Shader::compileShader(char* input, const ShaderType& type, GLuint& shader, int f)
+void Shader::compileShader(const char* input, const ShaderType& type, GLuint& shader, int f)
 {
 
 	GLint success;
 	GLuint shaderType = NULL;
 
 	switch (type) {
-	case ShaderType::VERTEX:
-		shaderType = GL_VERTEX_SHADER;
-		break;
+		case ShaderType::VERTEX:
+			shaderType = GL_VERTEX_SHADER;
+			break;
 
-	case ShaderType::FRAGMENT:
-		shaderType = GL_FRAGMENT_SHADER;
-		break;
+		case ShaderType::FRAGMENT:
+			shaderType = GL_FRAGMENT_SHADER;
+			break;
 
-	case ShaderType::GEOMETRY:
-		shaderType = GL_GEOMETRY_SHADER;
-		break;
+		case ShaderType::GEOMETRY:
+			shaderType = GL_GEOMETRY_SHADER;
+			break;
 	}
 
 	auto shaderFinal = input;
 
-	CAPP_GL_CALL(shader = glCreateShader(shaderType));
-	CAPP_GL_CALL(glShaderSource(shader, 1, &shaderFinal, NULL));
-	CAPP_GL_CALL(glCompileShader(shader));
+	shader = glCreateShader(shaderType);
+	glShaderSource(shader, 1, &shaderFinal, NULL);
+	glCompileShader(shader);
 
-	CAPP_GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
+	(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
 	if (!success) {
 		GLchar infoLog[512];
-		CAPP_GL_CALL(glGetShaderInfoLog(shader, 512, NULL, infoLog));
+		glGetShaderInfoLog(shader, 512, NULL, infoLog);
 
-		CAPP_PRINT_ERROR("Failed to compile c string shader!");
+		CAPP_PRINT_ERROR("Failed to compile C-string shader!");
 		CAPP_PRINT_ERROR("%s", infoLog);
 	}
 }
 
-void Shader::createProgram(const GLuint vertex, const GLuint fragment, std::optional<GLuint> geometry) {
-	CAPP_GL_CALL(_programID = glCreateProgram());
+void Shader::createProgram(const unsigned vertex, const unsigned fragment, const std::optional<unsigned>& geometry) {
+	(_programID = glCreateProgram());
 
 	if (vertex) {
-		CAPP_GL_CALL(glAttachShader(_programID, vertex));
+		glAttachShader(_programID, vertex);
 	}
 	else {
 		CAPP_PRINT_WARNING("No vertex shader linked!");
 	}
 
 	if (fragment) {
-		CAPP_GL_CALL(glAttachShader(_programID, fragment));
+		glAttachShader(_programID, fragment);
 	}
 	else {
 		CAPP_PRINT_WARNING("No fragment shader linked!");
 	}
 
-	if (geometry.has_value()) {
+	if (geometry) {
 
 		if (geometry.value()) {
-			CAPP_GL_CALL(glAttachShader(_programID, geometry.value()));
+			glAttachShader(_programID, geometry.value());
 		}
 		else {
 			CAPP_PRINT_WARNING("No geometry shader linked!");
@@ -207,25 +198,25 @@ void Shader::createProgram(const GLuint vertex, const GLuint fragment, std::opti
 
 	GLint success;
 
-	CAPP_GL_CALL(glLinkProgram(_programID));
+	glLinkProgram(_programID);
 
-	CAPP_GL_CALL(glGetProgramiv(_programID, GL_LINK_STATUS, &success));
+	(glGetProgramiv(_programID, GL_LINK_STATUS, &success));
 	if (!success) {
 		GLchar infoLog[512];
-		CAPP_GL_CALL(glGetProgramInfoLog(_programID, 512, NULL, infoLog));
+		glGetProgramInfoLog(_programID, 512, NULL, infoLog);
 		CAPP_PRINT_ERROR("Failed to create the shader program!");
 		CAPP_PRINT_ERROR("%s", infoLog);
 	}
 
 	if (vertex) {
-		CAPP_GL_CALL(glDeleteShader(vertex));
+		glDeleteShader(vertex);
 	}
 	if (fragment) {
-		CAPP_GL_CALL(glDeleteShader(fragment));
+		glDeleteShader(fragment);
 	}
 	if (geometry.has_value()) {
 		if (geometry.value()) {
-			CAPP_GL_CALL(glDeleteShader(geometry.value()));
+			glDeleteShader(geometry.value());
 		}
 	}
 }
@@ -239,11 +230,11 @@ glm::mat4 Shader::loadModelMatrix(const std::optional<glm::vec3>& translation, c
 	glm::mat4 model = glm::mat4(1.0f);
 
 	if (translation.has_value())
-		model = glm::translate(model, translation.value());
+		model = translate(model, translation.value());
 	if (scaleBy.has_value())
-		model = glm::scale(model, glm::vec3(scaleBy.value()));
+		model = scale(model, glm::vec3(scaleBy.value()));
 	if (rotateBy.has_value())
-		model = glm::rotate(model, rotateAngle.value(), rotateBy.value());
+		model = rotate(model, rotateAngle.value(), rotateBy.value());
 
 	setUniform("model", model);
 	return model;
@@ -255,7 +246,7 @@ void Shader::loadViewMatrix(Camera& defaultCamera) {
 }
 
 void Shader::loadProjectionMatrix(float width, float height) {
-	const glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	const glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 1000.0f);
 	setUniform("projection", projection);
 }
 
@@ -265,90 +256,25 @@ void Shader::loadOrthoProjectionMatrix(float width, float height)
 	setUniform("projection", projection);
 }
 
-void Shader::setUniform(const std::string& name, const bool value) const {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
 
-	if (location != -1) {
-		CAPP_GL_CALL(glUniform1i(location, static_cast<GLint>(value)));
+int Shader::getUniformLocation(const std::string& uniformName) const {
+	const int location = glGetUniformLocation(_programID, uniformName.c_str());
+	if(location == -1) {
+		CAPP_PRINT_ERROR("Could not find uniform \"%s\" in shader \"%s\" (ID: %u)", uniformName.c_str(), _name.c_str(), _programID);
 	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
+	return location;
 }
 
-void Shader::setUniform(const std::string& name, const GLint value) const {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
+void Shader::setUniform(const std::string& name, const bool value) const                                                      { glUniform1i(getUniformLocation(name), static_cast<GLint>(value)); }
+void Shader::setUniform(const std::string& name, const GLint value) const                                                     { glUniform1i(getUniformLocation(name), value); }
+void Shader::setUniform(const std::string& name, const GLfloat value) const                                                   { glUniform1f(getUniformLocation(name), value); }
 
-	if (location != -1) {
-		CAPP_GL_CALL(glUniform1i(location, value));
-	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
-}
+void Shader::setUniform(const std::string& name, const glm::vec2& value) const                                                { glUniform2fv(getUniformLocation(name), 1, glm::value_ptr(value)); }
+void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat y) const                                      { glUniform2f(getUniformLocation(name), x, y); }
+void Shader::setUniform(const std::string& name, const glm::vec3& value) const                                                { glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(value)); }
+void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat y, const GLfloat z) const                     { glUniform3f(getUniformLocation(name), x, y, z); }
+void Shader::setUniform(const std::string& name, const glm::vec4& value) const                                                { glUniform4fv(getUniformLocation(name), 1, glm::value_ptr(value)); }
+void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat w) const    { glUniform4f(getUniformLocation(name), x, y, z, w); }
 
-void Shader::setUniform(const std::string& name, const GLfloat value) const {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-
-	if (location != -1) {
-		CAPP_GL_CALL(glUniform1f(location, value));
-	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
-}
-
-void Shader::setUniform(const std::string& name, const glm::vec3& value) const {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-
-	if (location != -1) {
-		CAPP_GL_CALL(glUniform3fv(location, 1, &value[0]));
-	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
-}
-
-void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat y, const GLfloat z) const {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-
-	if (location != -1) {
-		CAPP_GL_CALL(glUniform3fv(location, 1, &glm::vec3(x, y, z)[0]));
-	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
-}
-
-void Shader::setUniform(const std::string& name, const glm::vec4& value) const {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-
-	if (location != -1) {
-		CAPP_GL_CALL(glUniform4fv(location, 1, &value[0]));
-	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
-}
-
-void Shader::setUniform(const std::string& name, const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat w) const {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-
-	if (location != -1) {
-		CAPP_GL_CALL(glUniform4fv(location, 1, &glm::vec4(x, y, z, w)[0]));
-	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
-}
-
-void Shader::setUniform(const std::string& name, const glm::mat4& value) {
-	CAPP_GL_CALL(GLint location = glGetUniformLocation(_programID, name.c_str()));
-
-	if (location != -1) {
-		CAPP_GL_CALL(glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]));
-	}
-	else {
-		CAPP_PRINT_ERROR("Could not find uniform %s in shader #%u", name.c_str(), _programID);
-	}
-}
+void Shader::setUniform(const std::string& name, const glm::mat3& value) const                                                { glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)); }
+void Shader::setUniform(const std::string& name, const glm::mat4& value) const                                                { glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)); }

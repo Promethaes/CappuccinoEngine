@@ -1,5 +1,7 @@
 #include "Cappuccino/RigidBody.h"
+
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {
 
@@ -9,8 +11,10 @@ namespace Cappuccino {
 	float Physics::gravity = -98.0f;
 	float Physics::UniversalG = 6.67f * static_cast<float>(pow(10, -11));
 	
-	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, bool gravity)
-		: _position(transformPosition), _mass(mass), _grav(gravity) {}
+	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, const bool gravity)
+		: _position(transformPosition), _grav(gravity), _mass(mass) {
+		_shader = *ShaderLibrary::loadShader("DefaultHitbox", "hitBox.vert", "hitBox.frag");
+	}
 
 
 	void RigidBody::update(const float dt)

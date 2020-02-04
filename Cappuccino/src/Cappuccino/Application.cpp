@@ -8,6 +8,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include <thread>
 #include <chrono>
+#include "Cappuccino/ResourceManager.h"
+#include "Cappuccino/Cubemap.h"
 
 #define GameObjects GameObject::gameObjects
 using string = std::string;
@@ -98,6 +100,7 @@ namespace Cappuccino {
 
 		SoundSystem::init(R"(.\Assets\Sounds\)");
 		FontManager::init(R"(.\Assets\Fonts\)");
+		ResourceManager::init();
 	}
 
 	void Application::run() {
@@ -118,6 +121,8 @@ namespace Cappuccino {
 		CAPP_GL_CALL(glEnable(GL_BLEND));
 		CAPP_GL_CALL(glEnable(GL_SCISSOR_TEST));
 		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		
 		static GLfloat lastFrame;
 		float lag = 0.0f;
 		float turnRate = 1000.0f / 120.0f;
@@ -125,7 +130,7 @@ namespace Cappuccino {
 
 
 		//https://learnopengl.com/code_viewer_gh.php?code=src/4.advanced_opengl/5.1.framebuffers/framebuffers.cpp
-		//took these from learnopengl cause i didnt wanna write it all out myself
+		//took these from learnopengl cause i didn't wanna write it all out myself
 		float quadVertices[] = {
 			// positions   // texCoords
 			-1.0f,  1.0f,  0.0f, 1.0f,
@@ -169,18 +174,19 @@ namespace Cappuccino {
 			_viewports[0].use();
 
 			//if there are user defined framebuffers
-			if (Framebuffer::_framebuffers.size() > 0) {
-
+			if (!Framebuffer::_framebuffers.empty()) {
 				for (auto k : Framebuffer::_framebuffers) {
 
 					k->bind();
 					glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
 					k->_callback != nullptr ? k->_callback() : 0;
 
-					for (auto y : GameObjects)
-						if (y->isActive() && y->isVisible())
+					for (auto y : GameObjects) {
+						if (y->isActive() && y->isVisible()) {
 							y->draw();
-
+					}
+						c->draw();
+					for(auto c : Cubemap::allCubemaps) {
 					k->unbind();
 
 				}
@@ -214,6 +220,9 @@ namespace Cappuccino {
 						y->draw();
 				for (auto x : UserInterface::_allUI)
 					x->draw();
+				for(auto c : Cubemap::allCubemaps) {
+					c->draw();
+				}
 			}
 
 
@@ -247,7 +256,9 @@ namespace Cappuccino {
 
 		// Shutdown GLFW
 		glfwTerminate();
-	}
+
+		ResourceManager::shutdown();
+}
 
 
 	/*

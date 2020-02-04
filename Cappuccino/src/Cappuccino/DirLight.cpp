@@ -1,12 +1,11 @@
 #include "Cappuccino/DirLight.h"
+#include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {
 
-	DirLight::DirLight(const glm::vec2& windowSize, const glm::vec3& direction, const glm::vec3& ambientColour,
-		const glm::vec3& diffuseColour, const glm::vec3& specularColour, float shininess)
-
-		:_dirLightShader{ "lightingShader.vert","dirLight.frag" }
+	DirLight::DirLight(const glm::vec2& windowSize, const glm::vec3& direction, const glm::vec3& ambientColour, const glm::vec3& diffuseColour, const glm::vec3& specularColour, const float shininess)
 	{
+		_dirLightShader = *ShaderLibrary::loadShader("DefaultDirectionalLight", "lightingShader.vert", "dirLight.frag");
 		_dirLightShader.use();
 		_dirLightShader.loadProjectionMatrix(windowSize.x, windowSize.y);
 		_dirLightShader.setUniform("material.diffuse", 0);
@@ -54,7 +53,7 @@ namespace Cappuccino {
 		_dirLightShader.setUniform("dirLight.specular", _specularColour);
 	}
 
-	void DirLight::setShininess(float scalar)
+	void DirLight::setShininess(const float scalar)
 	{
 		_dirLightShader.use();
 		_shininess = scalar;

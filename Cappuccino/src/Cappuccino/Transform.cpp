@@ -1,37 +1,35 @@
 #include "Cappuccino/Transform.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 using namespace Cappuccino;
 
-glm::mat4 Transform::doTransform(const std::optional<glm::vec3>& translation, const std::optional<glm::vec3>& rotateOn, const std::optional<float> rotationAngle, const std::optional<glm::vec3>& scaleVec, const std::optional<float>& sizeScalar)
-{
-	if (translation.has_value())
-		_transformMat = glm::translate(_transformMat, translation.value());
-	if (rotateOn.has_value())
-		_transformMat = glm::rotate(_transformMat, rotationAngle.value(), rotateOn.value());
-	if (scaleVec.has_value())
-		_transformMat = glm::scale(_transformMat, scaleVec.value() * sizeScalar.value());
-	return _transformMat;
+const glm::mat4& Transform::rotate(const glm::vec3& rotateOn, const float rotationAngle) {
+	return _rotateMat = glm::rotate(_rotateMat, glm::radians(rotationAngle), rotateOn);
 }
 
-glm::mat4 Transform::rotate(const glm::vec3& rotateOn, float rotationAngle)
-{
-	_rotateMat = glm::rotate(_rotateMat, glm::radians(rotationAngle), rotateOn);
-	//forward = glm::rotate(forward, glm::radians(rotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
-	return _rotateMat;
+const glm::mat4& Transform::rotate(const glm::vec3& eulerRotation) {
+	return _rotateMat = glm::mat4_cast(glm::quat(glm::radians(eulerRotation)));
 }
 
-glm::mat4 Transform::scale(const glm::vec3& scaleVec, float sizeScalar)
-{
+const glm::mat4& Transform::scale(const glm::vec3& scaleVec, const float sizeScalar) {
 	return _scaleMat = glm::scale(_scaleMat, scaleVec * sizeScalar);
 }
 
-void Transform::update()
-{
-	_transformMat = _translateMat * _rotateMat * _scaleMat;
-}
-
-glm::vec3 Transform::translate(const glm::vec3& translateBy)
-{
+glm::vec3 Transform::translate(const glm::vec3& translateBy) {
 	_translateMat = glm::translate(_translateMat, translateBy);
 	return _translateMat[3];
+}
+
+void Transform::update() {
+	_transformMat = _translateMat * _rotateMat * _scaleMat;
+
+	if(_parentTransform != glm::mat4 { 1.0f }) {
+		_worldTransformMat = _parentTransform * _transformMat;
+	}
+	else {
+		_worldTransformMat = _transformMat;
+	}
 }

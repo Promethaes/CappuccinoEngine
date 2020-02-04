@@ -8,7 +8,8 @@ namespace Cappuccino {
 	class Mesh {
 	public:
 
-		Mesh(const std::string& path);
+		Mesh(const std::string& name, const std::string& path);
+		virtual ~Mesh();
 
 		/*
 		Purp: create mesh from data rather than loading from file, useful for animation calss
@@ -47,6 +48,8 @@ namespace Cappuccino {
 		 */
 		static void setDefaultPath(const std::string& directory);
 
+
+		const std::string& getName() const { return _name; }
 		
 		unsigned _VAO = 0;
 		unsigned _VBO = 0;
@@ -68,6 +71,7 @@ namespace Cappuccino {
 		unsigned _numFaces = 0;
 		unsigned _numVerts = 0;
 		std::string _path;
+		std::string _name;
 
 	};
 }

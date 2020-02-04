@@ -39,20 +39,20 @@ namespace Cappuccino {
 		Transform _transform;
 		RigidBody _rigidBody;
 		/*
-		Purp: To check collision between gameobject
-		Pre: another gameobject
+		Purp: To check collision between GameObject
+		Pre: another GameObject
 		Post: a boolean true if colliding
 		*/
 		bool checkCollision(GameObject* other);
 		/*
-		Purp: To check if you will collide with another gameobject
-		Pre: another Gameobject
+		Purp: To check if you will collide with another GameObject
+		Pre: another GameObject
 		Post: a boolean true if they will collide
 		*/
 		bool willCollide(GameObject* other,const glm::vec3& direction, float dt);
 
 		/*
-		Purp: To check collision between a gameobject and hitbox
+		Purp: To check collision between a GameObject and hitbox
 		Pre: a hitbox
 		Post: a boolean true if colliding
 		*/
@@ -64,9 +64,9 @@ namespace Cappuccino {
 		*/
 		bool willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos,float dt);
 
-		void setActive(bool yn) { _isActive = yn; }
+		void setActive(const bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
-		void setVisible(bool yn) { _isVisible = yn; }
+		void setVisible(const bool yn) { _isVisible = yn; }
 		bool isVisible() const { return _isVisible; }
 
 		void draw();
@@ -107,7 +107,7 @@ namespace Cappuccino {
 		*/
 		void loadTextures();
 		/*
-		load the meshs
+		load the meshes
 		*/
 		void loadMesh();
 	};

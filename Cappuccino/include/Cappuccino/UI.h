@@ -52,7 +52,7 @@ namespace Cappuccino {
 
 	private:
 
-		Shader _textShader{ "font.vert", "font.frag" };
+		Shader _textShader;
 
 	};
 
@@ -81,7 +81,7 @@ namespace Cappuccino {
 		glm::vec3 _barDimensions;
 		glm::vec2 _position;
 		glm::vec4 _colour;
-		Shader _barShader{ "screenSpaceModel.vert","screenSpace.frag" };
+		Shader _barShader;
 		bool _scaleFromRight;
 		Mesh* _barMesh;
 	};

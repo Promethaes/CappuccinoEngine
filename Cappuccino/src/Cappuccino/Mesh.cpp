@@ -1,12 +1,15 @@
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <sstream>
-#include <iostream>
-#include <algorithm>
-#include <fstream>
 #include "Cappuccino/Mesh.h"
+
 #include "Cappuccino/CappMacros.h"
 #include "Cappuccino/ResourceManager.h"
+
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 using string = std::string;
 
@@ -19,10 +22,11 @@ namespace Cappuccino {
 
 
 	std::string Mesh::_meshDirectory = "./Assets/Meshes/";
-	Mesh::Mesh(const std::string& path)
-	{
-		this->_path = path;
-		ResourceManager::_allMeshes.push_back(this);
+	Mesh::Mesh(const std::string& name, const std::string& path) :
+		_path(path), _name(name) {}
+
+	Mesh::~Mesh() {
+		glDeleteVertexArrays(1, &_VAO);
 	}
 
 	Mesh::Mesh(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS)
