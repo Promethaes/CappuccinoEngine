@@ -122,7 +122,7 @@ namespace Cappuccino {
 		CAPP_GL_CALL(glEnable(GL_SCISSOR_TEST));
 		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-		
+
 		static GLfloat lastFrame;
 		float lag = 0.0f;
 		float turnRate = 1000.0f / 120.0f;
@@ -184,11 +184,12 @@ namespace Cappuccino {
 					for (auto y : GameObjects) {
 						if (y->isActive() && y->isVisible()) {
 							y->draw();
+						}
+						for (auto c : Cubemap::allCubemaps) {
+							c->draw();
+						}
 					}
-						c->draw();
-					for(auto c : Cubemap::allCubemaps) {
 					k->unbind();
-
 				}
 
 				glClear(GL_COLOR_BUFFER_BIT);
@@ -199,9 +200,9 @@ namespace Cappuccino {
 						glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
 					}
 				}
-				
-				Framebuffer::_fbShader->setUniform("screenTexture",0);
-				Framebuffer::_fbShader->setUniform("bloom",1);
+
+				Framebuffer::_fbShader->setUniform("screenTexture", 0);
+				Framebuffer::_fbShader->setUniform("bloom", 1);
 				glBindVertexArray(quadVAO);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -220,7 +221,7 @@ namespace Cappuccino {
 						y->draw();
 				for (auto x : UserInterface::_allUI)
 					x->draw();
-				for(auto c : Cubemap::allCubemaps) {
+				for (auto c : Cubemap::allCubemaps) {
 					c->draw();
 				}
 			}
@@ -258,7 +259,7 @@ namespace Cappuccino {
 		glfwTerminate();
 
 		ResourceManager::shutdown();
-}
+	}
 
 
 	/*
