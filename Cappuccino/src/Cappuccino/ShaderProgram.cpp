@@ -25,7 +25,7 @@ Shader::Shader(const std::string& name, const string& vertShaderPath, const stri
 
 Shader::Shader(bool cString, const char* vertShader, const char* fragShader, const char* geoShader) {
 	_programID = 0;
-
+	_name = std::to_string(rand() % 100);
 	GLuint vertShaderu = 0, fragShaderu = 0, geoShaderu = 0;
 
 	//dummy int at the end to specify which compile shader to use
