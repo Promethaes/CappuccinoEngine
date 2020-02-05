@@ -85,11 +85,17 @@ namespace Cappuccino {
 
 	bool RigidBody::intersecting(const Ray& ray)
 	{
-		for (unsigned i=0;i<_hitBoxes.size();i++)
-		{
-			if (_hitBoxes[i].intersecting(ray, _position))
+		if (_hitBoxes.size() == 0)
+			return false;
+		else if (_hitBoxes.size() == 1)
+			if (_hitBoxes[0].intersecting(ray, _position))
 				return true;
-		}
+			else
+				for (unsigned i=0;i<_hitBoxes.size();i++)
+				{
+					if (_hitBoxes[i].intersecting(ray, _position))
+						return true;
+				}
 		return false;
 	}
 
