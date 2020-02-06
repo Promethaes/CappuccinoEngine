@@ -125,6 +125,7 @@ namespace Cappuccino {
 		bool drawHitBox = true;//should the hitboxes be drawn
 		static glm::mat4 _view;
 		static glm::mat4 _projection;
+		static Shader _shader;
 		Shader _shader;
 		glm::vec4 _shaderColour = glm::vec4(1.0f,0.0f,0.0f,1.0f);
 		

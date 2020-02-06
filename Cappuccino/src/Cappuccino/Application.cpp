@@ -123,7 +123,7 @@ namespace Cappuccino {
 		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-		static GLfloat lastFrame;
+		GLfloat lastFrame = 0;
 		float lag = 0.0f;
 		float turnRate = 1000.0f / 120.0f;
 		turnRate /= 1000.0f;
@@ -159,16 +159,18 @@ namespace Cappuccino {
 		while (!glfwWindowShouldClose(window)) {
 			//https://gameprogrammingpatterns.com/game-loop.html
 
-			const GLfloat currentFrame = static_cast<GLfloat>(glfwGetTime());
-			const GLfloat deltaTime = currentFrame - lastFrame;
+			GLfloat currentFrame = static_cast<GLfloat>(glfwGetTime());
+			GLfloat deltaTime = currentFrame - lastFrame;
 			lag += deltaTime;
 
-
+#ifdef _DEBUG
+			update(deltaTime);
+#else
 			while (lag >= turnRate) {
 				update(turnRate);
 				lag -= turnRate;
 			}
-
+#endif
 			//need to replace this, causes performance issues for sure.
 			//for some reason even if i try to do the gl calls manually, nothing renders
 			_viewports[0].use();
@@ -185,9 +187,9 @@ namespace Cappuccino {
 						if (y->isActive() && y->isVisible()) {
 							y->draw();
 						}
-						for (auto c : Cubemap::allCubemaps) {
-							c->draw();
-						}
+					}
+					for (auto c : Cubemap::allCubemaps) {
+						c->draw();
 					}
 					k->unbind();
 				}

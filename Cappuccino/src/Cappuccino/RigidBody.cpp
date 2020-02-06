@@ -11,9 +11,34 @@ namespace Cappuccino {
 	float Physics::gravity = -98.0f;
 	float Physics::UniversalG = 6.67f * static_cast<float>(pow(10, -11));
 	
+	
+
+	Shader RigidBody::_shader;
 	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, const bool gravity)
 		: _position(transformPosition), _grav(gravity), _mass(mass) {
-		_shader = *ShaderLibrary::loadShader("DefaultHitbox", "hitBox.vert", "hitBox.frag");
+
+		char* vert = R"(#version 420 core
+layout (location = 0) in vec3 aPos;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+	gl_Position = projection * view * model * vec4(aPos, 1.0);
+})";
+
+		char* frag = R"(#version 420 core
+
+out vec4 outColour;
+
+void main()
+{
+	outColour = vec4(1.0,0.0,0.0,1.0);
+})";
+
+		_shader = Shader(true,vert,frag);
 	}
 
 
