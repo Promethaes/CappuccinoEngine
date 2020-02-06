@@ -333,9 +333,10 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 	if (!_radius&&!_OBB)
 	{
 		float txMin, txMax, tyMin, tyMax, tzMin, tzMax;
+
 		auto inverseDir = 1.0f / (ray._rayDir);
 
-		glm::vec3 bounds[2]{ pos + _position - _size / 2.0f,pos + _position + _size / 2.0f };
+		glm::vec3 bounds[2]{ pos + _position - (_size / 2.0f), pos + _position + (_size / 2.0f) };
 		std::vector<int> sign;
 
 		sign.push_back((inverseDir.x < 0));
@@ -359,6 +360,7 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 			txMax = tyMax;
 		if ((txMin > tzMax) || (tzMin > txMax))
 			return false;
+
 
 		return true;
 	}

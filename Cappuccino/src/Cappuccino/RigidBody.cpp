@@ -39,7 +39,7 @@ namespace Cappuccino {
 		_shader.use();
 		_shader.setUniform("view", _view);//shader uniforms
 		_shader.setUniform("projection", _projection);
-
+		_shader.setUniform("ourColour",_shaderColour);
 
 		if (drawHitBox) {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));//wireframe mode
@@ -50,7 +50,7 @@ namespace Cappuccino {
 				newModel[3].y = _tempModel[3].y+_position.y;
 				newModel[3].z = _tempModel[3].z+_position.z;
 				_shader.loadModelMatrix(newModel);
-			//	hitBox.draw();//drawing hitboxes
+				hitBox.draw();//drawing hitboxes
 				
 			}
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
