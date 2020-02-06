@@ -63,7 +63,12 @@ namespace Cappuccino {
 		Post: a boolean true if they will collide
 		*/
 		bool willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos,float dt);
-
+		/*
+		Purp: Check if a ray is intersecting with cube hitboxes
+		Req: A ray
+		returns: whether or not it is intersecting
+		*/
+		bool intersecting(const Ray& ray);
 		void setActive(const bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
 		void setVisible(const bool yn) { _isVisible = yn; }

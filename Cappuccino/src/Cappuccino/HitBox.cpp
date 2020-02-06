@@ -361,7 +361,6 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 		if ((txMin > tzMax) || (tzMin > txMax))
 			return false;
 
-
 		return true;
 	}
 	else if (_OBB)//RAY / OBB

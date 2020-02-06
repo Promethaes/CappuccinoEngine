@@ -32,10 +32,11 @@ void main()
 		char* frag = R"(#version 420 core
 
 out vec4 outColour;
+uniform vec4 ourColour;
 
 void main()
 {
-	outColour = vec4(1.0,0.0,0.0,1.0);
+	outColour = ourColour;
 })";
 
 		_shader = Shader(true,vert,frag);
@@ -112,11 +113,13 @@ void main()
 	{
 		if (_hitBoxes.size() == 0)
 			return false;
-		else if (_hitBoxes.size() == 1)
+		else if (_hitBoxes.size() == 1) {
 			if (_hitBoxes[0].intersecting(ray, _position))
 				return true;
-			else
-				for (unsigned i=0;i<_hitBoxes.size();i++)
+		}
+		else
+			if(_hitBoxes[0].intersecting(ray, _position))
+				for (unsigned i=1;i<_hitBoxes.size();i++)
 				{
 					if (_hitBoxes[i].intersecting(ray, _position))
 						return true;

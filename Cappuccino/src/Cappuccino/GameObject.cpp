@@ -76,6 +76,11 @@ bool GameObject::willCollide(GameObject* other, const glm::vec3& direction, cons
 bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) { return _rigidBody.checkCollision(other, pos); }
 bool GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, const float dt) { return _rigidBody.willCollide(other, pos, direction, dt); }
 
+bool Cappuccino::GameObject::intersecting(const Ray& ray)
+{
+	return _rigidBody.intersecting(ray);
+}
+
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 	collision(dt);
