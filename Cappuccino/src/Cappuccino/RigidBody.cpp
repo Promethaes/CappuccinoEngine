@@ -14,6 +14,7 @@ namespace Cappuccino {
 	
 
 	Shader RigidBody::_shader;
+	bool RigidBody::drawHitBox = false;
 	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, const bool gravity)
 		: _position(transformPosition), _grav(gravity), _mass(mass) {
 

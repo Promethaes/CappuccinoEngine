@@ -122,7 +122,7 @@ namespace Cappuccino {
 		HitBox drawing variables
 		*/
 		std::vector<HitBox> _hitBoxes;
-		bool drawHitBox = true;//should the hitboxes be drawn
+		static bool drawHitBox;//should the hitboxes be drawn
 		static glm::mat4 _view;
 		static glm::mat4 _projection;
 		static Shader _shader;
