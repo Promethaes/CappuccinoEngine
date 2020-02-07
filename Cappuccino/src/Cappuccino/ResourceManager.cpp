@@ -1,5 +1,4 @@
 #include "Cappuccino/ResourceManager.h"
-
 #include "Cappuccino/CappMacros.h"
 
 using namespace Cappuccino;
@@ -8,15 +7,16 @@ using namespace Cappuccino;
 // ----- Shader library -------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-std::unordered_map<std::string, Shader*> ShaderLibrary::_shaders;
+ShaderLibrary::ShaderMap ShaderLibrary::_shaders;
 bool ShaderLibrary::_initialized = false;
 
 void ShaderLibrary::init() {
 	if(_initialized) {
-		CAPP_ASSERT(!_initialized, "Shader library already initialized!");
+		CAPP_PRINT_WARNING("Shader library already initialized!");
 		return;
 	}
 
+	_shaders.reserve(1000);
 	_initialized = true;
 }
 
@@ -60,15 +60,20 @@ bool ShaderLibrary::hasShader(const std::string& name) { return _shaders.find(na
 // ----- Mesh library ---------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-std::unordered_map<std::string, Mesh*> MeshLibrary::_meshes;
+std::mutex MeshLibrary::_meshMapMutex;
+MeshLibrary::FutureVector MeshLibrary::_futures;
+MeshLibrary::MeshMap MeshLibrary::_meshes;
+
 bool MeshLibrary::_initialized = false;
 
 void MeshLibrary::init() {
 	if(_initialized) {
-		CAPP_ASSERT(!_initialized, "Mesh library already initialized!");
+		CAPP_PRINT_WARNING("Mesh library already initialized!");
 		return;
 	}
 
+	_futures.reserve(1000);
+	_meshes.reserve(1000);
 	_initialized = true;
 }
 
@@ -94,7 +99,8 @@ Mesh* MeshLibrary::loadMesh(const std::string& name, const std::string& filepath
 		return _meshes[name];
 	}
 
-	return _meshes[name] = new Mesh(name, filepath);
+	_futures.push_back(std::async(std::launch::async, loadMeshImpl, &_meshes, name, filepath));
+	return _meshes[name];
 }
 
 Mesh* MeshLibrary::getMesh(const std::string& name) {
@@ -105,6 +111,15 @@ Mesh* MeshLibrary::getMesh(const std::string& name) {
 
 	return _meshes[name];
 }
+
+void MeshLibrary::loadMeshImpl(std::unordered_map<std::string, Mesh*>* map, const std::string& name, const std::string& filepath) {
+	CAPP_PRINT("Loading mesh \"%s\" from filepath \"%s\"...", name.c_str(), filepath.c_str());
+	auto mesh = new Mesh(name, filepath);
+	
+	std::lock_guard<std::mutex> lock(_meshMapMutex);
+	map->insert({ name, mesh });
+}
+
 
 bool MeshLibrary::hasMesh(const std::string& name) { return _meshes.find(name) != _meshes.end(); }
 
@@ -118,10 +133,11 @@ bool TextureLibrary::_initialized = false;
 
 void TextureLibrary::init() {
 	if(_initialized) {
-		CAPP_ASSERT(!_initialized, "Texture library already initialized!");
+		CAPP_PRINT_WARNING("Texture library already initialized!");
 		return;
 	}
 
+	_textures.reserve(100000);
 	_initialized = true;
 }
 

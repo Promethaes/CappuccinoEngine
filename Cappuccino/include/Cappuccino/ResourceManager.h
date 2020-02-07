@@ -4,11 +4,20 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 
+#include <future>
 #include <string>
 #include <unordered_map>
 
 namespace Cappuccino {
+
+	// ----------------------------------------------------------------------------------------
+	// ----- Shader library -------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------
+	
 	class ShaderLibrary {
+
+		using ShaderMap = std::unordered_map<std::string, Shader*>;
+		
 	public:
 
 		static void init();
@@ -22,11 +31,19 @@ namespace Cappuccino {
 
 		static bool hasShader(const std::string& name);
 
-		static std::unordered_map<std::string, Shader*> _shaders;
+		static ShaderMap _shaders;
 		static bool _initialized;
 	};
 
+	// ----------------------------------------------------------------------------------------
+	// ----- Mesh library ---------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------
+	
 	class MeshLibrary {
+
+		using FutureVector = std::vector<std::future<void>>;
+		using MeshMap = std::unordered_map<std::string, Mesh*>;
+		
 	public:
 
 		static void init();
@@ -38,13 +55,21 @@ namespace Cappuccino {
 
 	private:
 
+		static void loadMeshImpl(std::unordered_map<std::string, Mesh*>* map, const std::string& name, const std::string& filepath);
 		static bool hasMesh(const std::string& name);
 
-		static std::unordered_map<std::string, Mesh*> _meshes;
+		static std::mutex _meshMutex;
+		static FutureVector _futures;
+		static MeshMap _meshes;
+		
 		static bool _initialized;
 
 	};
 
+	// ----------------------------------------------------------------------------------------
+	// ----- Texture library ------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------
+	
 	class TextureLibrary {
 	public:
 
@@ -63,6 +88,8 @@ namespace Cappuccino {
 		static bool _initialized;
 
 	};
+
+	
 	
 	class ResourceManager {
 	public:
