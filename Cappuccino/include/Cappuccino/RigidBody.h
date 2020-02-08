@@ -133,7 +133,7 @@ namespace Cappuccino {
 		Collision variables
 		*/
 		bool _collision = false;
-		std::string myType = "";//objects that should not collide with eachother should be called the same type (bullet/loot)
+		std::string myType = "";//objects that should not collide with each other should be called the same type (bullet/loot)
 		bool _moveable = false;//if this object can move around the scene(enemy/bullet/player)
 		bool _canTouch= true;//if the object can touch other objects(almost everything)
 		bool _bounce = false;//if the object should bounce instead of stopping (grenade?)

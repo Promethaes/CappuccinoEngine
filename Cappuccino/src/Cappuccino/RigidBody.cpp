@@ -18,27 +18,29 @@ namespace Cappuccino {
 	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, const bool gravity)
 		: _position(transformPosition), _grav(gravity), _mass(mass) {
 
-		char* vert = R"(#version 420 core
-layout (location = 0) in vec3 aPos;
+		char* vert = R"(
+			#version 420 core
+			layout (location = 0) in vec3 aPos;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+			uniform mat4 model;
+			uniform mat4 view;
+			uniform mat4 projection;
 
-void main()
-{
-	gl_Position = projection * view * model * vec4(aPos, 1.0);
-})";
+			void main()
+			{
+				gl_Position = projection * view * model * vec4(aPos, 1.0);
+			})";
 
-		char* frag = R"(#version 420 core
+		char* frag = R"(
+			#version 420 core
 
-out vec4 outColour;
-uniform vec4 ourColour;
+			out vec4 outColour;
+			uniform vec4 ourColour;
 
-void main()
-{
-	outColour = ourColour;
-})";
+			void main()
+			{
+				outColour = ourColour;
+			})";
 
 		_shader = Shader(true,vert,frag);
 	}
@@ -60,7 +62,7 @@ void main()
 			_accel = glm::normalize(_accel) * _accelCap;
 
 	}
-
+
 	void RigidBody::draw()
 	{
 		_shader.use();

@@ -110,10 +110,10 @@ namespace Cappuccino {
 		/*
 		Purp: load the textures, make sure this is only called once
 		*/
-		void loadTextures();
+		//void loadTextures();
 		/*
 		load the meshes
 		*/
-		void loadMesh();
+		//void loadMesh();
 	};
 }

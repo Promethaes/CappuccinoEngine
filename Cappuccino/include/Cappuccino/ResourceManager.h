@@ -58,7 +58,7 @@ namespace Cappuccino {
 		static void loadMeshImpl(std::unordered_map<std::string, Mesh*>* map, const std::string& name, const std::string& filepath);
 		static bool hasMesh(const std::string& name);
 
-		static std::mutex _meshMutex;
+		static std::mutex _meshMapMutex;
 		static FutureVector _futures;
 		static MeshMap _meshes;
 		

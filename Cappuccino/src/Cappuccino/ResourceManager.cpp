@@ -113,7 +113,7 @@ Mesh* MeshLibrary::getMesh(const std::string& name) {
 }
 
 void MeshLibrary::loadMeshImpl(std::unordered_map<std::string, Mesh*>* map, const std::string& name, const std::string& filepath) {
-	CAPP_PRINT("Loading mesh \"%s\" from filepath \"%s\"...", name.c_str(), filepath.c_str());
+	CAPP_PRINT_N("Loading mesh \"%s\" from filepath \"%s\"...", name.c_str(), filepath.c_str());
 	auto mesh = new Mesh(name, filepath);
 	
 	std::lock_guard<std::mutex> lock(_meshMapMutex);
