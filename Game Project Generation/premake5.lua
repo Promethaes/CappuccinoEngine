@@ -30,6 +30,8 @@ os.execute("mkdir " .. solutionDir .. "\\libs\\Release")
 print("Copying necessary files...")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmod.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmod.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
+os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmodstudio.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
+os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmodstudio.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\freetype.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
 os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\freetype.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
 os.execute("xcopy %CappuccinoPath%\\Build\\bin\\x86_64\\Debug\\capp.lib " .. solutionDir .. "\\libs\\Debug")
@@ -75,6 +77,7 @@ workspace (projName)
 	
 		solutionDir.."/Engine",
 		solutionDir.."/Engine/Externals/fmod/include",
+		solutionDir.."/Engine/Externals/fmod/studio/include"
 		solutionDir.."/Engine/Externals/freetype/include",
 		solutionDir.."/Engine/Externals/glad/include",
 		solutionDir.."/Engine/Externals/glfw3/include",

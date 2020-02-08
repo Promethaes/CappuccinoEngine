@@ -2,7 +2,7 @@
 #include "Cappuccino/CappMacros.h"
 
 namespace Cappuccino {
-	
+
 	bool SoundSystem::_initialized = false;
 	std::vector<FMOD::Sound*> SoundSystem::_sounds = {};
 	std::vector<FMOD::ChannelGroup*> SoundSystem::_channelGroups = {};
@@ -46,6 +46,27 @@ namespace Cappuccino {
 		return _sounds.size() - 1;
 	}
 
+	unsigned SoundSystem::load3DSound(const std::string& relativeFilePath)
+	{
+		FMOD::Sound* sound = NULL;
+		_result = _system->createSound(std::string(_soundPath + relativeFilePath).c_str(), FMOD_3D, nullptr, &sound);
+		checkFmodErrors(_result, "Sound creation");
+
+		_sounds.push_back(sound);
+
+		return _sounds.size() - 1;
+	}
+
+	void SoundSystem::setListenerAttributes(int listener, glm::vec3& pos, glm::vec3& vel, glm::vec3& forward, glm::vec3& up)
+	{
+		FMOD_VECTOR p, v, f, u;
+		p.x = pos.x; p.y = pos.y; p.z = pos.z;
+		v.x = vel.x; v.y = vel.y; v.z = vel.z;
+		f.x = forward.x; f.y = forward.y; f.z = forward.z;
+		u.x = up.x; u.y = up.y; u.z = up.z;
+		_system->set3DListenerAttributes(listener, &p, &v, &f, &u);
+	}
+
 	unsigned SoundSystem::createChannelGroup(const std::string& groupName)
 	{
 		FMOD::ChannelGroup* group = NULL;
@@ -61,6 +82,12 @@ namespace Cappuccino {
 	{
 		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex], false, &_channels[(int)type]);
 		checkFmodErrors(_result, "Play sound 2D");
+	}
+
+	void SoundSystem::playSound3D(unsigned soundsIndex, unsigned groupsIndex, ChannelType type)
+	{
+		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex],false, &_channels[(int)type]);
+		checkFmodErrors(_result, "Play sound 3D");
 	}
 
 	void SoundSystem::update()
@@ -94,11 +121,119 @@ namespace Cappuccino {
 			_group = SoundSystem::createChannelGroup(createGroup.value());
 	}
 	Sound::Sound(unsigned soundHandle, unsigned groupHandle)
-		:_sound(soundHandle),_group(groupHandle)
+		:_sound(soundHandle), _group(groupHandle)
 	{
 	}
 	void Sound::play()
 	{
 		SoundSystem::playSound2D(_sound, _group, _type);
+	}
+
+	//studio sound
+	bool StudioSound::_initialized = false;
+	FMOD_RESULT StudioSound::_result = FMOD_OK;
+	std::string StudioSound::_soundPath = "";
+	FMOD::Studio::System* StudioSound::_system = nullptr;
+	std::vector<FMOD::Studio::Bank*> StudioSound::_banks = {};
+	std::vector<FMOD::Studio::EventInstance*> StudioSound::_events = {};
+	void StudioSound::init(const std::string& defaultFilePath)
+	{
+		if (!_initialized) {
+			_soundPath = defaultFilePath;
+
+			_result = FMOD::Studio::System::create(&_system);
+			checkFmodErrors(_result, "System creation");
+			_result = _system->initialize(512, FMOD_STUDIO_INIT_NORMAL, 0, 0);
+
+			checkFmodErrors(_result, "System initialization");
+			_initialized = true;
+
+		}
+	}
+	void StudioSound::checkFmodErrors(FMOD_RESULT& result, const std::string& whereError)
+	{
+		SoundSystem::checkFmodErrors(result, whereError);
+	}
+	void StudioSound::update()
+	{
+		_system->update();
+	}
+	unsigned StudioSound::loadBank(const std::string& relativeFilePath, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
+	{
+		FMOD::Studio::Bank* bank = NULL;
+		_result = _system->loadBankFile((_soundPath + relativeFilePath).c_str(), flags, &bank);
+		checkFmodErrors(_result, "loading bank file");
+		_banks.push_back(bank);
+		return _banks.size() - 1;
+	}
+	unsigned StudioSound::loadEvent(const std::string& eventID)
+	{
+		FMOD::Studio::EventDescription* desc = NULL;
+		_result = _system->getEvent(eventID.c_str(), &desc);
+		checkFmodErrors(_result, "checking event decription");
+
+		FMOD::Studio::EventInstance* instance = NULL;
+		_result = desc->createInstance(&instance);
+		checkFmodErrors(_result, "creating event instance");
+
+		_events.push_back(instance);
+		return _events.size() - 1;
+	}
+	void StudioSound::playEvent(unsigned handle)
+	{
+		_events[handle]->start();
+	}
+	void StudioSound::stopEvent(unsigned handle, bool stopInstant)
+	{
+		FMOD_STUDIO_STOP_MODE mode;
+		mode = stopInstant ? FMOD_STUDIO_STOP_IMMEDIATE : FMOD_STUDIO_STOP_ALLOWFADEOUT;
+		_result = _events[handle]->stop(mode);
+		checkFmodErrors(_result, "stopping a sound");
+	}
+	void StudioSound::setEventParameter(unsigned handle, const std::string& paramName, float value)
+	{
+		_result = _events[handle]->setParameterByName(paramName.c_str(), value);
+		checkFmodErrors(_result, "setting parameter " + paramName);
+	}
+	SoundBank::SoundBank(const std::string& path, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
+	{
+		_bank = StudioSound::loadBank(path, flags);
+	}
+	void SoundBank::addEvent(const std::string& eventID)
+	{
+		_events.push_back(StudioSound::loadEvent(eventID));
+	}
+	void SoundBank::playEvent(unsigned index)
+	{
+		StudioSound::playEvent(_events[index]);
+	}
+	void SoundBank::stopEvent(unsigned index, bool instaStop)
+	{
+		StudioSound::stopEvent(_events[index], instaStop);
+	}
+	Sound3D::Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup, SoundSystem::ChannelType type)
+		:_type(type)
+	{
+
+	}
+	void Sound3D::play()
+	{
+		SoundSystem::playSound3D(_sound, _group, SoundSystem::ChannelType::SoundEffect);
+	}
+	void Sound3D::setPosition(const glm::vec3& position)
+	{
+		_position = position;
+		FMOD_VECTOR p;
+		p.x = _position.x; p.y = _position.y; p.z = _position.z;
+		FMOD_VECTOR vel{ _vel.x, _vel.y,_vel.z };
+		SoundSystem::_channelGroups[_group]->set3DAttributes(&p, &vel);
+	}
+	void Sound3D::setVelocity(const glm::vec3& vel)
+	{
+		_vel = vel;
+		FMOD_VECTOR p;
+		p.x = _vel.x; p.y = _vel.y; p.z = _vel.z;
+		FMOD_VECTOR v{ _vel.x, _vel.y,_vel.z };
+		SoundSystem::_channelGroups[_group]->set3DAttributes(&v,&p);
 	}
 }

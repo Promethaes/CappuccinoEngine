@@ -9,13 +9,6 @@
 #include <glad/glad.h>
 #include <windows.h>
 
-#define SOUNDTEST									false
-#define CUBETEST									false
-#define SCENETEST									false
-#define NETWORKTEST									false
-#define CROSSHAIRTEST								false
-#define TEXTRENDERTEST								false
-#define UITEST										false
 
 #define RED		(FOREGROUND_RED | FOREGROUND_INTENSITY)
 #define YELLOW	(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY)
@@ -70,14 +63,6 @@
 	exit(code)
 
 #else
-
-#define SOUNDTEST									false
-#define CUBETEST									false
-#define SCENETEST									false
-#define NETWORKTEST									false
-#define CROSSHAIRTEST								false
-#define TEXTRENDERTEST								false
-#define UITEST										false
 
 #define CAPP_ASSERT									__noop
 #define CAPP_GL_CALL(glCall)						glCall

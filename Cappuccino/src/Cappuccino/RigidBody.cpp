@@ -11,9 +11,36 @@ namespace Cappuccino {
 	float Physics::gravity = -98.0f;
 	float Physics::UniversalG = 6.67f * static_cast<float>(pow(10, -11));
 	
+	
+
+	Shader RigidBody::_shader;
+	bool RigidBody::drawHitBox = false;
 	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, const bool gravity)
 		: _position(transformPosition), _grav(gravity), _mass(mass) {
-		_shader = *ShaderLibrary::loadShader("DefaultHitbox", "hitBox.vert", "hitBox.frag");
+
+		char* vert = R"(#version 420 core
+layout (location = 0) in vec3 aPos;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+	gl_Position = projection * view * model * vec4(aPos, 1.0);
+})";
+
+		char* frag = R"(#version 420 core
+
+out vec4 outColour;
+uniform vec4 ourColour;
+
+void main()
+{
+	outColour = ourColour;
+})";
+
+		_shader = Shader(true,vert,frag);
 	}
 
 
@@ -39,7 +66,7 @@ namespace Cappuccino {
 		_shader.use();
 		_shader.setUniform("view", _view);//shader uniforms
 		_shader.setUniform("projection", _projection);
-
+		_shader.setUniform("ourColour",_shaderColour);
 
 		if (drawHitBox) {
 			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));//wireframe mode
@@ -50,7 +77,7 @@ namespace Cappuccino {
 				newModel[3].y = _tempModel[3].y+_position.y;
 				newModel[3].z = _tempModel[3].z+_position.z;
 				_shader.loadModelMatrix(newModel);
-			//	hitBox.draw();//drawing hitboxes
+				hitBox.draw();//drawing hitboxes
 				
 			}
 			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
@@ -85,11 +112,19 @@ namespace Cappuccino {
 
 	bool RigidBody::intersecting(const Ray& ray)
 	{
-		for (unsigned i=0;i<_hitBoxes.size();i++)
-		{
-			if (_hitBoxes[i].intersecting(ray, _position))
+		if (_hitBoxes.size() == 0)
+			return false;
+		else if (_hitBoxes.size() == 1) {
+			if (_hitBoxes[0].intersecting(ray, _position))
 				return true;
 		}
+		else
+			if(_hitBoxes[0].intersecting(ray, _position))
+				for (unsigned i=1;i<_hitBoxes.size();i++)
+				{
+					if (_hitBoxes[i].intersecting(ray, _position))
+						return true;
+				}
 		return false;
 	}
 
