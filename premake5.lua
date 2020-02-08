@@ -53,6 +53,7 @@ project "CappuccinoEngine"
 		"Cappuccino/include",
 		
 		"Externals/fmod/include",
+		"Externals/fmod/studio/include",
 		"Externals/freetype/include",
 		"Externals/glad/include",
 		"Externals/glfw3/include",
@@ -65,6 +66,7 @@ project "CappuccinoEngine"
 	
 	libdirs {
 		"Externals/fmod",
+		"Externals/fmod/studio/lib",
 		"Externals/freetype"
 	}
 	
@@ -74,6 +76,7 @@ project "CappuccinoEngine"
 		"imagehlp",
 		"opengl32",
 		"fmod_vc",
+		"fmodstudio_vc.lib",
 		"freetype"
 	}
 	
