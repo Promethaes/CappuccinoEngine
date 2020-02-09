@@ -77,7 +77,7 @@ workspace (projName)
 	
 		solutionDir.."/Engine",
 		solutionDir.."/Engine/Externals/fmod/include",
-		solutionDir.."/Engine/Externals/fmod/studio/include"
+		solutionDir.."/Engine/Externals/fmod/studio/include",
 		solutionDir.."/Engine/Externals/freetype/include",
 		solutionDir.."/Engine/Externals/glad/include",
 		solutionDir.."/Engine/Externals/glfw3/include",
