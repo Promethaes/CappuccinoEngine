@@ -99,6 +99,7 @@ namespace Cappuccino {
 #endif
 
 		SoundSystem::init(R"(.\Assets\Sounds\)");
+		StudioSound::init(R"(.\Assets\Sounds\)");
 		FontManager::init(R"(.\Assets\Fonts\)");
 		ResourceManager::init();
 	}
@@ -280,7 +281,7 @@ namespace Cappuccino {
 		}
 
 		SoundSystem::update();
-
+		StudioSound::update();
 
 		SceneManager::updateScenes(dt);
 		for (auto x : GameObjects)
