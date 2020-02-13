@@ -81,6 +81,32 @@ bool Cappuccino::GameObject::intersecting(const Ray& ray)
 	return _rigidBody.intersecting(ray);
 }
 
+GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
+{
+	std::vector <GameObject*> touched;
+	std::vector <glm::vec3> locations;
+	std::vector <float> distances;
+	int correctBoi = 0;
+	for (auto x : gameObjects)
+		if (x->intersecting(ray) && x->isActive()&&x!=this) {
+			touched.push_back(x);
+			locations.push_back(x->_rigidBody.getFirstInteresect(ray));
+		}
+	for (auto x : locations) 
+		distances.push_back(x.length());
+
+	float min = distances[0];
+	for (unsigned i = 0; i < touched.size(); i++) {
+		if (distances[i] < min) {
+			min = distances[i];
+			correctBoi = i;
+		}
+	}
+			
+
+	return touched[correctBoi];
+}
+
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 	collision(dt);

@@ -69,6 +69,13 @@ namespace Cappuccino {
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray);
+		/*
+		Purp: to see what gameobject the ray hits first
+		Pre: a ray 
+		Post: what GameObject it hits first
+		*/
+		GameObject* getFirstIntersect(const Ray& ray);
+
 		void setActive(const bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
 		void setVisible(const bool yn) { _isVisible = yn; }

@@ -72,6 +72,14 @@ namespace Cappuccino {
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray);
+
+		/*
+		Purp: to see what hitbox is the closest to where the ray is
+		Pre: the ray 
+		Post: a vec3 of the position of the closest hitbox origin
+		*/
+		glm::vec3 getFirstInteresect(const Ray& ray);
+
 		/*
 		Purp: Check if two rigidbodies are colliding
 		Pre: Another RigidBody
