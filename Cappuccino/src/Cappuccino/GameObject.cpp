@@ -45,8 +45,8 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 	if (!hasHeight)
 		_textures.push_back(defaultHeight);
 
-	loadTextures();
-	loadMesh();
+	//loadTextures();
+	//loadMesh();
 
 	gameObjects.push_back(this);
 }
@@ -76,7 +76,7 @@ bool GameObject::willCollide(GameObject* other, const glm::vec3& direction, cons
 bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) { return _rigidBody.checkCollision(other, pos); }
 bool GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, const float dt) { return _rigidBody.willCollide(other, pos, direction, dt); }
 
-bool Cappuccino::GameObject::intersecting(const Ray& ray)
+bool GameObject::intersecting(const Ray& ray)
 {
 	return _rigidBody.intersecting(ray);
 }
@@ -173,29 +173,29 @@ void GameObject::collision(const float dt) {
 	}
 
 }
-void GameObject::loadTextures() {
-	if (!_loadedTextures) {
-		for (unsigned i = 0; i < _textures.size(); i++) {
-			if (!_textures[i]->isLoaded()) {
-				if (_textures[i]->load())
-					continue;
-				return;
-			}
-		}
-	}
-}
-
-void GameObject::loadMesh() {
-	if (!_loadedMesh) {
-		for (unsigned i = 0; i < _meshes.size(); i++) {
-			if (!_meshes[i]->loaded) {
-				if (_meshes[i]->loadMesh())
-					continue;
-				return;
-			}
-			
-			return;
-		}
-		_loadedMesh = true;
-	}
-}
+//void GameObject::loadTextures() {
+//	if (!_loadedTextures) {
+//		for (unsigned i = 0; i < _textures.size(); i++) {
+//			if (!_textures[i]->isLoaded()) {
+//				if (_textures[i]->load())
+//					continue;
+//				return;
+//			}
+//		}
+//	}
+//}
+//
+//void GameObject::loadMesh() {
+//	if (!_loadedMesh) {
+//		for (unsigned i = 0; i < _meshes.size(); i++) {
+//			if (!_meshes[i]->loaded) {
+//				if (_meshes[i]->loadMesh())
+//					continue;
+//				return;
+//			}
+//			
+//			return;
+//		}
+//		_loadedMesh = true;
+//	}
+//}
