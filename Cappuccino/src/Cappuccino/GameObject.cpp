@@ -114,6 +114,16 @@ void GameObject::draw()
 				x->bind(3);
 			else if (x->type == TextureType::HeightMap)
 				x->bind(4);
+			else if (x->type == TextureType::PBRAlbedo)
+				x->bind(5);
+			else if (x->type == TextureType::PBRNormal)
+				x->bind(6);
+			else if (x->type == TextureType::PBRMetallic)
+				x->bind(7);
+			else if (x->type == TextureType::PBRRoughness)
+				x->bind(8);
+			else if (x->type == TextureType::PBRAmbientOcc)
+				x->bind(9);
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
@@ -132,6 +142,16 @@ void GameObject::draw()
 				x->unbind(3);
 			else if (x->type == TextureType::HeightMap)
 				x->unbind(4);
+			else if (x->type == TextureType::PBRAlbedo)
+				x->unbind(5);
+			else if (x->type == TextureType::PBRNormal)
+				x->unbind(6);
+			else if (x->type == TextureType::PBRMetallic)
+				x->unbind(7);
+			else if (x->type == TextureType::PBRRoughness)
+				x->unbind(8);
+			else if (x->type == TextureType::PBRAmbientOcc)
+				x->unbind(9);
 		}
 	}
 
