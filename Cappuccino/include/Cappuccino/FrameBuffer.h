@@ -18,6 +18,7 @@ namespace Cappuccino {
 		void bind();
 		void unbind();
 		void(*_callback)();
+		static void(*_overrideCallback)();//callback that overrides the entire automatic process of drawing framebuffers
 		std::vector<unsigned>& getColourBuffers() { return _colourBuffers; }
 
 		//pointer so it can be initialized properly later
