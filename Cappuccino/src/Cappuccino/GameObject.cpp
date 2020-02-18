@@ -1,5 +1,6 @@
 #include "Cappuccino/GameObject.h"
 #include "Cappuccino/CappMacros.h"
+#include "Cappuccino/ResourceManager.h"
 
 using namespace Cappuccino;
 
@@ -9,12 +10,12 @@ Texture* GameObject::defaultEmission = nullptr;
 Texture* GameObject::defaultNormal = nullptr;
 Texture* GameObject::defaultHeight = nullptr;
 
-GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass, const unsigned viewportNum) :
-	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1), _shader(_shader) {
+GameObject::GameObject(const Shader& shader, const std::vector<Texture*>& textures, const std::vector<MeshProperties>& meshes, const std::optional<float>& mass, const unsigned viewportNum) :
+	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1), _shader(shader) {
 	_viewportNum = viewportNum;
 	
 	this->_textures = textures;
-	this->_meshes = _meshs;
+	this->_meshes = meshes;
 
 	bool hasNormal = false, hasEmission = false, hasHeight = false;
 	for (unsigned i = 0; i < this->_textures.size(); i++) {
@@ -45,19 +46,15 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 	if (!hasHeight)
 		_textures.push_back(defaultHeight);
 
-	loadTextures();
-	loadMesh();
+	//loadTextures();
+	//loadMesh();
 
 	gameObjects.push_back(this);
 }
 
 GameObject::~GameObject() {
 
-	for (unsigned i = 0; i < _meshes.size(); i++) {
-		_meshes[i]->unload();
-		delete _meshes[i];
-		i--;
-	}
+	_meshes.clear();
 
 	for (unsigned i = 0; i < _textures.size(); i++) {
 		if (_textures[i]->type == TextureType::DiffuseMap)
@@ -75,6 +72,10 @@ bool GameObject::checkCollision(GameObject* other) { return _rigidBody.checkColl
 bool GameObject::willCollide(GameObject* other, const glm::vec3& direction, const float dt) { return _rigidBody.willCollide(other->_rigidBody, direction, dt); }
 bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) { return _rigidBody.checkCollision(other, pos); }
 bool GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, const float dt) { return _rigidBody.willCollide(other, pos, direction, dt); }
+
+bool GameObject::intersecting(const Ray& ray) {
+	return _rigidBody.intersecting(ray);
+}
 
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
@@ -112,8 +113,9 @@ void GameObject::draw()
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
-		
-		_meshes[i]->draw();
+
+		auto mesh = MeshLibrary::getMesh(_meshes[i].name);
+		mesh->draw();
 		
 		//unloads the textures
 		for (auto x : _textures) {
@@ -168,29 +170,29 @@ void GameObject::collision(const float dt) {
 	}
 
 }
-void GameObject::loadTextures() {
-	if (!_loadedTextures) {
-		for (unsigned i = 0; i < _textures.size(); i++) {
-			if (!_textures[i]->isLoaded()) {
-				if (_textures[i]->load())
-					continue;
-				return;
-			}
-		}
-	}
-}
-
-void GameObject::loadMesh() {
-	if (!_loadedMesh) {
-		for (unsigned i = 0; i < _meshes.size(); i++) {
-			if (!_meshes[i]->loaded) {
-				if (_meshes[i]->loadMesh())
-					continue;
-				return;
-			}
-			
-			return;
-		}
-		_loadedMesh = true;
-	}
-}
+//void GameObject::loadTextures() {
+//	if (!_loadedTextures) {
+//		for (unsigned i = 0; i < _textures.size(); i++) {
+//			if (!_textures[i]->isLoaded()) {
+//				if (_textures[i]->load())
+//					continue;
+//				return;
+//			}
+//		}
+//	}
+//}
+//
+//void GameObject::loadMesh() {
+//	if (!_loadedMesh) {
+//		for (unsigned i = 0; i < _meshes.size(); i++) {
+//			if (!_meshes[i]->loaded) {
+//				if (_meshes[i]->loadMesh())
+//					continue;
+//				return;
+//			}
+//			
+//			return;
+//		}
+//		_loadedMesh = true;
+//	}
+//}

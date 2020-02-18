@@ -51,9 +51,8 @@ bool Texture::load() {
 		stbi_image_free(_data);
 	}
 	else {
-		CAPP_PRINT_ERROR("Problem loading texture at %s", string(_textureDirectory + _path).c_str());
 		stbi_image_free(_data);
-		SYS_EXIT(0);
+		CAPP_ASSERT(false, "Problem loading texture \"%s\"\nTexture path: %s", _name.c_str(), string(_textureDirectory + _path).c_str());
 	}
 
 	_loaded = true;
