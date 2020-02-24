@@ -82,7 +82,6 @@ namespace Cappuccino {
 		//load texture
 
 
-		glEnable(GL_TEXTURE_3D);
 		glGenTextures(1, &_textureID);
 		glBindTexture(GL_TEXTURE_3D, _textureID);
 
@@ -94,7 +93,6 @@ namespace Cappuccino {
 
 		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, _lutSize, _lutSize, _lutSize, 0, GL_RGB, GL_FLOAT, _rgbValues.data());
 		glBindTexture(GL_TEXTURE_3D, 0);
-		glDisable(GL_TEXTURE_3D);
 
 
 		return loaded = true;
