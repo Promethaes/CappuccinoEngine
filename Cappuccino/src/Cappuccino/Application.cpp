@@ -185,6 +185,7 @@ namespace Cappuccino {
 					for (auto k : Framebuffer::_framebuffers) {
 
 						k->bind();
+						
 						glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
 						k->_callback != nullptr ? k->_callback() : 0;
 
@@ -193,36 +194,37 @@ namespace Cappuccino {
 								y->draw();
 							}
 						}
-					}
 					
-					for(auto c : Cubemap::allCubemaps) {
-						c->draw();
+						for(auto c : Cubemap::allCubemaps) {
+							c->draw();
+						}
+						
+						k->unbind();
 					}
-					k->unbind();
 				}
 
-					glClear(GL_COLOR_BUFFER_BIT);
-					Framebuffer::_fbShader->use();
-					for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-						for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-							glActiveTexture(GL_TEXTURE0 + j + i);
-							glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
-						}
+				glClear(GL_COLOR_BUFFER_BIT);
+				Framebuffer::_fbShader->use();
+				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
+					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
+						glActiveTexture(GL_TEXTURE0 + j + i);
+						glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
 					}
+				}
 
-					Framebuffer::_fbShader->setUniform("screenTexture", 0);
-					Framebuffer::_fbShader->setUniform("bloom", 1);
-					glBindVertexArray(quadVAO);
-					glDrawArrays(GL_TRIANGLES, 0, 6);
+				Framebuffer::_fbShader->setUniform("screenTexture", 0);
+				Framebuffer::_fbShader->setUniform("bloom", 1);
+				glBindVertexArray(quadVAO);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
 
-					for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-						for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-							glActiveTexture(GL_TEXTURE0 + j + i);
-							glBindTexture(GL_TEXTURE_2D, 0);
-						}
+				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
+					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
+						glActiveTexture(GL_TEXTURE0 + j + i);
+						glBindTexture(GL_TEXTURE_2D, 0);
 					}
-					for (auto x : UserInterface::_allUI)
-						x->draw();
+				}
+				for (auto x : UserInterface::_allUI) {
+					x->draw();
 				}
 			}
 			else {

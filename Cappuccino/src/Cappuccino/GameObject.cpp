@@ -1,5 +1,4 @@
 #include "Cappuccino/GameObject.h"
-#include "Cappuccino/CappMacros.h"
 #include "Cappuccino/ResourceManager.h"
 
 using namespace Cappuccino;
@@ -54,44 +53,36 @@ GameObject::~GameObject() {
 }
 
 
-bool GameObject::checkCollision(GameObject* other) { return _rigidBody.checkCollision(other->_rigidBody); }
+bool GameObject::checkCollision(GameObject* other) { return _rigidBody.checkCollision(other->_rigidBody); }
 bool GameObject::willCollide(GameObject* other, const glm::vec3& direction, const float dt) { return _rigidBody.willCollide(other->_rigidBody, direction, dt); }
-bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) { return _rigidBody.checkCollision(other, pos); }
+bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) { return _rigidBody.checkCollision(other, pos); }
 bool GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, const float dt) { return _rigidBody.willCollide(other, pos, direction, dt); }
-
-bool GameObject::intersecting(const Ray& ray)
-{
-	return _rigidBody.intersecting(ray);
-}
-
-GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
-{
-	std::vector <GameObject*> touched;
-	std::vector <glm::vec3> locations;
-	std::vector <float> distances;
-	int correctBoi = 0;
-	for (auto x : gameObjects)
-		if (x->intersecting(ray) && x->isActive()&&x!=this) {
-			touched.push_back(x);
-			locations.push_back(x->_rigidBody.getFirstInteresect(ray));
-		}
-	for (auto x : locations) 
-		distances.push_back(x.length());
-
-	float min = distances[0];
-	for (unsigned i = 0; i < touched.size(); i++) {
-		if (distances[i] < min) {
-			min = distances[i];
-			correctBoi = i;
-		}
-	}
-			
-
-	return touched[correctBoi];
-}
+bool GameObject::intersecting(const Ray& ray) { return _rigidBody.intersecting(ray); }
+GameObject* GameObject::getFirstIntersect(const Ray& ray) {
+	std::vector<GameObject*> touched;
+	std::vector<glm::vec3> locations;
+	std::vector<float> distances;
+	unsigned correctBoi = 0;
 
-bool GameObject::intersecting(const Ray& ray) {
-	return _rigidBody.intersecting(ray);
+	for (auto x : gameObjects)
+		if (x->intersecting(ray) && x->isActive()&&x!=this) {
+			touched.push_back(x);
+			locations.push_back(x->_rigidBody.getFirstInteresect(ray));
+		}
+
+	distances.reserve(locations.size());
+	for (auto x : locations) {
+		distances.push_back(glm::length(x));
+	}
+	
+	float min = distances[0];
+	for (unsigned i = 0; i < touched.size(); i++) {
+		if (distances[i] < min) {
+			min = distances[i];
+			correctBoi = i;
+		}
+	}
+	return touched[correctBoi];
 }
 
 void GameObject::baseUpdate(float dt) {
@@ -129,16 +120,16 @@ void GameObject::draw()
 				texture->bind(3);
 			else if (t.type == TextureType::HeightMap)
 				texture->bind(4);
-			else if (x->type == TextureType::PBRAlbedo)
-				x->bind(5);
-			else if (x->type == TextureType::PBRNormal)
-				x->bind(6);
-			else if (x->type == TextureType::PBRMetallic)
-				x->bind(7);
-			else if (x->type == TextureType::PBRRoughness)
-				x->bind(8);
-			else if (x->type == TextureType::PBRAmbientOcc)
-				x->bind(9);
+			else if (t.type == TextureType::PBRAlbedo)
+				texture->bind(5);
+			else if (t.type == TextureType::PBRNormal)
+				texture->bind(6);
+			else if (t.type == TextureType::PBRMetallic)
+				texture->bind(7);
+			else if (t.type == TextureType::PBRRoughness)
+				texture->bind(8);
+			else if (t.type == TextureType::PBRAmbientOcc)
+				texture->bind(9);
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
