@@ -128,6 +128,22 @@ void main()
 		return false;
 	}
 
+	glm::vec3 RigidBody::getFirstInteresect(const Ray& ray)
+	{
+		glm::vec3 nearestBox(0.0f);
+		float smallestLength = glm::length(_position);
+		for (unsigned i = 0; i < _hitBoxes.size(); i++) {				
+			if (_hitBoxes[i].intersecting(ray,_position)) {
+				if (glm::length(_hitBoxes[i]._position) < smallestLength) {
+					smallestLength = glm::length(_hitBoxes[i]._position);
+					nearestBox = _hitBoxes[i]._position;
+				}
+			}
+		}
+		
+		return nearestBox;
+	}
+
 	bool RigidBody::checkCollision(RigidBody& other)
 	{
 		if (_hitBoxes.empty() || other._hitBoxes.empty())//if no hitboxes
