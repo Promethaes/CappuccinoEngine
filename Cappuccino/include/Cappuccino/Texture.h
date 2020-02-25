@@ -3,8 +3,9 @@
 #include <string>
 
 namespace Cappuccino {
-	enum class TextureType {
-		DiffuseMap = 0,
+	enum class TextureType : unsigned int {
+		None = 0,
+		DiffuseMap,
 		SpecularMap,
 		NormalMap,
 		EmissionMap,
@@ -16,7 +17,13 @@ namespace Cappuccino {
 		PBRAmbientOcc
 	};
 
-
+	struct TextureProperties {
+		std::string name;
+		std::string filepath;
+		TextureType type = TextureType::None;
+		unsigned textureIndex = 0;
+	};
+	
 	/*
 	The texture class is used to abstract the process of creating a texture
 	*/
@@ -24,7 +31,9 @@ namespace Cappuccino {
 	public:
 		//texture index (for game objects) applies this texture to the mesh at that index
 		//eg GameObject has 2 meshes, texture index is 1, apply this texture to the second mesh
-		Texture(const std::string& name, const std::string& path, const TextureType& type, unsigned textureIndex = 0);
+		Texture(const std::string& name, const std::string& path, TextureType type, unsigned textureIndex = 0);
+		Texture(const std::string& name, TextureType type, unsigned width, unsigned height, void* data, unsigned numChannels = 3, unsigned textureIndex = 0);
+
 		/*
 		Purp: loads the texture into memory
 		returns: bool if it was successful or not
@@ -55,22 +64,24 @@ namespace Cappuccino {
 		*/
 		void unbind(unsigned textureSlot) const;
 
-		TextureType type;
+		TextureProperties getProperties() const { return _properties; }
+		
+		const std::string& getName() const { return _properties.name; }
+		TextureType getType() const { return _properties.type; }
+		unsigned getTextureIndex() const { return _properties.textureIndex; }
 
-		unsigned getTextureIndex() const { return _textureIndex; }
-
-		const std::string& getName() const { return _name; }
+		void setName(const std::string& name) { _properties.name = name; }
 
 	private:
-		unsigned _textureIndex = 6969;
 
 		static std::string _textureDirectory;
 
+		unsigned _width, _height, _channels;
 		unsigned char* _data;
 
-		std::string _path;
-		std::string _name;
+		TextureProperties _properties;
 		unsigned _texture;
+		
 		bool _loaded = false;
 	};
 }

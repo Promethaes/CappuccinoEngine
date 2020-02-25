@@ -74,8 +74,9 @@ namespace Cappuccino {
 #if _DEBUG
 
 		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
+		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS));
 		CAPP_GL_CALL(glDebugMessageCallback(glDebugMessageCallbackFunc, NULL));
-		CAPP_GL_CALL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, 0, GL_FALSE));
+		CAPP_GL_CALL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE));
 
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -105,7 +106,7 @@ namespace Cappuccino {
 	}
 
 	void Application::run() {
-
+		
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
@@ -192,11 +193,13 @@ namespace Cappuccino {
 								y->draw();
 							}
 						}
-						for (auto c : Cubemap::allCubemaps) {
-							c->draw();
-						}
-						k->unbind();
 					}
+					
+					for(auto c : Cubemap::allCubemaps) {
+						c->draw();
+					}
+					k->unbind();
+				}
 
 					glClear(GL_COLOR_BUFFER_BIT);
 					Framebuffer::_fbShader->use();

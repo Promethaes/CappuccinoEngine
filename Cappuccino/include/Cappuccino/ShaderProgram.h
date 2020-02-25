@@ -108,5 +108,7 @@ namespace Cappuccino {
 		std::string _vertexShaderPath;
 		std::string _fragmentShaderPath;
 		std::string _geometryShaderPath;
+
+		static unsigned _shaderName;
 	};
 }

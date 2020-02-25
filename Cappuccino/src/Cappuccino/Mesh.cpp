@@ -1,17 +1,10 @@
 #include "Cappuccino/Mesh.h"
 
-#include "Cappuccino/CappMacros.h"
-#include "Cappuccino/ResourceManager.h"
-
 #include <glad/glad.h>
-#include <glm/glm.hpp>
 
 #include <algorithm>
-#include <fstream>
 #include <iostream>
-#include <sstream>
-
-using string = std::string;
+#include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {
 	struct FaceData {
@@ -23,7 +16,10 @@ namespace Cappuccino {
 
 	std::string Mesh::_meshDirectory = "./Assets/Meshes/";
 	Mesh::Mesh(const std::string& name, const std::string& path) :
-		_path(path), _name(name) {}
+		_properties({ name, path }) {
+		glGenVertexArrays(1, &_VAO);
+		glGenBuffers(1, &_VBO);
+	}
 
 	Mesh::~Mesh() {
 		glDeleteVertexArrays(1, &_VAO);
@@ -35,145 +31,134 @@ namespace Cappuccino {
 		texts = TEXTS;
 		norms = NORMS;
 		tangs = TANGS;
+
+		glGenVertexArrays(1, &_VAO);
+		glGenBuffers(1, &_VBO);
 	}
 
 	bool Mesh::loadMesh()
 	{
 		if (loaded)
 			return true;
-		char inputString[128];
+		//char inputString[128];
 
-		std::vector<glm::vec3> vertexData{};
-		std::vector<glm::vec2> textureData{};
-		std::vector<glm::vec3> normalData{};
-		std::vector<FaceData> faces{};
-		std::vector<float> unPvertexData{};
-		std::vector<float> unPtextureData{};
-		std::vector<float> unPnormalData{};
+		//std::vector<glm::vec3> vertexData{};
+		//std::vector<glm::vec2> textureData{};
+		//std::vector<glm::vec3> normalData{};
+		//std::vector<FaceData> faces{};
+		//std::vector<float> unPvertexData{};
+		//std::vector<float> unPtextureData{};
+		//std::vector<float> unPnormalData{};
 		//load the file
-		std::ifstream input{};
-		input.open(_meshDirectory + _path);
+		//std::ifstream input(_meshDirectory + _properties.filepath);
 
-		if (!input.good()) {
-			std::cout << "Problem loading file: " << _path << "\n";
-			return false;
-		}
+		//if (!input.good()) {
+		//	CAPP_ASSERT(false, "Problem loading mesh \"%s\"\nMesh path: %s", _properties.name.c_str(), _properties.filepath.c_str());
+		//	return false;
+		//}
 		//import data
-		while (!input.eof()) {
-			input.getline(inputString, 128);
+		//while (!input.eof()) {
+		//	input.getline(inputString, 128);
 
-			//vertex data
-			if (inputString[0] == 'v' && inputString[1] == ' ') {
-				glm::vec3 vertData{ 0,0,0 };
+		//	vertex data
+		//	if (inputString[0] == 'v' && inputString[1] == ' ') {
+		//		glm::vec3 vertData { 0, 0, 0 };
 
-				std::sscanf(inputString, "v %f %f %f", &vertData.x, &vertData.y, &vertData.z);
-				vertexData.push_back(vertData);
-			}//texture data
-			else if (inputString[0] == 'v' && inputString[1] == 't') {
-				glm::vec2 texCoord{ 0,0 };
+		//		std::sscanf(inputString, "v %f %f %f", &vertData.x, &vertData.y, &vertData.z);
+		//		vertexData.push_back(vertData);
+		//	}//texture data
+		//	else if (inputString[0] == 'v' && inputString[1] == 't') {
+		//		glm::vec2 texCoord { 0, 0 };
 
-				std::sscanf(inputString, "vt %f %f", &texCoord.x, &texCoord.y);
-				textureData.push_back(texCoord);
-			}//normal data
-			else if (inputString[0] == 'v' && inputString[1] == 'n') {
-				glm::vec3 normData{ 0,0,0 };
+		//		std::sscanf(inputString, "vt %f %f", &texCoord.x, &texCoord.y);
+		//		textureData.push_back(texCoord);
+		//	}//normal data
+		//	else if (inputString[0] == 'v' && inputString[1] == 'n') {
+		//		glm::vec3 normData { 0, 0, 0 };
 
-				std::sscanf(inputString, "vn %f %f %f", &normData.x, &normData.y, &normData.z);
-				normalData.push_back(normData);
-			}//face data
-			else if (inputString[0] == 'f' && inputString[1] == ' ') {
-				faces.emplace_back();
+		//		std::sscanf(inputString, "vn %f %f %f", &normData.x, &normData.y, &normData.z);
+		//		normalData.push_back(normData);
+		//	}//face data
+		//	else if (inputString[0] == 'f' && inputString[1] == ' ') {
+		//		faces.emplace_back();
 
 
-				std::sscanf(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
-					&faces.back().vertexData[0], &faces.back().textureData[0], &faces.back().normalData[0],
-					&faces.back().vertexData[1], &faces.back().textureData[1], &faces.back().normalData[1],
-					&faces.back().vertexData[2], &faces.back().textureData[2], &faces.back().normalData[2]);
-			}
-			else
-				continue;
-		}
+		//		std::sscanf(inputString, "f %u/%u/%u %u/%u/%u %u/%u/%u",
+		//			&faces.back().vertexData[0], &faces.back().textureData[0], &faces.back().normalData[0],
+		//			&faces.back().vertexData[1], &faces.back().textureData[1], &faces.back().normalData[1],
+		//			&faces.back().vertexData[2], &faces.back().textureData[2], &faces.back().normalData[2]);
+		//	}
+		//	else
+		//		continue;
+		//}
 
 
 
 		//add the data to the vectors
-		for (unsigned i = 0; i < faces.size(); i++) {
-			for (unsigned j = 0; j < 3; j++) {
-				unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].x);
-				unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].y);
-				unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].z);
+		//for (unsigned i = 0; i < faces.size(); i++) {
+		//	for (unsigned j = 0; j < 3; j++) {
+		//		unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].x);
+		//		unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].y);
+		//		unPvertexData.push_back(vertexData[faces[i].vertexData[j] - 1].z);
 
-				if (!textureData.empty()) {
-					unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].x);
-					unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].y);
-				}
+		//		if (!textureData.empty()) {
+		//			unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].x);
+		//			unPtextureData.push_back(textureData[faces[i].textureData[j] - 1].y);
+		//		}
 
-				if (!normalData.empty()) {
-					unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].x);
-					unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].y);
-					unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].z);
-				}
-			}
-		}
+		//		if (!normalData.empty()) {
+		//			unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].x);
+		//			unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].y);
+		//			unPnormalData.push_back(normalData[faces[i].normalData[j] - 1].z);
+		//		}
+		//	}
+		//}
 
-		_numFaces = faces.size();
-		_numVerts = _numFaces * 3;
+		//_numFaces = faces.size();
+		//_numVerts = _numFaces * 3;
 
 		//https://learnopengl.com/Advanced-Lighting/Normal-Mapping
 		//https://gitlab.com/ShawnM427/florp/blob/master/src/florp/graphics/MeshBuilder.cpp
 
 		//it works!
-		std::vector<glm::vec3> tangs;
+		//std::vector<glm::vec3> tangs;
 
-		for (unsigned i = 0; i < _numFaces; i++) {
-			std::vector<glm::vec3> tCalcPos;
-			std::vector<glm::vec2> tCalcUV;
+		//for (unsigned i = 0; i < _numFaces; i++) {
+		//	std::vector<glm::vec3> tCalcPos;
+		//	std::vector<glm::vec2> tCalcUV;
 
-			for (unsigned j = 0; j < 3; j++) {
-				tCalcPos.push_back(vertexData[faces[i].vertexData[j] - 1]);
-				tCalcUV.push_back(textureData[faces[i].textureData[j] - 1]);
+		//	for (unsigned j = 0; j < 3; j++) {
+		//		tCalcPos.push_back(vertexData[faces[i].vertexData[j] - 1]);
+		//		tCalcUV.push_back(textureData[faces[i].textureData[j] - 1]);
 
-			}
-			glm::vec3 deltaPos = tCalcPos[1] - tCalcPos[0];
-			glm::vec3 deltaPos2 = tCalcPos[2] - tCalcPos[0];
+		//	}
+		//	glm::vec3 deltaPos = tCalcPos[1] - tCalcPos[0];
+		//	glm::vec3 deltaPos2 = tCalcPos[2] - tCalcPos[0];
 
-			glm::vec2 deltaUV = tCalcUV[1] - tCalcUV[0];
-			glm::vec2 deltaUV2 = tCalcUV[2] - tCalcUV[0];
+		//	glm::vec2 deltaUV = tCalcUV[1] - tCalcUV[0];
+		//	glm::vec2 deltaUV2 = tCalcUV[2] - tCalcUV[0];
 
-			float f = 1.0f / (deltaUV.x * deltaUV2.y - deltaUV.y * deltaUV2.x);
-			glm::vec3 tang = (deltaPos * deltaUV2.y - deltaPos2 * deltaUV.y) * f;
+		//	float f = 1.0f / (deltaUV.x * deltaUV2.y - deltaUV.y * deltaUV2.x);
+		//	glm::vec3 tang = (deltaPos * deltaUV2.y - deltaPos2 * deltaUV.y) * f;
 
-			for (unsigned j = 0; j < 3; j++) {
-				tangs.push_back(tang);
-			}
+		//	for (unsigned j = 0; j < 3; j++) {
+		//		tangs.push_back(tang);
+		//	}
 
-		}
+		//}
 
+		AssetLoader::MeshData data = AssetLoader::loadOBJ(_properties.name, _meshDirectory + _properties.filepath);
+		_numVerts = data.vertices.size();
+		_numFaces = _numVerts / 3;
 
-		for (unsigned i = 0; i < unPvertexData.size(); i++) {
-			master.push_back(unPvertexData[i]);
-			verts.push_back(unPvertexData[i]);
-		}
-		for (unsigned i = 0; i < unPtextureData.size(); i++) {
-			master.push_back(unPtextureData[i]);
-			texts.push_back(unPtextureData[i]);
-		}
-		for (unsigned i = 0; i < unPnormalData.size(); i++) {
-			master.push_back(unPnormalData[i]);
-			norms.push_back(unPnormalData[i]);
-		}
-		for (unsigned i = 0; i < tangs.size(); i++) {
-			master.push_back(tangs[i].x);
-			master.push_back(tangs[i].y);
-			master.push_back(tangs[i].z);
-			this->tangs.push_back(tangs[i].x);
-			this->tangs.push_back(tangs[i].y);
-			this->tangs.push_back(tangs[i].z);
-		}
-
-
-		glGenVertexArrays(1, &_VAO);
-		glGenBuffers(1, &_VBO);
+		for(float vert : data.vertices)
+			master.push_back(vert);
+		for(float uv : data.uvCoords)
+			master.push_back(uv);
+		for(float norm : data.normals)
+			master.push_back(norm);
+		for(float tang : data.tangents)
+			master.push_back(tang);
 
 		//binding the vao
 		glBindVertexArray(_VAO);
@@ -190,36 +175,37 @@ namespace Cappuccino {
 		//verts
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		//texts
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(unPvertexData.size() * sizeof(float)));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(data.vertices.size() * sizeof(float)));
 		//norms
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size()) * sizeof(float)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((data.vertices.size() + data.uvCoords.size()) * sizeof(float)));
 		//tangents
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size() + unPnormalData.size()) * sizeof(float)));
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((data.vertices.size() + data.uvCoords.size() + data.normals.size()) * sizeof(float)));
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		input.close();
 		return loaded = true;
+	}
+
+	void Mesh::loadFromData(const unsigned numFaces) {
+		_numFaces = numFaces;
+		_numVerts = _numFaces * 3;
+		loadFromData();
 	}
 
 	void Mesh::loadFromData()
 	{
 		master.clear();
-		for (unsigned i = 0; i < verts.size(); i++)
-			master.push_back(verts[i]);
-
-		for (unsigned i = 0; i < texts.size(); i++)
-			master.push_back(texts[i]);
-
-		for (unsigned i = 0; i < norms.size(); i++)
-			master.push_back(norms[i]);
-
-		for (unsigned i = 0; i < tangs.size(); i++)
-			master.push_back(tangs[i]);
-
-
+		
+		for(float vert : verts)
+			master.push_back(vert);
+		for(float uv : texts)
+			master.push_back(uv);
+		for(float norm : norms)
+			master.push_back(norm);
+		for(float tang : tangs)
+			master.push_back(tang);
 
 		glBindVertexArray(_VAO);
 
@@ -249,22 +235,20 @@ namespace Cappuccino {
 		norms.clear();
 		tangs.clear();
 
-
-
-		for (unsigned i = 0; i < VERTS.size(); i++) {
-			master.push_back(VERTS[i]);
-			verts.push_back(VERTS[i]);
+		for(float i : VERTS) {
+			master.push_back(i);
+			verts.push_back(i);
 		}
-		for (unsigned i = 0; i < texts.size(); i++) {
-			master.push_back(texts[i]);
+		for(float i : texts) {
+			master.push_back(i);
 		}
-		for (unsigned i = 0; i < NORMS.size(); i++) {
-			master.push_back(NORMS[i]);
-			norms.push_back(NORMS[i]);
+		for(float i : NORMS) {
+			master.push_back(i);
+			norms.push_back(i);
 		}
-		for (unsigned i = 0; i < TANGS.size(); i++) {
-			master.push_back(TANGS[i]);
-			tangs.push_back(TANGS[i]);
+		for(float i : TANGS) {
+			master.push_back(i);
+			tangs.push_back(i);
 		}
 
 
@@ -310,7 +294,7 @@ namespace Cappuccino {
 	}
 
 	void Mesh::setDefaultPath(const std::string& directory) {
-		string dir = directory;
+		std::string dir = directory;
 		std::transform(dir.begin(), dir.end(), dir.begin(), ::tolower);
 
 		if (dir == "default")

@@ -56,11 +56,11 @@ UIBar::UIBar(const glm::vec2& defaultPosition, const glm::vec4& defaultColour, c
 	_transform.scale(barDimensions, 1.0f);
 
 	if (point == OriginPoint::BottomLeft)
-		_barMesh = new Mesh("BottomLeftCube", "Cube3.obj");
+		_barMesh = MeshLibrary::loadMesh("BottomLeftCube", "Cube3.obj");
 	else if (point == OriginPoint::Middle)
-		_barMesh = new Mesh("MiddleCube", "Cube2.obj");
+		_barMesh = MeshLibrary::loadMesh("MiddleCube", "Cube2.obj");
 	else if (point == OriginPoint::BottomRight)
-		_barMesh = new Mesh("BottomRightCube", "Cube.obj");
+		_barMesh = MeshLibrary::loadMesh("BottomRightCube", "Cube.obj");
 
 
 	_barMesh->loadMesh();
