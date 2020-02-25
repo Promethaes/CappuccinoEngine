@@ -15,6 +15,8 @@
 
 namespace Cappuccino {
 
+	FMOD_VECTOR& glmToFmod(glm::vec3& v);
+
 	class SoundSystem {
 	public:
 
@@ -112,13 +114,11 @@ namespace Cappuccino {
 	public:
 		Sound3D() = default;
 		Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt, SoundSystem::ChannelType type = SoundSystem::ChannelType::SoundEffect);
-		Sound3D(unsigned soundHandle, unsigned groupHandle);
 
 		//default play function, uses default sound manager play
 		void play();
 
-		void setPosition(const glm::vec3& position);
-		void setVelocity(const glm::vec3& vel);
+		void SetChannelPosition(glm::vec3& pos);
 
 		void setSoundHandle(unsigned soundHandle) { _sound = soundHandle; }
 		void setGroupHandle(unsigned groupHandle) { _group = groupHandle; }
@@ -127,7 +127,6 @@ namespace Cappuccino {
 		unsigned getGroupHandle() const { return _group; }
 	private:
 		glm::vec3 _position;
-		glm::vec3 _vel;
 		unsigned _sound = 0, _group = 0;
 		SoundSystem::ChannelType _type;
 	};
@@ -146,9 +145,9 @@ namespace Cappuccino {
 		static void stopEvent(unsigned handle, bool stopInstant = false);
 		static void setEventParameter(unsigned handle, const std::string& paramName, float value);
 
-	private:
 		static std::vector<FMOD::Studio::Bank*> _banks;
 		static std::vector<FMOD::Studio::EventInstance*> _events;
+	private:
 		static bool _initialized;
 		static FMOD_RESULT _result;
 		static std::string _soundPath;

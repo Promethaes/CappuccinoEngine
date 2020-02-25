@@ -81,6 +81,32 @@ bool GameObject::intersecting(const Ray& ray)
 	return _rigidBody.intersecting(ray);
 }
 
+GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
+{
+	std::vector <GameObject*> touched;
+	std::vector <glm::vec3> locations;
+	std::vector <float> distances;
+	int correctBoi = 0;
+	for (auto x : gameObjects)
+		if (x->intersecting(ray) && x->isActive()&&x!=this) {
+			touched.push_back(x);
+			locations.push_back(x->_rigidBody.getFirstInteresect(ray));
+		}
+	for (auto x : locations) 
+		distances.push_back(x.length());
+
+	float min = distances[0];
+	for (unsigned i = 0; i < touched.size(); i++) {
+		if (distances[i] < min) {
+			min = distances[i];
+			correctBoi = i;
+		}
+	}
+			
+
+	return touched[correctBoi];
+}
+
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 	collision(dt);
@@ -114,6 +140,16 @@ void GameObject::draw()
 				x->bind(3);
 			else if (x->type == TextureType::HeightMap)
 				x->bind(4);
+			else if (x->type == TextureType::PBRAlbedo)
+				x->bind(5);
+			else if (x->type == TextureType::PBRNormal)
+				x->bind(6);
+			else if (x->type == TextureType::PBRMetallic)
+				x->bind(7);
+			else if (x->type == TextureType::PBRRoughness)
+				x->bind(8);
+			else if (x->type == TextureType::PBRAmbientOcc)
+				x->bind(9);
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
@@ -132,6 +168,16 @@ void GameObject::draw()
 				x->unbind(3);
 			else if (x->type == TextureType::HeightMap)
 				x->unbind(4);
+			else if (x->type == TextureType::PBRAlbedo)
+				x->unbind(5);
+			else if (x->type == TextureType::PBRNormal)
+				x->unbind(6);
+			else if (x->type == TextureType::PBRMetallic)
+				x->unbind(7);
+			else if (x->type == TextureType::PBRRoughness)
+				x->unbind(8);
+			else if (x->type == TextureType::PBRAmbientOcc)
+				x->unbind(9);
 		}
 	}
 

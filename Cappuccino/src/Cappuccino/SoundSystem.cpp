@@ -214,26 +214,23 @@ namespace Cappuccino {
 	Sound3D::Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup, SoundSystem::ChannelType type)
 		:_type(type)
 	{
-
+		_type = type;
+		_sound = SoundSystem::load3DSound(PATH);
+		if (createGroup.has_value())
+			_group = SoundSystem::createChannelGroup(createGroup.value());
 	}
 	void Sound3D::play()
 	{
 		SoundSystem::playSound3D(_sound, _group, SoundSystem::ChannelType::SoundEffect);
 	}
-	void Sound3D::setPosition(const glm::vec3& position)
+	void Sound3D::SetChannelPosition(glm::vec3& pos)
 	{
-		_position = position;
-		FMOD_VECTOR p;
-		p.x = _position.x; p.y = _position.y; p.z = _position.z;
-		FMOD_VECTOR vel{ _vel.x, _vel.y,_vel.z };
-		SoundSystem::_channelGroups[_group]->set3DAttributes(&p, &vel);
+		FMOD_VECTOR p = glmToFmod(pos);
+		SoundSystem::_channels[(int)_type]->set3DAttributes(&p, NULL);
 	}
-	void Sound3D::setVelocity(const glm::vec3& vel)
+	FMOD_VECTOR& glmToFmod(glm::vec3& v)
 	{
-		_vel = vel;
-		FMOD_VECTOR p;
-		p.x = _vel.x; p.y = _vel.y; p.z = _vel.z;
-		FMOD_VECTOR v{ _vel.x, _vel.y,_vel.z };
-		SoundSystem::_channelGroups[_group]->set3DAttributes(&v,&p);
+		FMOD_VECTOR nV{ v.x,v.y,v.z };
+		return nV;
 	}
 }

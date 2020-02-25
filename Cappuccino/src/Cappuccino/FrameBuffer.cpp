@@ -7,6 +7,7 @@ std::vector<Framebuffer*> Framebuffer::_framebuffers = {};
 char* Framebuffer::_vertShader = "";
 char* Framebuffer::_fragShader = "";
 Shader* Framebuffer::_fbShader = nullptr;
+void(*Framebuffer::_overrideCallback)() = nullptr;
 Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numColourBuffers, void(*instructionsCallback)(), const std::optional<char*>& vertShader, const std::optional<char*>& fragShader)
 	:_windowSize(windowSize), _callback(instructionsCallback)
 {
