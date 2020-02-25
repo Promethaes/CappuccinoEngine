@@ -4,47 +4,43 @@
 
 using namespace Cappuccino;
 
-std::vector<GameObject*> GameObject::gameObjects = {};
+std::vector<GameObject*> GameObject::gameObjects;
 
 Texture* GameObject::defaultEmission = nullptr;
 Texture* GameObject::defaultNormal = nullptr;
 Texture* GameObject::defaultHeight = nullptr;
 
-GameObject::GameObject(const Shader& shader, const std::vector<Texture*>& textures, const std::vector<MeshProperties>& meshes, const std::optional<float>& mass, const unsigned viewportNum) :
-	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1), _shader(shader) {
-	_viewportNum = viewportNum;
-	
-	this->_textures = textures;
-	this->_meshes = meshes;
-
+GameObject::GameObject(const Shader& shader, const std::vector<TextureProperties>& textures, const std::vector<MeshProperties>& meshes, const std::optional<float>& mass, const unsigned viewportNum) :
+	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1),
+	_viewportNum(viewportNum), _textures(textures), _meshes(meshes), _shader(shader)
+{
 	bool hasNormal = false, hasEmission = false, hasHeight = false;
-	for (unsigned i = 0; i < this->_textures.size(); i++) {
-		if (_textures[i]->type == TextureType::EmissionMap)
+	for(const auto& texture : _textures) {
+		if (texture.type == TextureType::EmissionMap)
 			hasEmission = true;
-		else if (_textures[i]->type == TextureType::NormalMap)
+		else if (texture.type == TextureType::NormalMap)
 			hasNormal = true;
-		else if (_textures[i]->type == TextureType::HeightMap)
+		else if (texture.type == TextureType::HeightMap)
 			hasHeight = true;
-
 	}
 
 	static bool initDefaultMaps = false;
 
 	if (!initDefaultMaps) {
-		defaultEmission = new Texture("DefaultEmission", "defaultEmission.png", TextureType::EmissionMap);
-		defaultNormal = new Texture("DefaultNormal", "defaultNorm.png", TextureType::NormalMap);
-		defaultHeight = new Texture("DefaultHeight", "defaultHeight.png", TextureType::HeightMap);
+		defaultEmission = TextureLibrary::loadTexture("DefaultEmission", "defaultEmission.png", TextureType::EmissionMap);
+		defaultNormal = TextureLibrary::loadTexture("DefaultNormal", "defaultNorm.png", TextureType::NormalMap);
+		defaultHeight = TextureLibrary::loadTexture("DefaultHeight", "defaultHeight.png", TextureType::HeightMap);
 
 		//after all maps are init one time, never do it again
 		initDefaultMaps = true;
 	}
 
 	if (!hasEmission)
-		_textures.push_back(defaultEmission);
+		_textures.push_back(defaultEmission->getProperties());
 	if (!hasNormal)
-		_textures.push_back(defaultNormal);
+		_textures.push_back(defaultNormal->getProperties());
 	if (!hasHeight)
-		_textures.push_back(defaultHeight);
+		_textures.push_back(defaultHeight->getProperties());
 
 	//loadTextures();
 	//loadMesh();
@@ -53,18 +49,8 @@ GameObject::GameObject(const Shader& shader, const std::vector<Texture*>& textur
 }
 
 GameObject::~GameObject() {
-
 	_meshes.clear();
-
-	for (unsigned i = 0; i < _textures.size(); i++) {
-		if (_textures[i]->type == TextureType::DiffuseMap)
-			_textures[i]->unbind(0);
-		else if (_textures[i]->type == TextureType::SpecularMap)
-			_textures[i]->unbind(1);
-
-		delete _textures[i];
-		i--;
-	}
+	_textures.clear();
 }
 
 
@@ -93,23 +79,25 @@ void GameObject::draw()
 	//set active shader
 	glUseProgram(_shader.getID());
 
-	for (unsigned i = 0; i < _meshes.size();i++) {
+	for(unsigned i = 0; i < _meshes.size(); i++) {
 
 		//bind the textures to their proper slots
-		for (auto x : _textures) {
-			if (x->getTextureIndex() != i)
+		for (const auto& t : _textures) {
+			const auto texture = TextureLibrary::getTexture(t.name);
+			
+			if (t.textureIndex != i)
 				continue;
 
-			if (x->type == TextureType::DiffuseMap)
-				x->bind(0);
-			else if (x->type == TextureType::SpecularMap)
-				x->bind(1);
-			else if (x->type == TextureType::NormalMap)
-				x->bind(2);
-			else if (x->type == TextureType::EmissionMap)
-				x->bind(3);
-			else if (x->type == TextureType::HeightMap)
-				x->bind(4);
+			if (t.type == TextureType::DiffuseMap)
+				texture->bind(0);
+			else if (t.type == TextureType::SpecularMap)
+				texture->bind(1);
+			else if (t.type == TextureType::NormalMap)
+				texture->bind(2);
+			else if (t.type == TextureType::EmissionMap)
+				texture->bind(3);
+			else if (t.type == TextureType::HeightMap)
+				texture->bind(4);
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
@@ -118,17 +106,9 @@ void GameObject::draw()
 		mesh->draw();
 		
 		//unloads the textures
-		for (auto x : _textures) {
-			if (x->type == TextureType::DiffuseMap)
-				x->unbind(0);
-			else if (x->type == TextureType::SpecularMap)
-				x->unbind(1);
-			else if (x->type == TextureType::NormalMap)
-				x->unbind(2);
-			else if (x->type == TextureType::EmissionMap)
-				x->unbind(3);
-			else if (x->type == TextureType::HeightMap)
-				x->unbind(4);
+		const auto texture = TextureLibrary::getTexture(defaultEmission->getName());
+		for(unsigned j = 0; j < 24; ++j) {
+			texture->unbind(j);
 		}
 	}
 
@@ -140,7 +120,7 @@ void GameObject::collision(const float dt) {
 		for (auto x : gameObjects) {//check the other game objects
 			if (x->isActive() && x != this) {//if the object is active and not this
 				if (x->_rigidBody._canTouch && _rigidBody._canTouch) { //if the object can be touched
-					if (_rigidBody.myType == "" || _rigidBody.myType != x->_rigidBody.myType) {
+					if (_rigidBody.myType.empty() || _rigidBody.myType != x->_rigidBody.myType) {
 						//if default type or not the same type as other object
 						for (unsigned i = 0; i < 3; i++) {//all three dimensions
 							glm::vec3 temp(0, 0, 0);

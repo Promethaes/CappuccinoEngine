@@ -15,7 +15,7 @@ namespace Cappuccino {
 
 	class GameObject {
 	public:
-		GameObject(const Shader& shader, const std::vector<Texture*>& textures, const std::vector<MeshProperties>& meshes, const std::optional<float>& mass = std::nullopt, unsigned viewportNum = 0);
+		GameObject(const Shader& shader, const std::vector<TextureProperties>& textures, const std::vector<MeshProperties>& meshes, const std::optional<float>& mass = std::nullopt, unsigned viewportNum = 0);
 		virtual ~GameObject();
 		/*
 		Purp: wrapper class to call child update
@@ -83,7 +83,7 @@ namespace Cappuccino {
 
 		unsigned _viewportNum;
 
-		std::vector<Texture*> _textures;
+		std::vector<TextureProperties> _textures;
 		std::vector<MeshProperties> _meshes;
 		Shader _shader;
 
@@ -100,8 +100,8 @@ namespace Cappuccino {
 		*/
 		virtual void childUpdate(float dt) = 0;
 
-		bool _loadedTextures = false;
-		bool _loadedMesh = false;
+		//bool _loadedTextures = false;
+		//bool _loadedMesh = false;
 		bool _isActive = false;
 		bool _isVisible = true;
 

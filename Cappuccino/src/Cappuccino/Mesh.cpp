@@ -1,12 +1,9 @@
 #include "Cappuccino/Mesh.h"
 
 #include <glad/glad.h>
-#include <glm/glm.hpp>
 
 #include <algorithm>
-#include <fstream>
 #include <iostream>
-#include "Cappuccino/CappMacros.h"
 #include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {

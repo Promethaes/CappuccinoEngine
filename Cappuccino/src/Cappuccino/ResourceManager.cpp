@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <stb/stb_image.h>
 
 using namespace Cappuccino;
 
@@ -109,7 +110,9 @@ Mesh* MeshLibrary::loadMesh(const std::string& name, const std::string& filepath
 		return _meshMap[name];
 	}
 
-	return _meshMap[name] = new Mesh(name, filepath);
+	auto mesh = new Mesh(name, filepath);
+	mesh->loadMesh();
+	return _meshMap[name] = mesh;
 }
 
 Mesh* MeshLibrary::getMesh(const std::string& name) {
@@ -182,14 +185,21 @@ bool TextureLibrary::hasTexture(const std::string& name) { return _textureMap.fi
 // ----------------------------------------------------------------------------------------
 
 ResourceManager::MeshFutureVector ResourceManager::_meshFutures;
+ResourceManager::TextureFutureVector ResourceManager::_textureFutures;
 
 void ResourceManager::init() {
+	_meshFutures.reserve(1000);
+	_textureFutures.reserve(1000);
+	
 	MeshLibrary::init();
 	ShaderLibrary::init();
 	TextureLibrary::init();
 }
 
 void ResourceManager::shutdown() {
+	_meshFutures.clear();
+	_textureFutures.clear();
+	
 	MeshLibrary::shutdown();
 	ShaderLibrary::shutdown();
 	TextureLibrary::shutdown();
@@ -204,52 +214,124 @@ void ResourceManager::loadAll() {
 		mesh->setName(data.name);
 		MeshLibrary::addMesh(data.name, mesh);
 	}
+
+	for(unsigned i = 0; i < _textureFutures.size(); ++i) {
+		AssetLoader::TextureData data = _textureFutures[i].get();
+
+		const auto texture = new Texture(data.name, data.type, data.width, data.height, data.data, data.channels, data.textureIndex);
+		TextureLibrary::addTexture(data.name, texture);
+	}
 }
 
 void ResourceManager::loadAssetFile(const std::string& filepath, const ResourceType type) {
 	std::ifstream assetFile(filepath);
 	CAPP_ASSERT(assetFile.good(), "Could not open file!\nFilepath: %s", filepath.c_str());
 
-	std::unordered_map<std::string, std::string> assetMap;
-
-	while(!assetFile.eof()) {
-		std::string line;
-		std::getline(assetFile, line);
-
-		if(line.empty() || line.compare(0, 2, "//") == 0) {
-			continue;
-		}
-
-		std::string name, path, token;
-		std::istringstream sin(line);
-
-		for(unsigned i = 0; i < 2; ++i) {
-			std::getline(sin, token, ',');
-			if(i == 0) {
-				name = token;
-			}
-			else if(i == 1) {
-				token.erase(0, 1);
-				path = token;
-			}
-		}
+	switch(type) {
 		
-		if(assetMap.find(name) != assetMap.end()) {
-			CAPP_PRINT_WARNING("Asset \"%s\" with filepath \"%s\" already loaded, skipping...", name.c_str(), path.c_str());
-			continue;
-		}
-		
-		assetMap[name] = path;
-	}
+		case ResourceType::Mesh: {
+			std::unordered_map<std::string, std::string> meshFilepaths;
+			while(!assetFile.eof()) {
+				std::string line;
+				std::getline(assetFile, line);
 
-	for(const auto& properties : assetMap) {
-		switch(type) {
-			case ResourceType::Mesh:
+				if(line.empty() || line.compare(0, 2, "//") == 0) {
+					continue;
+				}
+
+				std::string name, path, token;
+				std::istringstream sin(line);
+
+				for(unsigned i = 0; i < 2; ++i) {
+					std::getline(sin, token, ',');
+					if(i == 0) {
+						name = token;
+					}
+					else if(i == 1) {
+						token.erase(0, 1);
+						path = token;
+					}
+				}
+
+				if(meshFilepaths.find(name) != meshFilepaths.end()) {
+					CAPP_PRINT_WARNING(R"(Mesh "%s" with filepath "%s" already loaded, skipping...)", name.c_str(), path.c_str());
+					continue;
+				}
+
+				meshFilepaths[name] = path;
+			}
+
+			for(const auto& properties : meshFilepaths) {
 				_meshFutures.push_back(std::async(std::launch::async, AssetLoader::loadOBJ, properties.first, properties.second));
-				break;
-			default:
-				break;
+			}
+
+			break;
 		}
+
+		case ResourceType::Texture: {
+			std::vector<std::tuple<std::string, std::string, std::string, std::string>> textureFilepaths;
+
+			while(!assetFile.eof()) {
+				std::string line;
+				std::getline(assetFile, line);
+
+				if(line.empty() || line.compare(0, 2, "//") == 0) {
+					continue;
+				}
+
+				std::string token, name, path, tp, index = "0";
+				std::istringstream sin(line);
+
+				for(unsigned i = 0; i < 3; ++i) {
+					std::getline(sin, token, ',');
+					if(i == 0) {
+						name = token;
+					}
+					else if(i == 1) {
+						token.erase(0, 1);
+						path = token;
+					}
+					else if(i == 2) {
+						token.erase(0, 1);
+						tp = token;
+					}
+				}
+
+				if(std::getline(sin, token, ',')) {
+					token.erase(0, 1);
+					index = token;
+				}
+
+				auto texture = std::make_tuple(name, path, tp, index);
+				
+				if(std::find(textureFilepaths.begin(), textureFilepaths.end(), texture) != textureFilepaths.end()) {
+					CAPP_PRINT_WARNING(R"(Texture "%s" of type "%s" with filepath "%s" already loaded, skipping...)", name.c_str(), tp.c_str(), path.c_str());
+					continue;
+				}
+				
+				textureFilepaths.push_back(texture);
+			}
+
+			for(const auto& properties : textureFilepaths) {
+				const auto& [name, path, tp, index] = properties;
+
+				TextureType tt = TextureType::None;
+				if(tp == "DiffuseMap") tt = TextureType::DiffuseMap;
+				else if(tp == "SpecularMap") tt = TextureType::SpecularMap;
+				else if(tp == "NormalMap") tt = TextureType::NormalMap;
+				else if(tp == "EmissionMap") tt = TextureType::EmissionMap;
+				else if(tp == "HeightMap") tt = TextureType::HeightMap;
+				else CAPP_ASSERT(false, "Unknown texture type \"%s\"!", tp.c_str());
+
+				int i = std::stoi(index);
+				
+				_textureFutures.push_back(std::async(std::launch::async, AssetLoader::loadIMG, name, path, tt, i));
+			}
+
+			break;
+		}
+		
+		default: break;
 	}
 }
 
@@ -258,8 +340,7 @@ void ResourceManager::loadAssetFile(const std::string& filepath, const ResourceT
 // ----- Asset loader ---------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-std::mutex AssetLoader::_mutex;
-//std::vector<AssetLoader::MeshData> AssetLoader::_meshes;
+std::mutex AssetLoader::_textureMutex;
 
 AssetLoader::MeshData AssetLoader::loadOBJ(std::string name, std::string filepath) {
 	std::vector<glm::vec3> vertexData; vertexData.reserve(1000000);
@@ -281,7 +362,7 @@ AssetLoader::MeshData AssetLoader::loadOBJ(std::string name, std::string filepat
 
 	if(!input.good()) {
 		CAPP_ASSERT(input.good(), "Problem loading OBJ file: \"%s\"", filepath.c_str());
-		return {"", {}, {}, {}, {}};
+		return { "", {}, {}, {}, {}, {} };
 	}
 
 	
@@ -379,6 +460,21 @@ AssetLoader::MeshData AssetLoader::loadOBJ(std::string name, std::string filepat
 	}
 
 	input.close();
-	//std::lock_guard<std::mutex> lock(_mutex);
 	return { std::move(name), numFaces, unpackedVertexData, unpackedTextureData, unpackedNormalData, unpackedTangentData };
+}
+
+AssetLoader::TextureData AssetLoader::loadIMG(std::string name, std::string filepath, const TextureType textureType, const unsigned textureIndex) {
+
+	CAPP_PRINT_N("Loading texture \"%s\" (%s)", name.c_str(), filepath.c_str());
+	
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, channels;
+
+	std::lock_guard<std::mutex> lock(_textureMutex);
+	stbi_uc* data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+	
+	CAPP_ASSERT(data != nullptr, "Failed to load texture \"%s\" (%s)", name.c_str(), filepath.c_str());
+	CAPP_ASSERT(width > 0 && height > 0, "Image \"%s\" must have dimensions greater than 0!\nTexture path: %s", name.c_str(), filepath.c_str());
+	
+	return { std::move(name), textureType, static_cast<unsigned>(width), static_cast<unsigned>(height), static_cast<unsigned>(channels), data, textureIndex };
 }

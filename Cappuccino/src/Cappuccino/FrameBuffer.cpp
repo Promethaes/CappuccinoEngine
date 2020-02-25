@@ -1,39 +1,44 @@
 #include "Cappuccino/FrameBuffer.h"
 #include "glad/glad.h"
 #include "Cappuccino/CappMacros.h"
+
 using namespace Cappuccino;
-std::vector<Framebuffer*> Framebuffer::_framebuffers = {};
 
-char* Framebuffer::_vertShader = "";
-char* Framebuffer::_fragShader = "";
+std::vector<Framebuffer*> Framebuffer::_framebuffers;
+char* Framebuffer::_vertShader = nullptr;
+char* Framebuffer::_fragShader = nullptr;
 Shader* Framebuffer::_fbShader = nullptr;
-Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numColourBuffers, void(*instructionsCallback)(), const std::optional<char*>& vertShader, const std::optional<char*>& fragShader)
-	:_windowSize(windowSize), _callback(instructionsCallback)
+
+Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numColourBuffers, void(*instructionsCallback)(), const std::optional<char*>& vertShader, const std::optional<char*>& fragShader) :
+	_callback(instructionsCallback), _windowSize(windowSize)
 {
-	_vertShader =
-		R"(#version 420 core
-				layout (location = 0) in vec2 aPos;
-				layout (location = 1) in vec2 aTexCoords;
+	_vertShader = R"(
+		#version 420 core
+		layout (location = 0) in vec2 aPos;
+		layout (location = 1) in vec2 aTexCoords;
 
-				out vec2 TexCoords;
+		out vec2 TexCoords;
 
-				void main()
-				{
-					gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
-					TexCoords = aTexCoords;
-				}  )";
-	_fragShader =
-		R"(#version 420 core
-				out vec4 FragColor;
+		void main()
+		{
+			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+			TexCoords = aTexCoords;
+		}
+	)";
+	
+	_fragShader = R"(
+		#version 420 core
+		out vec4 FragColor;
   
-				in vec2 TexCoords;
+		in vec2 TexCoords;
 
-				uniform sampler2D screenTexture;
+		uniform sampler2D screenTexture;
 
-				void main()
-				{ 
-					FragColor = texture(screenTexture, TexCoords);
-				})";
+		void main()
+		{ 
+			FragColor = texture(screenTexture, TexCoords);
+		}
+	)";
 
 	if (vertShader.has_value())
 		_vertShader = vertShader.value();
@@ -44,23 +49,19 @@ Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numCo
 
 	generate(_fbo);
 	bind();
+	
 	for (unsigned i = 0; i < numColourBuffers; i++) {
 		if (i > 7)
 			break;
 		generateTextureAttachment();
 	}
 
-	//attach colour as a texture (important for post proccessing)
+	//attach colour as a texture (important for post processing)
 	attachTextures();
 
 	generateRenderBufferAttachment(_depthStencilBuffer);
 	CAPP_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilBuffer));
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-
-		printf("Fatal Error: Framebuffer incomplete\n");
-		__debugbreak();
-	}
+	CAPP_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Failed to validate framebuffer! (Framebuffer incomplete)");
 
 	unbind();
 
@@ -68,22 +69,22 @@ Cappuccino::Framebuffer::Framebuffer(const glm::vec2& windowSize, unsigned numCo
 
 }
 
-void Cappuccino::Framebuffer::generate(unsigned& fbo)
+void Framebuffer::generate(unsigned& fbo)
 {
 	CAPP_GL_CALL(glGenFramebuffers(1, &fbo));
 }
 
-void Cappuccino::Framebuffer::bind()
+void Framebuffer::bind()
 {
 	CAPP_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _fbo));
 }
 
-void Cappuccino::Framebuffer::unbind()
+void Framebuffer::unbind()
 {
 	CAPP_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void Cappuccino::Framebuffer::generateTextureAttachment()
+void Framebuffer::generateTextureAttachment()
 {
 	//generate the texture to bind to the framebuffer
 	_colourBuffers.push_back(0);
@@ -97,7 +98,7 @@ void Cappuccino::Framebuffer::generateTextureAttachment()
 	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, handle, 0);
 }
 
-void Cappuccino::Framebuffer::attachTextures()
+void Framebuffer::attachTextures()
 {
 	std::vector<GLenum> e;
 
@@ -109,7 +110,7 @@ void Cappuccino::Framebuffer::attachTextures()
 	glDrawBuffers(_colourBuffers.size(), e.data());
 }
 
-void Cappuccino::Framebuffer::generateRenderBufferAttachment(unsigned& handle)
+void Framebuffer::generateRenderBufferAttachment(unsigned& handle)
 {
 	CAPP_GL_CALL(glGenRenderbuffers(1, &handle));
 	CAPP_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, handle));

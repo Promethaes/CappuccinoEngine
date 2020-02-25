@@ -101,9 +101,27 @@ namespace Cappuccino {
 		
 		static MeshData loadOBJ(std::string name, std::string filepath);
 
+		struct TextureData {
+			std::string name;
+			TextureType type = TextureType::None;
+			unsigned width = 0;
+			unsigned height = 0;
+			unsigned channels = 0;
+			unsigned char* data = nullptr;
+			unsigned textureIndex = 0;
+		};
+		
+		static TextureData loadIMG(std::string name, std::string filepath, TextureType textureType, unsigned textureIndex = 0);
+
+		//struct ShaderData {
+		//	std::string name;
+		//	std::string vert;
+		//	std::string frag;
+		//	std::optional<std::string> geom;
+		//};
+		
 	private:
-		static std::mutex _mutex;
-		//static std::vector<MeshData> _meshes;
+		static std::mutex _textureMutex;
 		
 	};
 
@@ -112,14 +130,15 @@ namespace Cappuccino {
 	// ----------------------------------------------------------------------------------------
 
 	enum class ResourceType : unsigned int {
-		Shader = 0,
-		Mesh,
+		Mesh = 0,
 		Texture
 	};
 
 	class ResourceManager {
 
 		using MeshFutureVector = std::vector<std::future<AssetLoader::MeshData>>;
+		using TextureFutureVector = std::vector<std::future<AssetLoader::TextureData>>;
+		//using ShaderFutureVector = std::vector<std::future<AssetLoader::ShaderData>>;
 
 	public:
 
@@ -132,6 +151,8 @@ namespace Cappuccino {
 	private:
 
 		static MeshFutureVector _meshFutures;
+		static TextureFutureVector _textureFutures;
+		//static ShaderFutureVector _shaderFutures;
 
 	};
 	
