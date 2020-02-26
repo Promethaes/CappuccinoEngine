@@ -58,8 +58,10 @@ namespace Cappuccino {
 		*/
 		void addAnimation(Animation* animation);
 
+		//sets a flag to tell the engine to start playing the animation
 		void playAnimation(AnimationType type);
 
+		//checks if the animation is playing
 		bool isPlaying(AnimationType type);
 
 		/*
