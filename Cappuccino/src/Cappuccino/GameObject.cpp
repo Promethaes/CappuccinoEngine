@@ -90,6 +90,7 @@ void GameObject::baseUpdate(float dt) {
 	_transform._position->y = _rigidBody._position.y;
 	_transform._position->z = _rigidBody._position.z;
 	_transform.update();
+	_animator.update(dt);
 }
 
 void GameObject::draw()

@@ -27,8 +27,8 @@ namespace Cappuccino {
 		AnimationType getAnimationType() { return _type; }
 
 		void setSpeed(float speed) { _speed = speed; }
+		bool _shouldPlay = false;
 	private:
-		bool _shouldPlay = true;
 		bool _loop = false;
 		AnimationType _type;
 		int index = 1;
@@ -45,6 +45,8 @@ namespace Cappuccino {
 	public:
 		Animator();
 
+		void update(float dt);
+
 		/*
 		Purp: add or change an animation to the list AT THE INDEX ACCORDING TO THE ANIMATION TYPE
 
@@ -56,7 +58,9 @@ namespace Cappuccino {
 		*/
 		void addAnimation(Animation* animation);
 
-		void playAnimation(AnimationType type, float dt);
+		void playAnimation(AnimationType type);
+
+		bool isPlaying(AnimationType type);
 
 		/*
 		Purp: deletes an animation at the type given
@@ -70,6 +74,7 @@ namespace Cappuccino {
 		void setSpeed(AnimationType type, float speed);
 
 	private:
+		static float _dt;
 		bool _playingAnimation = false;
 		std::vector<Animation*> _animations;
 	};
