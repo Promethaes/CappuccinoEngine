@@ -26,10 +26,10 @@ print("Copying necessary files...")
 -- os.execute("robocopy %CappuccinoPath%\\Build\\bin "                   .. "\"" .. solutionDir .. "\\libs\" *.lib /e /xo /xx /ns /np /ndl /njh /njs")
 
 -- Copy external header, inline, and dll files
-os.execute("robocopy %CappuccinoPath%\\Externals "                       .. "\"" .. solutionDir .. "\\Engine\\Externals\" *.dll *.h *.hpp *.inl /s /xo /xx /ns /np /ndl /njh /njs")
+os.execute("robocopy \"%CappuccinoPath%\\Externals\" "                       .. "\"" .. solutionDir .. "\\Engine\\Externals\" *.dll *.h *.hpp *.inl /s /xo /xx /ns /np /ndl /njh /njs")
 
 -- Copy engine header files
-os.execute("robocopy %CappuccinoPath%\\Cappuccino\\include "             .. "\"" .. solutionDir .. "\\Engine\\Cappuccino\\include\" *.h *.hpp /mir /xo /xx /ns /np /ndl /njh /njs")
+os.execute("robocopy \"%CappuccinoPath%\\Cappuccino\\include\" "             .. "\"" .. solutionDir .. "\\Engine\\Cappuccino\\include\" *.h *.hpp /mir /xo /xx /ns /np /ndl /njh /njs")
 
 -- Copy other files
 os.execute("robocopy \"%CappuccinoPath%\\Game Project Generation\" "     .. "\"" .. solutionDir .. "\\include\" reeee.txt /xo /xx /ns /np /ndl /njh /njs")
