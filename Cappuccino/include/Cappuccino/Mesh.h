@@ -16,6 +16,8 @@ namespace Cappuccino {
 		*/
 		Mesh(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS);
 
+		Mesh(Mesh& other);
+
 		/*
 		Purpose: The mesh will be loaded off of the filepath provided in the contructor
 		Req.: None

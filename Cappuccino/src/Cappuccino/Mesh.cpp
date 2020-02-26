@@ -37,6 +37,16 @@ namespace Cappuccino {
 		tangs = TANGS;
 	}
 
+	Mesh::Mesh(Mesh& other)
+	{
+		verts = other.verts;
+		texts = other.texts;
+		norms = other.norms;
+		tangs = other.tangs;
+		_numVerts = other._numVerts;
+		_numFaces = other._numFaces;
+	}
+
 	bool Mesh::loadMesh()
 	{
 		if (loaded)
@@ -220,6 +230,8 @@ namespace Cappuccino {
 			master.push_back(tangs[i]);
 
 
+		glGenVertexArrays(1, &_VAO);
+		glGenBuffers(1, &_VBO);
 
 		glBindVertexArray(_VAO);
 
@@ -240,6 +252,7 @@ namespace Cappuccino {
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
+		loaded = true;
 	}
 
 	void Mesh::reload(const std::vector<float>& VERTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS)
