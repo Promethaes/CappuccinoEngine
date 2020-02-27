@@ -4,14 +4,12 @@
 #include "glm/gtx/compatibility.hpp"
 
 namespace Cappuccino {
+	Shader* Animator::_animationShader = nullptr;
 	Animation::Animation(const std::vector<Mesh*>& keyFrames, AnimationType type)
 		: _originalMesh({}, {}, {}, {}), _type(type)
 	{
 		_keyFrames = keyFrames;
 
-		_currentVerts = _keyFrames[0]->verts;
-		_currentNorms = _keyFrames[0]->norms;
-		_currentTangs = _keyFrames[0]->tangs;
 
 		_originalMesh.verts = _currentVerts;
 		_originalMesh.norms = _currentNorms;
@@ -20,59 +18,37 @@ namespace Cappuccino {
 	}
 	void Animation::play(float dt)
 	{
+		if (Animator::_animationShader == nullptr) {
+			printf("Animation shader not set! animations cannot be played!\n");
+			return;
+		}
+		Animator::_animationShader->use();
+		Animator::_animationShader->setUniform("shouldPlay",_shouldPlay);
+
 		if (!_shouldPlay)
 			return;
 
+		if (t == 0.0f) {
+
+			_keyFrames[0]->animationFunction(*_keyFrames[index]);
+		}
+
 		t += dt * _speed;
+		Animator::_animationShader->setUniform("dt",t);
 
 		if (t >= 1.0f) {
 			t = 0.0f;
-
-			_currentVerts = _keyFrames[index]->verts;
-			_currentNorms = _keyFrames[index]->norms;
-			_currentTangs = _keyFrames[index]->tangs;
-
+			
+			_keyFrames[0]->_VBO = _keyFrames[index]->_VBO;
 			index++;
 			if (index > _keyFrames.size() - 1) {
 				if (!_loop)
 					_shouldPlay = false;
-				_currentVerts = _originalMesh.verts;
-				_currentNorms = _originalMesh.norms;
-				_currentTangs = _originalMesh.tangs;
 				index = 1;
 			}
 		}
-
-		else {
-			std::vector<float> tempVerts;
-			for (unsigned i = 0; i < _currentVerts.size(); i += 3) {
-				auto e = (glm::slerp(glm::quat(1.0f, _currentVerts[i], _currentVerts[i + 1], _currentVerts[i + 2]), glm::quat(1.0f, _keyFrames[index]->verts[i], _keyFrames[index]->verts[i + 1], _keyFrames[index]->verts[i + 2]), t));
-				tempVerts.push_back(e.x);
-				tempVerts.push_back(e.y);
-				tempVerts.push_back(e.z);
-
-			}
-			std::vector<float> tempNorms;
-			for (unsigned i = 0; i < _currentNorms.size(); i += 3) {
-				auto e = (glm::slerp(glm::quat(1.0f, _currentNorms[i], _currentNorms[i + 1], _currentNorms[i + 2]), glm::quat(1.0f, _keyFrames[index]->norms[i], _keyFrames[index]->norms[i + 1], _keyFrames[index]->norms[i + 2]), t));
-				tempNorms.push_back(e.x);
-				tempNorms.push_back(e.y);
-				tempNorms.push_back(e.z);
-
-			}
-			std::vector<float> tempTangs;
-			for (unsigned i = 0; i < _currentTangs.size(); i += 3) {
-				auto e = (glm::slerp(glm::quat(1.0f, _currentTangs[i], _currentTangs[i + 1], _currentTangs[i + 2]), glm::quat(1.0f, _keyFrames[index]->tangs[i], _keyFrames[index]->tangs[i + 1], _keyFrames[index]->tangs[i + 2]), t));
-				tempTangs.push_back(e.x);
-				tempTangs.push_back(e.y);
-				tempTangs.push_back(e.z);
-
-			}
-
-			_keyFrames[0]->reload(tempVerts, tempNorms, tempTangs);
-		}
-
 	}
+	
 	Mesh& Animation::getOriginalMesh()
 	{
 		return _originalMesh;
@@ -87,9 +63,8 @@ namespace Cappuccino {
 	{
 		_dt = dt;
 		for (auto x : _animations) {
-			if (x != nullptr)
-				if (x->_shouldPlay)
-					x->play(dt);
+			if (x != nullptr && x->_shouldPlay)
+				x->play(dt);
 		}
 	}
 	void Animator::addAnimation(Animation* animation)

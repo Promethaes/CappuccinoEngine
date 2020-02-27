@@ -1,5 +1,6 @@
 #pragma once
 #include "Cappuccino/Mesh.h"
+#include "Cappuccino/ShaderProgram.h"
 #include <vector>
 enum class AnimationType {
 	Idle = 0,
@@ -75,8 +76,9 @@ namespace Cappuccino {
 		//set the animation speed at the index
 		void setSpeed(AnimationType type, float speed);
 
-	private:
 		static float _dt;
+		static Shader* _animationShader;
+	private:
 		bool _playingAnimation = false;
 		std::vector<Animation*> _animations;
 	};

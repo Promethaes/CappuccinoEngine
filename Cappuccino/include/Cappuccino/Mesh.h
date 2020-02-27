@@ -18,6 +18,12 @@ namespace Cappuccino {
 
 		Mesh(Mesh& other);
 
+		//MUST HAVE SAME NUMBER OF VERTS AND ALL !!!
+		void animationFunction(Mesh& other);
+
+		//assigns all the members from other to this
+		void assignOperation(Mesh& other);
+
 		/*
 		Purpose: The mesh will be loaded off of the filepath provided in the contructor
 		Req.: None
