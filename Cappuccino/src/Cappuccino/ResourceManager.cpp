@@ -316,21 +316,21 @@ void ResourceManager::loadAssetFile(const std::string& filepath, const ResourceT
 				const auto& [name, path, tp, index] = properties;
 
 				TextureType tt = TextureType::None;
-				switch(tp) {
-					case "DiffuseMap":		tt = TextureType::DiffuseMap;		break;
-					case "SpecularMap":		tt = TextureType::SpecularMap;		break;
-					case "NormalMap":		tt = TextureType::NormalMap;		break;
-					case "EmissionMap":		tt = TextureType::EmissionMap;		break;
-					case "HeightMap":		tt = TextureType::HeightMap;		break;
-					case "PBRAlbedo":		tt = TextureType::PBRAlbedo;		break;
-					case "PBRMetallic":		tt = TextureType::PBRMetallic;		break;
-					case "PBRNormal":		tt = TextureType::PBRNormal;		break;
-					case "PBRRoughness":	tt = TextureType::PBRRoughness;		break;
-					case "PBRAmbientOcc":	tt = TextureType::PBRAmbientOcc;	break;
-					default: break;
-				}
-				CAPP_ASSERT(tt == TextureType::None, "Unknown texture type \"%s\"!", tp.c_str());
 
+				if(tp == "DiffuseMap")			tt = TextureType::DiffuseMap;
+				else if(tp == "SpecularMap")	tt = TextureType::SpecularMap;
+				else if(tp == "NormalMap")		tt = TextureType::NormalMap;
+				else if(tp == "EmissionMap")	tt = TextureType::EmissionMap;
+				else if(tp == "HeightMap")		tt = TextureType::HeightMap;
+				else if(tp == "PBRAlbedo")		tt = TextureType::PBRAlbedo;
+				else if(tp == "PBRMetallic")	tt = TextureType::PBRMetallic;
+				else if(tp == "PBRNormal")		tt = TextureType::PBRNormal;
+				else if(tp == "PBRRoughness")	tt = TextureType::PBRRoughness;
+				else if(tp == "PBRAmbientOcc")	tt = TextureType::PBRAmbientOcc;
+				else {
+					CAPP_ASSERT(false, "Unknown texture type \"%s\"!", tp.c_str());
+				}
+				
 				int i = std::stoi(index);
 				_textureFutures.push_back(std::async(std::launch::async, AssetLoader::loadIMG, name, path, tt, i));
 			}

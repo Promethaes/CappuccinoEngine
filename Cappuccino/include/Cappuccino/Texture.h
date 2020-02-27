@@ -4,8 +4,7 @@
 
 namespace Cappuccino {
 	enum class TextureType : unsigned int {
-		None = 0,
-		DiffuseMap,
+		DiffuseMap = 0,
 		SpecularMap,
 		NormalMap,
 		EmissionMap,
@@ -14,7 +13,8 @@ namespace Cappuccino {
 		PBRNormal,
 		PBRMetallic,
 		PBRRoughness,
-		PBRAmbientOcc
+		PBRAmbientOcc,
+		None
 	};
 
 	struct TextureProperties {
