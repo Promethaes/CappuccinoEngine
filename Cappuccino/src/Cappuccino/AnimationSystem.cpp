@@ -4,37 +4,32 @@
 #include "glm/gtx/compatibility.hpp"
 
 namespace Cappuccino {
-	Shader* Animator::_animationShader = nullptr;
+	
+	std::vector<Animation*> Animation::_allAnimations = {};
 	Animation::Animation(const std::vector<Mesh*>& keyFrames, AnimationType type)
-		: _originalMesh({}, {}, {}, {}), _type(type)
+		:  _type(type)
 	{
 		_keyFrames = keyFrames;
-
-
-		_originalMesh.verts = _currentVerts;
-		_originalMesh.norms = _currentNorms;
-		_originalMesh.tangs = _currentTangs;
-		_originalMesh.texts = _keyFrames[0]->texts;
+		_allAnimations.push_back(this);
 	}
 	void Animation::play(float dt)
 	{
-		if (Animator::_animationShader == nullptr) {
+		if (_animationShader == nullptr) {
 			printf("Animation shader not set! animations cannot be played!\n");
 			return;
 		}
-		Animator::_animationShader->use();
-		Animator::_animationShader->setUniform("shouldPlay",_shouldPlay);
+		_animationShader->use();
+		_animationShader->setUniform("shouldPlay",_shouldPlay);
 
 		if (!_shouldPlay)
 			return;
 
-		if (t == 0.0f) {
-
+		if (t == 0.0f) 
 			_keyFrames[0]->animationFunction(*_keyFrames[index]);
-		}
-
+		
+			
 		t += dt * _speed;
-		Animator::_animationShader->setUniform("dt",t);
+		_animationShader->setUniform("dt",t);
 
 		if (t >= 1.0f) {
 			t = 0.0f;
@@ -49,10 +44,6 @@ namespace Cappuccino {
 		}
 	}
 	
-	Mesh& Animation::getOriginalMesh()
-	{
-		return _originalMesh;
-	}
 	float Animator::_dt = 0.0f;
 	Animator::Animator()
 	{
@@ -79,6 +70,10 @@ namespace Cappuccino {
 	bool Animator::isPlaying(AnimationType type)
 	{
 		return _animations[(int)type]->_shouldPlay;
+	}
+	void Animator::setAnimationShader(AnimationType type,Shader* shader)
+	{
+		_animations[(int)type]->_animationShader = shader;
 	}
 	void Animator::clearAnimation(AnimationType type)
 	{

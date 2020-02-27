@@ -23,12 +23,14 @@ namespace Cappuccino {
 
 		void setLoop(bool yn) { _loop = yn; }
 		void play(float dt);
-		Mesh& getOriginalMesh();
 
 		AnimationType getAnimationType() { return _type; }
 
 		void setSpeed(float speed) { _speed = speed; }
 		bool _shouldPlay = false;
+		
+		static std::vector<Animation*> _allAnimations;
+		Shader* _animationShader;
 	private:
 		bool _loop = false;
 		AnimationType _type;
@@ -36,11 +38,6 @@ namespace Cappuccino {
 		float t = 0.0f;
 		float _speed = 1.0f;
 		std::vector<Mesh*> _keyFrames;
-		std::vector<float> _currentVerts;
-		std::vector<float> _currentTangs;
-		std::vector<float> _currentNorms;
-
-		Mesh _originalMesh;
 	};
 	class Animator {
 	public:
@@ -65,6 +62,9 @@ namespace Cappuccino {
 		//checks if the animation is playing
 		bool isPlaying(AnimationType type);
 
+		//set the animation shader of an animation at index type
+		void setAnimationShader(AnimationType type,Shader* shader);
+
 		/*
 		Purp: deletes an animation at the type given
 		Req: type as an index
@@ -77,7 +77,6 @@ namespace Cappuccino {
 		void setSpeed(AnimationType type, float speed);
 
 		static float _dt;
-		static Shader* _animationShader;
 	private:
 		bool _playingAnimation = false;
 		std::vector<Animation*> _animations;
