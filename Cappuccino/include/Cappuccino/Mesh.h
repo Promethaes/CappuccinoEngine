@@ -5,6 +5,11 @@
 
 namespace Cappuccino {
 
+	struct MeshProperties {
+		std::string name;
+		std::string filepath;
+	};
+
 	class Mesh {
 	public:
 
@@ -12,7 +17,7 @@ namespace Cappuccino {
 		virtual ~Mesh();
 
 		/*
-		Purp: create mesh from data rather than loading from file, useful for animation calss
+		Purp: create mesh from data rather than loading from file, useful for animation class
 		*/
 		Mesh(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS);
 
@@ -25,7 +30,7 @@ namespace Cappuccino {
 		void assignOperation(Mesh& other);
 
 		/*
-		Purpose: The mesh will be loaded off of the filepath provided in the contructor
+		Purpose: The mesh will be loaded off of the filepath provided in the constructor
 		Req.: None
 		Returns: A boolean representing if the load succeeded or not
 		*/
@@ -35,6 +40,7 @@ namespace Cappuccino {
 		Purp: load the mesh without external input (using class members)
 		*/
 		void loadFromData();
+		void loadFromData(unsigned numFaces);
 
 		void reload(const std::vector<float>& VERTS,const std::vector<float>& NORMS,const std::vector<float>& TANGS);
 
@@ -56,8 +62,8 @@ namespace Cappuccino {
 		 */
 		static void setDefaultPath(const std::string& directory);
 
-
-		const std::string& getName() const { return _name; }
+		void setName(const std::string& name) { _properties.name = name; }
+		const std::string& getName() const { return _properties.name; }
 		
 		unsigned _VAO = 0;
 		unsigned _VBO = 0;
@@ -78,8 +84,7 @@ namespace Cappuccino {
 		
 		unsigned _numFaces = 0;
 		unsigned _numVerts = 0;
-		std::string _path;
-		std::string _name;
+		MeshProperties _properties;
 
 	};
 }

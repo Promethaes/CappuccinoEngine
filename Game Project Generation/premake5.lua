@@ -12,40 +12,30 @@ os.execute("echo Enter project name:")
 local projName = io.read()
 os.execute("echo.")
 
-print(string.format("Creating project \"%s\" in directory %s", projName, solutionDir))
+print(string.format("Creating project \"%s\" in directory \"%s\"", projName, solutionDir))
 
+-----------------------------------------------------------------------------------------------------------------------
 print("Making directories...")
-os.execute("mkdir " .. solutionDir .. "\\Build")
-os.execute("mkdir " .. solutionDir .. "\\Build\\bin")
-os.execute("mkdir " .. solutionDir .. "\\Build\\bin\\x64")
-os.execute("mkdir " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
-os.execute("mkdir " .. solutionDir .. "\\Build\\bin\\x64\\Release")
-os.execute("mkdir " .. solutionDir .. "\\Assets")
-os.execute("mkdir " .. solutionDir .. "\\Engine\\Cappuccino")
-os.execute("mkdir " .. solutionDir .. "\\Engine\\Externals")
-os.execute("mkdir " .. solutionDir .. "\\src")
-os.execute("mkdir " .. solutionDir .. "\\libs\\Debug")
-os.execute("mkdir " .. solutionDir .. "\\libs\\Release")
+os.execute("mkdir \"" .. solutionDir .. "\\Assets\"")
+os.execute("mkdir \"" .. solutionDir .. "\\include\"")
+os.execute("mkdir \"" .. solutionDir .. "\\src\"")
 
 print("Copying necessary files...")
-os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmod.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
-os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmod.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
-os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmodstudio.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
-os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\fmodstudio.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
-os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\freetype.dll " .. solutionDir .. "\\Build\\bin\\x64\\Debug")
-os.execute("xcopy %CappuccinoPath%\\Externals\\dll\\freetype.dll " .. solutionDir .. "\\Build\\bin\\x64\\Release")
-os.execute("xcopy %CappuccinoPath%\\Build\\bin\\x86_64\\Debug\\capp.lib " .. solutionDir .. "\\libs\\Debug")
-os.execute("xcopy %CappuccinoPath%\\Build\\bin\\x86_64\\Release\\capp.lib " .. solutionDir .. "\\libs\\Release")
-os.execute("xcopy %CappuccinoPath%\\Externals\\Build\\bin\\x86_64\\Debug\\Externals.lib " .. solutionDir .. "\\libs\\Debug")
-os.execute("xcopy %CappuccinoPath%\\Externals\\Build\\bin\\x86_64\\Release\\Externals.lib " .. solutionDir .. "\\libs\\Release")
+-- Copy engine libraries into libs folder
+-- os.execute("robocopy %CappuccinoPath%\\Externals\\Build\\bin "        .. "\"" .. solutionDir .. "\\libs\" *.lib /e /xo /xx /ns /np /ndl /njh /njs")
+-- os.execute("robocopy %CappuccinoPath%\\Build\\bin "                   .. "\"" .. solutionDir .. "\\libs\" *.lib /e /xo /xx /ns /np /ndl /njh /njs")
 
+-- Copy external header, inline, and dll files
+os.execute("robocopy \"%CappuccinoPath%\\Externals\" "                       .. "\"" .. solutionDir .. "\\Engine\\Externals\" *.dll *.h *.hpp *.inl /s /xo /xx /ns /np /ndl /njh /njs")
 
-os.execute("xcopy /S %CappuccinoPath%\\Cappuccino\\include\\Cappuccino " .. solutionDir .. 			  "\\Engine\\Cappuccino")
-os.execute("xcopy /S %CappuccinoPath%\\\"Game Project Generation\"\\Externals " .. solutionDir ..     "\\Engine\\Externals")
-os.execute("xcopy /S %CappuccinoPath%\\Cappuccino\\src\\Cappuccino\\main.cpp " .. solutionDir .. "\\src")
+-- Copy engine header files
+os.execute("robocopy \"%CappuccinoPath%\\Cappuccino\\include\" "             .. "\"" .. solutionDir .. "\\Engine\\Cappuccino\\include\" *.h *.hpp /mir /xo /xx /ns /np /ndl /njh /njs")
 
--- This is to make sure the filters are created in Visual Studio even if there are no files in the folders
-os.execute("xcopy reeee.txt " .. solutionDir .. "\\include\\")
+-- Copy other files
+os.execute("robocopy \"%CappuccinoPath%\\Game Project Generation\" "     .. "\"" .. solutionDir .. "\\include\" reeee.txt /xo /xx /ns /np /ndl /njh /njs")
+os.execute("robocopy \"%CappuccinoPath%\\Cappuccino\\src\\Cappuccino\" " .. "\"" .. solutionDir .. "\\src\" main.cpp /xo /xx /ns /np /ndl /njh /njs")
+
+-----------------------------------------------------------------------------------------------------------------------
 
 os.execute("echo.")
 print("Starting premake build...")
@@ -70,24 +60,26 @@ workspace (projName)
 	
 	targetdir (solutionDir .. "/Build/bin/%{cfg.platform}/%{cfg.buildcfg}")
 	objdir (solutionDir .. "/Build/obj/%{cfg.platform}/%{cfg.buildcfg}")
-	
 
 	includedirs {
-		solutionDir .. "/include",
-	
-		solutionDir.."/Engine",
-		solutionDir.."/Engine/Externals/fmod/include",
-		solutionDir.."/Engine/Externals/fmod/studio/include",
-		solutionDir.."/Engine/Externals/freetype/include",
-		solutionDir.."/Engine/Externals/glad/include",
-		solutionDir.."/Engine/Externals/glfw3/include",
-		solutionDir.."/Engine/Externals/glm/include",
-		solutionDir.."/Engine/Externals/imgui/include",
-		solutionDir.."/Engine/Externals/stb/include"
+		"\"" .. solutionDir .. "/include\"",
+		"\"" .. solutionDir .. "/Engine/Cappuccino/include\"",
+		
+		"\"" .. solutionDir .. "/Engine/Externals/fmod/include\"",
+		"\"" .. solutionDir .. "/Engine/Externals/fmod/studio/include\"",
+		"\"" .. solutionDir .. "/Engine/Externals/freetype/include\"",
+		"\"" .. solutionDir .. "/Engine/Externals/glad/include\"",
+		"\"" .. solutionDir .. "/Engine/Externals/glfw3/include\"",
+		"\"" .. solutionDir .. "/Engine/Externals/glm/include\"",
+		"\"" .. solutionDir .. "/Engine/Externals/imgui/include\"",
+		"\"" .. solutionDir .. "/Engine/Externals/stb/include\""
 	}
 	
-	
-
+	libdirs {
+		-- Reeee environment variables
+		os.getenv("CappuccinoPath") .. "/Build/bin/%{cfg.architecture}/%{cfg.buildcfg}",
+		os.getenv("CappuccinoPath") .. "/Externals/Build/bin/%{cfg.architecture}/%{cfg.buildcfg}"
+    }
 	
 	filter "platforms:x64"
 		system "windows"
@@ -106,19 +98,13 @@ workspace (projName)
 		defines "DEBUG"
 		runtime "Debug"
 		symbols "on"
-		libdirs {
-			solutionDir.."\\libs\\Debug"
-		}
 
 	filter "configurations:Release"
 		defines "NDEBUG"
 		runtime "Release"
 		optimize "on"
-		libdirs {
-			solutionDir.."\\libs\\Release"
-		}
 
-print(string.format("Building project %s...", projName)) 
+print(string.format("Building project %s...", projName))
 project (projName)
 	kind "ConsoleApp"
 	configuration "windows"
@@ -130,9 +116,32 @@ project (projName)
 	}
 	
 	files {
-		solutionDir .. "/include/reeee.txt",
-		solutionDir .. "/include/**.h",
-		solutionDir .. "/src/**.cpp",
+		solutionDir .. "\\include/reeee.txt",
+		solutionDir .. "\\include/**.h",
+		solutionDir .. "\\include/**.hpp",
+		solutionDir .. "\\src/**.cpp",
 	}
 	
-os.execute("del /s /q %{solutionDir}\\reeee.txt")
+	prebuildcommands {
+		-- Update header files from engine
+		"robocopy \"" .. os.getenv("CappuccinoPath") .. "\\Cappuccino\\include\" \"%{prj.location}\\Engine\\Cappuccino\\include\" *.h *.hpp /mir /xo /xx /ns /np /ndl /njh /njs",
+		
+		-- Update lib files from engine
+		-- "robocopy \"%CappuccinoPath%\\Externals\\Build\\bin\" \"%{prj.location}\\libs\" *.lib /e /xo /xx /ns /np /ndl /njh /njs",
+		-- "robocopy \"%CappuccinoPath%\\Build\\bin\" \"%{prj.location}\\libs\" *.lib /e /xo /xx /ns /np /ndl /njh /njs",
+		
+		-- Update any default assets
+		"robocopy \"" .. os.getenv("CappuccinoPath") .. "\\Cappuccino\\Assets\" \"%{prj.location}\\Assets\" /s /xo /xx /ns /np /ndl /njh /njs",
+		
+		"exit 0"
+	}
+	
+	postbuildcommands {
+		-- Copy all dll files next to executable
+		"robocopy \"%{prj.location}\\Engine\\Externals\\dll\" \"%{cfg.targetdir}\" /e /xo /xx /ns /np /ndl /njh /njs",
+		
+		-- Copy assets directory next to executable
+		"robocopy \"%{prj.location}\\Assets\" \"%{cfg.targetdir}\\Assets\" /mir /xo /xx /ns /np /ndl /njh /njs",
+		
+		"exit 0"
+	}

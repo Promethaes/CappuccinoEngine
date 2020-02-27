@@ -16,10 +16,23 @@ enum class AnimationType {
 };
 namespace Cappuccino {
 
+	enum class AnimationType {
+		Idle = 0,
+		Attack,
+		Run,
+		Crouch,
+		Jump,
+		Death,
+		Walk,
+		Dance,
+		Interact,
+		NumTypes
+	};
+
 	class Animation {
 	public:
-		//a list of key frames and the type of animation is required
-		Animation(const std::vector<Mesh*>& keyFrames, AnimationType type);
+		//a list of key frames and the type of animation is required 
+		Animation(const std::vector<MeshProperties>& keyFrames, AnimationType type);
 
 		void setLoop(bool yn) { _loop = yn; }
 		void play(float dt);
@@ -71,9 +84,9 @@ namespace Cappuccino {
 		*/
 		void clearAnimation(AnimationType type);
 
-		//set the animation at the index to loop
-		void setLoop(AnimationType type,bool yn);
-		//set the animation speed at the index
+		//set the animation at the index to loop 
+		void setLoop(AnimationType type, bool yn);
+		//set the animation speed at the index 
 		void setSpeed(AnimationType type, float speed);
 
 		static float _dt;

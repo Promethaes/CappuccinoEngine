@@ -1,7 +1,8 @@
-#include "Cappuccino/AnimationSystem.h"
-#include "Cappuccino/CappMath.h"
-#include "glm/common.hpp"
-#include "glm/gtx/compatibility.hpp"
+#include "Cappuccino/AnimationSystem.h" 
+#include "Cappuccino/CappMath.h" 
+#include "glm/common.hpp" 
+#include "glm/gtx/compatibility.hpp" 
+#include "Cappuccino/ResourceManager.h" 
 
 namespace Cappuccino {
 	
@@ -88,4 +89,28 @@ namespace Cappuccino {
 	{
 		_animations[(int)type]->setSpeed(speed);
 	}
+}
+Mesh& Animation::getOriginalMesh() {
+	return _originalMesh;
+}
+Animator::Animator() {
+	for(unsigned i = 0; i < (int)AnimationType::NumTypes; i++)
+		_animations.push_back(nullptr);
+}
+void Animator::addAnimation(Animation* animation) {
+	_animations[(int)animation->getAnimationType()] = animation;
+}
+void Animator::playAnimation(AnimationType type, float dt) {
+	_animations[(int)type]->play(dt);
+	_playingAnimation = true;
+}
+void Animator::clearAnimation(AnimationType type) {
+	delete _animations[(int)type];
+	_animations[(int)type] = nullptr;
+}
+void Animator::setLoop(AnimationType type, bool yn) {
+	_animations[(int)type]->setLoop(yn);
+}
+void Animator::setSpeed(AnimationType type, float speed) {
+	_animations[(int)type]->setSpeed(speed);
 }

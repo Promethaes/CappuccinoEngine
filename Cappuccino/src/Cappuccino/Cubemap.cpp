@@ -16,10 +16,10 @@ Cubemap::Cubemap(const glm::vec2& windowSize, const std::vector<std::string>& fi
 	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &_cubemap);
 	setCubemapTextures(filepaths);
 
-	_cubeMesh = new Mesh("Skybox", "Skybox.obj");
+	_cubeMesh = MeshLibrary::loadMesh("Skybox", "Skybox.obj");
 	_cubeMesh->loadMesh();
 	
-	_shader = *ShaderLibrary::loadShader("Skybox", "cubemap.vert", "cubemap.frag");
+	_shader = *ShaderLibrary::loadShader("Cubemap", "cubemap.vert", "cubemap.frag");
 	_shader.use();
 	_shader.loadProjectionMatrix(windowSize.x, windowSize.y);
 	allCubemaps.push_back(this);

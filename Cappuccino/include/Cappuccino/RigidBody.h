@@ -72,6 +72,14 @@ namespace Cappuccino {
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray);
+
+		/*
+		Purp: to see what hitbox is the closest to where the ray is
+		Pre: the ray 
+		Post: a vec3 of the position of the closest hitbox origin
+		*/
+		glm::vec3 getFirstInteresect(const Ray& ray);
+
 		/*
 		Purp: Check if two rigidbodies are colliding
 		Pre: Another RigidBody
@@ -126,14 +134,14 @@ namespace Cappuccino {
 		static glm::mat4 _view;
 		static glm::mat4 _projection;
 		static Shader _shader;
-		glm::vec4 _shaderColour = glm::vec4(1.0f,0.0f,0.0f,1.0f);
+		glm::vec4 _shaderColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		
 
 		/*
 		Collision variables
 		*/
 		bool _collision = false;
-		std::string myType = "";//objects that should not collide with eachother should be called the same type (bullet/loot)
+		std::string myType = "";//objects that should not collide with each other should be called the same type (bullet/loot)
 		bool _moveable = false;//if this object can move around the scene(enemy/bullet/player)
 		bool _canTouch= true;//if the object can touch other objects(almost everything)
 		bool _bounce = false;//if the object should bounce instead of stopping (grenade?)

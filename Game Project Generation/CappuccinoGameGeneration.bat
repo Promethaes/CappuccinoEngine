@@ -8,7 +8,7 @@ if %ERRORLEVEL% NEQ 0 (
     goto :eof
 )
 
-call %CappuccinoPath%\Premake\premake5.exe --file="%~dp0\premake5.lua" vs2019
+call "%CappuccinoPath%\Premake\premake5.exe" --file="%~dp0\premake5.lua" vs2019
 
 echo.
 echo Project generated.

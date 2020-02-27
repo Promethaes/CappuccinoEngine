@@ -74,8 +74,9 @@ namespace Cappuccino {
 #if _DEBUG
 
 		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
+		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS));
 		CAPP_GL_CALL(glDebugMessageCallback(glDebugMessageCallbackFunc, NULL));
-		CAPP_GL_CALL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, 0, GL_FALSE));
+		CAPP_GL_CALL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE));
 
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -105,7 +106,7 @@ namespace Cappuccino {
 	}
 
 	void Application::run() {
-
+		
 		CAPP_PRINT_N("OpenGL version %s", reinterpret_cast<GLchar const*>(glGetString(GL_VERSION)));
 		CAPP_PRINT_N("Using %s %s\n", reinterpret_cast<GLchar const*>(glGetString(GL_VENDOR)), reinterpret_cast<GLchar const*>(glGetString(GL_RENDERER)));
 
@@ -184,6 +185,7 @@ namespace Cappuccino {
 					for (auto k : Framebuffer::_framebuffers) {
 
 						k->bind();
+						
 						glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
 						k->_callback != nullptr ? k->_callback() : 0;
 
@@ -192,34 +194,37 @@ namespace Cappuccino {
 								y->draw();
 							}
 						}
-						for (auto c : Cubemap::allCubemaps) {
+					
+						for(auto c : Cubemap::allCubemaps) {
 							c->draw();
 						}
+						
 						k->unbind();
 					}
+				}
 
-					glClear(GL_COLOR_BUFFER_BIT);
-					Framebuffer::_fbShader->use();
-					for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-						for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-							glActiveTexture(GL_TEXTURE0 + j + i);
-							glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
-						}
+				glClear(GL_COLOR_BUFFER_BIT);
+				Framebuffer::_fbShader->use();
+				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
+					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
+						glActiveTexture(GL_TEXTURE0 + j + i);
+						glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
 					}
+				}
 
-					Framebuffer::_fbShader->setUniform("screenTexture", 0);
-					Framebuffer::_fbShader->setUniform("bloom", 1);
-					glBindVertexArray(quadVAO);
-					glDrawArrays(GL_TRIANGLES, 0, 6);
+				Framebuffer::_fbShader->setUniform("screenTexture", 0);
+				Framebuffer::_fbShader->setUniform("bloom", 1);
+				glBindVertexArray(quadVAO);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
 
-					for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-						for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-							glActiveTexture(GL_TEXTURE0 + j + i);
-							glBindTexture(GL_TEXTURE_2D, 0);
-						}
+				for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
+					for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
+						glActiveTexture(GL_TEXTURE0 + j + i);
+						glBindTexture(GL_TEXTURE_2D, 0);
 					}
-					for (auto x : UserInterface::_allUI)
-						x->draw();
+				}
+				for (auto x : UserInterface::_allUI) {
+					x->draw();
 				}
 			}
 			else {

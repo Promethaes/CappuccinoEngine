@@ -15,7 +15,7 @@ namespace Cappuccino {
 
 	class GameObject {
 	public:
-		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs, const std::optional<float>& mass = std::nullopt,unsigned viewportNum = 0);
+		GameObject(const Shader& shader, const std::vector<TextureProperties>& textures, const std::vector<MeshProperties>& meshes, const std::optional<float>& mass = std::nullopt, unsigned viewportNum = 0);
 		virtual ~GameObject();
 		/*
 		Purp: wrapper class to call child update
@@ -23,8 +23,8 @@ namespace Cappuccino {
 		*/
 		void baseUpdate(float dt);
 
-		void setShader(const Shader& SHADER) {
-			_shader = SHADER;
+		void setShader(const Shader& shader) {
+			_shader = shader;
 			_shader.createShader();
 		}
 
@@ -49,7 +49,7 @@ namespace Cappuccino {
 		Pre: another GameObject
 		Post: a boolean true if they will collide
 		*/
-		bool willCollide(GameObject* other,const glm::vec3& direction, float dt);
+		bool willCollide(GameObject* other, const glm::vec3& direction, float dt);
 
 		/*
 		Purp: To check collision between a GameObject and hitbox
@@ -69,6 +69,13 @@ namespace Cappuccino {
 		returns: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray);
+		/*
+		Purp: to see what gameobject the ray hits first
+		Pre: a ray 
+		Post: what GameObject it hits first
+		*/
+		GameObject* getFirstIntersect(const Ray& ray);
+
 		void setActive(const bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
 		void setVisible(const bool yn) { _isVisible = yn; }
@@ -83,13 +90,13 @@ namespace Cappuccino {
 
 		unsigned _viewportNum;
 
-		std::vector<Texture*> _textures;
-		std::vector<Mesh*> _meshes;
+		std::vector<TextureProperties> _textures;
+		std::vector<MeshProperties> _meshes;
 		Shader _shader;
 
 	private:
 		/*
-		Purp: to check collision with all gameobjects
+		Purp: to check collision with all game objects
 		Pre: None
 		Post: None
 		*/
@@ -100,8 +107,8 @@ namespace Cappuccino {
 		*/
 		virtual void childUpdate(float dt) = 0;
 
-		bool _loadedTextures = false;
-		bool _loadedMesh = false;
+		//bool _loadedTextures = false;
+		//bool _loadedMesh = false;
 		bool _isActive = false;
 		bool _isVisible = true;
 
@@ -110,10 +117,10 @@ namespace Cappuccino {
 		/*
 		Purp: load the textures, make sure this is only called once
 		*/
-		void loadTextures();
+		//void loadTextures();
 		/*
 		load the meshes
 		*/
-		void loadMesh();
+		//void loadMesh();
 	};
 }
