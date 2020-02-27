@@ -130,18 +130,22 @@ void main()
 
 	glm::vec3 RigidBody::getFirstInteresect(const Ray& ray)
 	{
-		glm::vec3 nearestBox(0.0f);
-		float smallestLength = glm::length(_position);
+		glm::vec3 nearestIntersectPoint = glm::vec3(0.0f);//possible edge case scenario
+		float smallestLength = 0.0f;
+
 		for (unsigned i = 0; i < _hitBoxes.size(); i++) {				
 			if (_hitBoxes[i].intersecting(ray,_position)) {
-				if (glm::length(_hitBoxes[i]._position) < smallestLength) {
-					smallestLength = glm::length(_hitBoxes[i]._position);
-					nearestBox = _hitBoxes[i]._position;
+				glm::vec3 tempRayIntersect = _hitBoxes[i].getIntersectPoint(ray, _position);
+				float tempRayIntersectLength = glm::length(tempRayIntersect);
+				if (tempRayIntersectLength < smallestLength || smallestLength == 0.0f) {
+					smallestLength = tempRayIntersectLength;
+					nearestIntersectPoint = tempRayIntersect;
 				}
 			}
 		}
-		
-		return nearestBox;
+		if (nearestIntersectPoint == glm::vec3(0.0f))
+			std::cout << "THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
+		return nearestIntersectPoint;
 	}
 
 	bool RigidBody::checkCollision(RigidBody& other)

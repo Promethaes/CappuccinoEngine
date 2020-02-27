@@ -36,10 +36,16 @@ namespace Cappuccino {
 		void draw();
 		/*
 		Purp: check if a ray is intersecting the hitbox
-		Req: A ray and a glm of the rigidbodies position
-		returns: whether or not it is intersecting
+		Pre: A ray and a glm vec3 of the rigidbody position
+		Post: whether or not it is intersecting
 		*/
 		bool intersecting(const Ray& ray,glm::vec3&);
+		/*
+		Purp: to find the closest point on the ray where it intersects with the hitbox
+		Pre: A ray and glm vec3 of the rigidbody position
+		Post: a glm vec3 of the closest intersection point
+		*/
+		glm::vec3 getIntersectPoint(const Ray& ray,glm::vec3& position);
 		/*
 		Purp: Rotate the hitbox
 		Pre: an angle of rotation
