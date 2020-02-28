@@ -1,6 +1,7 @@
 #pragma once
 #include "Cappuccino/Mesh.h"
 #include "Cappuccino/ShaderProgram.h"
+#include "ResourceManager.h"
 #include <vector>
 enum class AnimationType {
 	Idle = 0,
@@ -16,18 +17,6 @@ enum class AnimationType {
 };
 namespace Cappuccino {
 
-	enum class AnimationType {
-		Idle = 0,
-		Attack,
-		Run,
-		Crouch,
-		Jump,
-		Death,
-		Walk,
-		Dance,
-		Interact,
-		NumTypes
-	};
 
 	class Animation {
 	public:
@@ -51,6 +40,7 @@ namespace Cappuccino {
 		float t = 0.0f;
 		float _speed = 1.0f;
 		std::vector<Mesh*> _keyFrames;
+		std::vector<MeshProperties> _keyFrameProps;
 	};
 	class Animator {
 	public:

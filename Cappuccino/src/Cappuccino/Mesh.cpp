@@ -195,8 +195,8 @@ namespace Cappuccino {
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((data.vertices.size() + data.uvCoords.size() + data.normals.size()) * sizeof(float)));
 
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size()) * sizeof(float)));
-		glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((unPtextureData.size() + unPvertexData.size() + unPnormalData.size()) * sizeof(float)));
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((data.vertices.size() + data.uvCoords.size()) * sizeof(float)));
+		glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((data.vertices.size() + data.uvCoords.size() + data.normals.size()) * sizeof(float)));
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
