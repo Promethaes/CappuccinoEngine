@@ -83,30 +83,37 @@ bool Cappuccino::GameObject::intersecting(const Ray& ray)
 
 GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
 {
-	std::vector <GameObject*> touched;
-	std::vector <glm::vec3> locations;
-	std::vector <float> distances;
-	int correctBoi = -1;
+	std::vector <GameObject*> touched;//all gameobjects that the ray hit
+	std::vector <glm::vec3> locations;//where the ray hit on that object
+	std::vector <float> distances;//the distance of that point from the origin of the ray
+	int objectHitNumber = -1;//if nothing is selected
 	for (auto x : gameObjects)
-		if(x->isActive() && x != this)
-			if (x->intersecting(ray)) {
-				touched.push_back(x);
-				locations.push_back(x->_rigidBody.getFirstInteresect(ray));
+		if (x->isActive() && x != this)
+			if (x->id != "Bullet") {
+				if (x->intersecting(ray)) {//if the object is hit by the ray
+					touched.push_back(x);//add it to the list of hit objects
+					locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
+				}
 			}
+			
 	for (auto x : locations) 
-		distances.push_back(glm::length(x));
+		distances.push_back(glm::length(x));//get the distance from the ray origin to the collision point
 
-	float min = -1.0f;
-	for (unsigned i = 0; i < touched.size(); i++) {
-		if (distances[i] < min||min==-1.0f) {
-			min = distances[i];
-			correctBoi = i;
+	float min = 0.0f;
+
+	for (unsigned i = 0; i < distances.size(); i++) {//for all the lengths
+		if (distances[i] < min || min == 0.0f) {//if the object is closer or the base value is still there
+			min = distances[i];//we have a new minumim
+			objectHitNumber = i;//the object at this position will be the closest hit object
 		}
 	}
-	if (correctBoi != -1)
-		return touched[correctBoi];
+	
+	if (objectHitNumber != -1) {//if not base case
+		std::cout << touched[objectHitNumber]->id<<std::endl;
+		return touched[objectHitNumber];//return that object
+	}
 	else
-		return NULL;
+		return NULL;//we have a problem
 }
 
 void GameObject::baseUpdate(float dt) {

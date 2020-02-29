@@ -131,20 +131,41 @@ void main()
 	glm::vec3 RigidBody::getFirstInteresect(const Ray& ray)
 	{
 		glm::vec3 nearestIntersectPoint = glm::vec3(0.0f);//possible edge case scenario
-		float smallestLength = 0.0f;
+		float smallestLength = 0.0f;//base length
 
-		for (unsigned i = 0; i < _hitBoxes.size(); i++) {				
-			if (_hitBoxes[i].intersecting(ray,_position)) {
-				glm::vec3 tempRayIntersect = _hitBoxes[i].getIntersectPoint(ray, _position);
-				float tempRayIntersectLength = glm::length(tempRayIntersect);
-				if (tempRayIntersectLength < smallestLength || smallestLength == 0.0f) {
-					smallestLength = tempRayIntersectLength;
-					nearestIntersectPoint = tempRayIntersect;
+		if (_hitBoxes.size() == 1) {//if there is only one hitbox
+			if (_hitBoxes[0].intersecting(ray, _position)) {//if that hitbox is touched
+				glm::vec3 tempRayIntersect = _hitBoxes[0].getIntersectPoint(ray, _position);//find where
+				float tempRayIntersectLength = glm::length(tempRayIntersect);//the length of the vector
+				if ((tempRayIntersectLength < smallestLength || smallestLength == 0.0f) //if the length is smaller than the current length or we have the default length
+					&& tempRayIntersect != glm::vec3(0.0f)) {//and it's not a false hit
+					smallestLength = tempRayIntersectLength;//we have a new smallest length
+					nearestIntersectPoint = tempRayIntersect;//we have the closest point to the ray origin
+				}
+				else {
+					std::cout << "RigidBody::GetFirstIntersect::This should never happen. One hitbox and no collision "<<std::endl;
 				}
 			}
 		}
+		else if (_hitBoxes.size() > 1) {//if more than one hitbox
+			for (unsigned i = 1; i < _hitBoxes.size(); i++) {
+				if (_hitBoxes[i].intersecting(ray, _position)) {
+					glm::vec3 tempRayIntersect = _hitBoxes[i].getIntersectPoint(ray, _position);
+					float tempRayIntersectLength = glm::length(tempRayIntersect);
+					if ((tempRayIntersectLength < smallestLength || smallestLength == 0.0f) && tempRayIntersect != glm::vec3(0.0f)) {
+						smallestLength = tempRayIntersectLength;
+						nearestIntersectPoint = tempRayIntersect;
+					}
+				}
+			}
+		}
+		else
+		{
+			std::cout <<"RigidBody::GetFirstIntersect::Evyn, this shouldn't happen, There are no hitboxes on a collided object"<<std::endl;
+		}
+		
 		if (nearestIntersectPoint == glm::vec3(0.0f))
-			std::cout << "THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
+			std::cout << "RigidBody::GetFirstIntersect::THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
 		return nearestIntersectPoint;
 	}
 

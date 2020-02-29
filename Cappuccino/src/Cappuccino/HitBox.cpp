@@ -366,6 +366,7 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 	else if (_OBB)//RAY / OBB
 	{
 		//TODO
+		return false;
 	}
 	else//RAY / SPHERE
 	{
@@ -377,27 +378,73 @@ https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rend
 glm::vec3 Cappuccino::HitBox::getIntersectPoint(const Ray& ray, glm::vec3& position)
 {
 	glm::vec3 point(0.0f);//return data
+	bool didCollide = false;
+	glm::vec3 dimensionBox(0.0f);//0=neutral,-1 negative, 1 positive
+	glm::vec3 dimensionRay(0.0f);
+
 	if (!_OBB && !_radius) {//if aabb
-		glm::vec3 raySpaceBoxPos = _position - ray._rayPos;//raypos is now 0,0,0
-		glm::vec3 boxMin((raySpaceBoxPos - _size) / 2.0f);//get the new box position max and min
-		glm::vec3 boxMax((raySpaceBoxPos + _size) / 2.0f);
+		glm::vec3 raySpaceBoxPos = position + _position - ray._rayPos;//raypos is now 0,0,0
+		glm::vec3 boxMin(raySpaceBoxPos - (_size / 2.0f));//get the new box position max and min
+		glm::vec3 boxMax(raySpaceBoxPos + (_size / 2.0f));
+
+		if (boxMin.x > 0.0f && boxMax.x > 0.0f)
+			dimensionBox.x = 1;
+		else if(boxMin.x < 0.0f && boxMax.x < 0.0f)
+			dimensionBox.x = -1;
+
+		if (boxMin.y > 0.0f && boxMax.y > 0.0f)
+			dimensionBox.y = 1;
+		else if (boxMin.y < 0.0f && boxMax.y < 0.0f)
+			dimensionBox.y = -1;
+
+		if (boxMin.z > 0.0f && boxMax.z > 0.0f)
+			dimensionBox.z = 1;
+		else if (boxMin.z < 0.0f && boxMax.z < 0.0f)
+			dimensionBox.z = -1;
+
+
+		if (ray._rayDir.x > 0.0f)
+			dimensionRay.x = 1;
+		else if (ray._rayDir.x < 0.0f)
+			dimensionRay.x = -1;
+
+		if (ray._rayDir.y > 0.0f)
+			dimensionRay.y = 1;
+		else if (ray._rayDir.y < 0.0f)
+			dimensionRay.y = -1;
+
+		if (ray._rayDir.z > 0.0f)
+			dimensionRay.z = 1;
+		else if (ray._rayDir.z < 0.0f)
+			dimensionRay.z = -1;
+
+		for (unsigned i = 0; i < 3; i++)
+			if (dimensionBox[i] != 0 && dimensionBox[i] != dimensionRay[i])
+				return point;
+
+
 
 		//x
 		float xMultLow = boxMin.x / ray._rayDir.x;//get the multiplier for the other 2 dimensions
 		float xMultHigh = boxMax.x / ray._rayDir.x;//max and min
 		{
 			glm::vec3 rayLowPosX = ray._rayDir * xMultLow;//create where the ray would strike the box or not at the minimum of the box in that dimension
-			std::cout << boxMin.x << " should be the same as " << rayLowPosX.x << std::endl;//test
 			if (rayLowPosX.y<boxMax.y && rayLowPosX.y>boxMin.y&& rayLowPosX.z<boxMax.z && rayLowPosX.z>boxMin.z)//if the striking position is in between the max and min in all dimensions 
-				if (point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayLowPosX))//if the length of the vector is smaller than the record
+				if ((point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayLowPosX))&& glm::length(rayLowPosX)!=0.0f)//if the length of the vector is smaller than the record
+				{
 					point = rayLowPosX;//replace the record
+					didCollide = true;
+				}
 		}
 		
 		{
 			glm::vec3 rayHighPosX = ray._rayDir * xMultHigh;
-			if (rayHighPosX.y<boxMax.y && rayHighPosX.y>boxMin.y&& rayHighPosX.z<boxMax.z && rayHighPosX.z>boxMin.z)
-				if (point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayHighPosX))
+			if (rayHighPosX.y<=boxMax.y && rayHighPosX.y>=boxMin.y&& rayHighPosX.z<=boxMax.z && rayHighPosX.z>=boxMin.z)
+				if ((point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayHighPosX))&& glm::length(rayHighPosX)!=0.0f)
+				{
 					point = rayHighPosX;
+					didCollide = true;
+				}
 		}
 		
 
@@ -408,15 +455,21 @@ glm::vec3 Cappuccino::HitBox::getIntersectPoint(const Ray& ray, glm::vec3& posit
 
 		{
 			glm::vec3 rayLowPosY = ray._rayDir * yMultLow;
-			if (rayLowPosY.x<boxMax.x && rayLowPosY.x>boxMin.x&& rayLowPosY.z<boxMax.z && rayLowPosY.z>boxMin.z)
-				if (point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayLowPosY))
+			if (rayLowPosY.x<=boxMax.x && rayLowPosY.x>=boxMin.x&& rayLowPosY.z<=boxMax.z && rayLowPosY.z>=boxMin.z)
+				if ((point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayLowPosY))&& glm::length(rayLowPosY)!=0.0f) {
 					point = rayLowPosY;
+					didCollide = true;
+				}
+					
 		}
 		{
 			glm::vec3 rayHighPosY = ray._rayDir * yMultHigh;
-			if (rayHighPosY.x<boxMax.x && rayHighPosY.x>boxMin.x&& rayHighPosY.z<boxMax.z && rayHighPosY.z>boxMin.z)
-				if (point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayHighPosY))
+			if (rayHighPosY.x<=boxMax.x && rayHighPosY.x>=boxMin.x&& rayHighPosY.z<=boxMax.z && rayHighPosY.z>=boxMin.z)
+				if ((point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayHighPosY))&& glm::length(rayHighPosY)!=0.0f) {
 					point = rayHighPosY;
+					didCollide = true;
+				}
+					
 		}
 		
 		
@@ -428,21 +481,30 @@ glm::vec3 Cappuccino::HitBox::getIntersectPoint(const Ray& ray, glm::vec3& posit
 
 		{
 			glm::vec3 rayLowPosZ = ray._rayDir * zMultLow;
-			if (rayLowPosZ.y<boxMax.y && rayLowPosZ.y>boxMin.y&& rayLowPosZ.x<boxMax.x && rayLowPosZ.x>boxMin.x)
-				if (point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayLowPosZ))
+			if (rayLowPosZ.y<=boxMax.y && rayLowPosZ.y>=boxMin.y&& rayLowPosZ.x<=boxMax.x && rayLowPosZ.x>=boxMin.x)
+				if ((point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayLowPosZ))&& glm::length(rayLowPosZ)!=0.0f) {
 					point = rayLowPosZ;
+					didCollide = true;
+				}
+					
 		}
 		{
 			glm::vec3 rayHighPosZ = ray._rayDir * zMultHigh;
-			if (rayHighPosZ.x<boxMax.x && rayHighPosZ.x>boxMin.x&& rayHighPosZ.y<boxMax.y && rayHighPosZ.y>boxMin.y)
-				if (point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayHighPosZ))
+			if (rayHighPosZ.x<=boxMax.x && rayHighPosZ.x>=boxMin.x&& rayHighPosZ.y<=boxMax.y && rayHighPosZ.y>=boxMin.y)
+				if ((point == glm::vec3(0.0f) || glm::length(point) > glm::length(rayHighPosZ))&& glm::length(rayHighPosZ)!=0.0f) {
 					point = rayHighPosZ;
+					didCollide = true;
+				}
+					
 		}
 
 	}
 
-	if (point == glm::vec3(0.0f))
+	if (point == glm::vec3(0.0f)) {
 		std::cout << "THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
+	}
+	if (!didCollide)
+		std::cout << "Fuck\n";
 	return point;
 }
 
