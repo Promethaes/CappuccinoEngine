@@ -18,6 +18,8 @@ namespace Cappuccino {
 
 	bool Application::_instantiated = false;
 	GLFWwindow* Application::window = nullptr;
+	Shader* Application::_gBufferShader = nullptr;
+	Shader* Application::_lightingPassShader = nullptr;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
@@ -117,11 +119,11 @@ namespace Cappuccino {
 		SoundSystem::playSound2D(soundRef, groupRef);
 #endif
 
-		CAPP_GL_CALL(glEnable(GL_DEPTH_TEST));
-		CAPP_GL_CALL(glEnable(GL_CULL_FACE));
-		CAPP_GL_CALL(glEnable(GL_BLEND));
-		CAPP_GL_CALL(glEnable(GL_SCISSOR_TEST));
-		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_CULL_FACE);
+		//glEnable(GL_BLEND);
+		//glEnable(GL_SCISSOR_TEST);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		GLfloat lastFrame = 0;
@@ -153,6 +155,68 @@ namespace Cappuccino {
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+
+		//https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+		unsigned gBuffer = 0;
+		glGenFramebuffers(1, &gBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+		unsigned gPos, gNormal, gAlbedo, gMetalRoughnessAO,gEmissive,gDepthStencil;
+
+		//position
+		glGenTextures(1, &gPos);
+		glBindTexture(GL_TEXTURE_2D, gPos);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPos, 0);
+
+		//normals
+		glGenTextures(1, &gNormal);
+		glBindTexture(GL_TEXTURE_2D, gNormal);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+
+		//albedo
+		glGenTextures(1, &gAlbedo);
+		glBindTexture(GL_TEXTURE_2D, gAlbedo);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedo, 0);
+
+		//metallic, roughness, ambient occlusion
+		glGenTextures(1, &gMetalRoughnessAO);
+		glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gMetalRoughnessAO, 0);
+
+		//emissive
+		glGenTextures(1, &gEmissive);
+		glBindTexture(GL_TEXTURE_2D, gEmissive);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, gEmissive, 0);
+
+		unsigned attachments[5] = { GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4 };
+		glDrawBuffers(5, attachments);
+
+		glGenRenderbuffers(1, &gDepthStencil);
+		glBindRenderbuffer(GL_RENDERBUFFER, gDepthStencil);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gDepthStencil);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		
+		
 
 		/*
 		Render Loop
@@ -223,9 +287,52 @@ namespace Cappuccino {
 				}
 			}
 			else {
+				
+				//geometry pass
+				glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 				for (auto y : GameObjects)
-					if (y->isActive() && y->isVisible())
-						y->draw();
+					if (y->isActive() && y->isVisible()) 
+						y->gBufferDraw(_gBufferShader);
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				_lightingPassShader->use();
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, gPos);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, gNormal);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, gAlbedo);
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
+				glActiveTexture(GL_TEXTURE4);
+				glBindTexture(GL_TEXTURE_2D, gEmissive);
+
+				glBindVertexArray(quadVAO);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, gPos);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, gNormal);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, gAlbedo);
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
+				glActiveTexture(GL_TEXTURE4);
+				glBindTexture(GL_TEXTURE_2D, gEmissive);
+
+				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+				glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 				for (auto x : UserInterface::_allUI)
 					x->draw();
 				for (auto c : Cubemap::allCubemaps) {

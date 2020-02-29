@@ -7,7 +7,6 @@ std::vector<GameObject*> GameObject::gameObjects = {};
 
 Texture* GameObject::defaultEmission = nullptr;
 Texture* GameObject::defaultNormal = nullptr;
-Texture* GameObject::defaultHeight = nullptr;
 
 GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass, const unsigned viewportNum) :
 	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1), _shader(_shader) {
@@ -18,21 +17,17 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 
 	bool hasNormal = false, hasEmission = false, hasHeight = false;
 	for (unsigned i = 0; i < this->_textures.size(); i++) {
-		if (_textures[i]->type == TextureType::EmissionMap)
+		if (_textures[i]->type == TextureType::PBREmission)
 			hasEmission = true;
-		else if (_textures[i]->type == TextureType::NormalMap)
+		else if (_textures[i]->type == TextureType::PBRNormal)
 			hasNormal = true;
-		else if (_textures[i]->type == TextureType::HeightMap)
-			hasHeight = true;
-
 	}
 
 	static bool initDefaultMaps = false;
 
 	if (!initDefaultMaps) {
-		defaultEmission = new Texture("DefaultEmission", "defaultEmission.png", TextureType::EmissionMap);
-		defaultNormal = new Texture("DefaultNormal", "defaultNorm.png", TextureType::NormalMap);
-		defaultHeight = new Texture("DefaultHeight", "defaultHeight.png", TextureType::HeightMap);
+		defaultEmission = new Texture("DefaultEmission", "defaultEmission.png", TextureType::PBREmission);
+		defaultNormal = new Texture("DefaultNormal", "defaultNorm.png", TextureType::PBRNormal);
 
 		//after all maps are init one time, never do it again
 		initDefaultMaps = true;
@@ -42,8 +37,7 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 		_textures.push_back(defaultEmission);
 	if (!hasNormal)
 		_textures.push_back(defaultNormal);
-	if (!hasHeight)
-		_textures.push_back(defaultHeight);
+	
 
 	loadTextures();
 	loadMesh();
@@ -125,6 +119,8 @@ void GameObject::draw()
 				x->bind(8);
 			else if (x->type == TextureType::PBRAmbientOcc)
 				x->bind(9);
+			else if (x->type == TextureType::PBREmission)
+				x->bind(10);
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
@@ -153,10 +149,76 @@ void GameObject::draw()
 				x->unbind(8);
 			else if (x->type == TextureType::PBRAmbientOcc)
 				x->unbind(9);
+			else if (x->type == TextureType::PBREmission)
+				x->unbind(10);
 		}
 	}
 
 	_rigidBody.draw();
+}
+void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
+{
+	gBufferShader->use();
+	for (unsigned i = 0; i < _meshes.size(); i++) {
+
+		//bind the textures to their proper slots
+		for (auto x : _textures) {
+			if (x->getTextureIndex() != i)
+				continue;
+
+			if (x->type == TextureType::DiffuseMap)
+				x->bind(0);
+			else if (x->type == TextureType::SpecularMap)
+				x->bind(1);
+			else if (x->type == TextureType::NormalMap)
+				x->bind(2);
+			else if (x->type == TextureType::EmissionMap)
+				x->bind(3);
+			else if (x->type == TextureType::HeightMap)
+				x->bind(4);
+			else if (x->type == TextureType::PBRAlbedo)
+				x->bind(5);
+			else if (x->type == TextureType::PBRNormal)
+				x->bind(6);
+			else if (x->type == TextureType::PBRMetallic)
+				x->bind(7);
+			else if (x->type == TextureType::PBRRoughness)
+				x->bind(8);
+			else if (x->type == TextureType::PBRAmbientOcc)
+				x->bind(9);
+			else if (x->type == TextureType::PBREmission)
+				x->bind(10);
+		}
+
+		_transform._transformMat = gBufferShader->loadModelMatrix(_transform._transformMat);
+
+		_meshes[i]->draw();
+	
+		for (auto x : _textures) {
+			if (x->type == TextureType::DiffuseMap)
+				x->unbind(0);
+			else if (x->type == TextureType::SpecularMap)
+				x->unbind(1);
+			else if (x->type == TextureType::NormalMap)
+				x->unbind(2);
+			else if (x->type == TextureType::EmissionMap)
+				x->unbind(3);
+			else if (x->type == TextureType::HeightMap)
+				x->unbind(4);
+			else if (x->type == TextureType::PBRAlbedo)
+				x->unbind(5);
+			else if (x->type == TextureType::PBRNormal)
+				x->unbind(6);
+			else if (x->type == TextureType::PBRMetallic)
+				x->unbind(7);
+			else if (x->type == TextureType::PBRRoughness)
+				x->unbind(8);
+			else if (x->type == TextureType::PBRAmbientOcc)
+				x->unbind(9);
+			else if (x->type == TextureType::PBREmission)
+				x->unbind(10);
+		}
+	}
 }
 void GameObject::collision(const float dt) {
 	if (_rigidBody._moveable) {

@@ -54,6 +54,8 @@ namespace Cappuccino {
 		static GLFWwindow* window;
 
 		glm::vec4 _clearColour;
+		static Shader* _gBufferShader;
+		static Shader* _lightingPassShader;
 	private:
 
 		void cleanup();
