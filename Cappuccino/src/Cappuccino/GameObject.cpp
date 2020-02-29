@@ -109,7 +109,6 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
 	}
 	
 	if (objectHitNumber != -1) {//if not base case
-		std::cout << touched[objectHitNumber]->id<<std::endl;
 		return touched[objectHitNumber];//return that object
 	}
 	else

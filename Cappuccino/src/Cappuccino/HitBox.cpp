@@ -332,6 +332,50 @@ bool HitBox::intersecting(const Ray& ray, glm::vec3& pos)
 https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
 	if (!_radius&&!_OBB)//ray aabb
 	{
+
+		glm::vec3 dimensionBox(0.0f);//0=neutral,-1 negative, 1 positive
+		glm::vec3 dimensionRay(0.0f);
+
+		glm::vec3 raySpaceBoxPos = pos + _position - ray._rayPos;//raypos is now 0,0,0
+		glm::vec3 boxMin(raySpaceBoxPos - (_size / 2.0f));//get the new box position max and min
+		glm::vec3 boxMax(raySpaceBoxPos + (_size / 2.0f));
+
+
+		if (boxMin.x > 0.0f && boxMax.x > 0.0f)
+			dimensionBox.x = 1;
+		else if (boxMin.x < 0.0f && boxMax.x < 0.0f)
+			dimensionBox.x = -1;
+
+		if (boxMin.y > 0.0f && boxMax.y > 0.0f)
+			dimensionBox.y = 1;
+		else if (boxMin.y < 0.0f && boxMax.y < 0.0f)
+			dimensionBox.y = -1;
+
+		if (boxMin.z > 0.0f && boxMax.z > 0.0f)
+			dimensionBox.z = 1;
+		else if (boxMin.z < 0.0f && boxMax.z < 0.0f)
+			dimensionBox.z = -1;
+
+
+		if (ray._rayDir.x > 0.0f)
+			dimensionRay.x = 1;
+		else if (ray._rayDir.x < 0.0f)
+			dimensionRay.x = -1;
+
+		if (ray._rayDir.y > 0.0f)
+			dimensionRay.y = 1;
+		else if (ray._rayDir.y < 0.0f)
+			dimensionRay.y = -1;
+
+		if (ray._rayDir.z > 0.0f)
+			dimensionRay.z = 1;
+		else if (ray._rayDir.z < 0.0f)
+			dimensionRay.z = -1;
+
+		for (unsigned i = 0; i < 3; i++)
+			if (dimensionBox[i] != 0 && dimensionBox[i] != dimensionRay[i])
+				return false;
+
 		float txMin, txMax, tyMin, tyMax, tzMin, tzMax;
 
 		auto inverseDir = 1.0f / (ray._rayDir);
