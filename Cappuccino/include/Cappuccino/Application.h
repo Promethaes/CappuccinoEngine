@@ -8,6 +8,7 @@
 #include "Cappuccino/SceneManager.h"
 #include "Cappuccino/SoundSystem.h"
 #include "Cappuccino/XInputManager.h"
+#include "Cappuccino/LUT.h"
 
 #if SCENETEST
 #include "Cappuccino/Testing/Test Scene.h"
@@ -58,6 +59,7 @@ namespace Cappuccino {
 		static Shader* _lightingPassShader;
 		static Shader* _blurPassShader;
 		static Shader* _ppShader;
+		static LUT* _activeLUT;
 	private:
 
 		void cleanup();

@@ -22,6 +22,7 @@ namespace Cappuccino {
 	Shader* Application::_lightingPassShader = nullptr;
 	Shader* Application::_blurPassShader = nullptr;
 	Shader* Application::_ppShader = nullptr;
+	LUT* Application::_activeLUT = nullptr;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
@@ -433,11 +434,14 @@ namespace Cappuccino {
 				if (firstRenderPass) {
 					_ppShader->setUniform("screenTexture", 0);
 					_ppShader->setUniform("bloomTexture", 1);
+					_ppShader->setUniform("lookup.LUT", 2);
 				}
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, hdrColourBuffer);
 				glActiveTexture(GL_TEXTURE1);
 				glBindTexture(GL_TEXTURE_2D, pingpongColourBuffers[!horizontal]);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_3D, _activeLUT->_textureID);
 
 				glBindVertexArray(quadVAO);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
