@@ -4,44 +4,15 @@
 #include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {
-
-	glm::mat4 RigidBody::_projection = glm::mat4();
-	glm::mat4 RigidBody::_view = glm::mat4();
 	
 	float Physics::gravity = -98.0f;
 	float Physics::UniversalG = 6.67f * static_cast<float>(pow(10, -11));
 	
 	
 
-	Shader RigidBody::_shader;
-	bool RigidBody::drawHitBox = false;
 	RigidBody::RigidBody(const glm::vec3& transformPosition, const float mass, const bool gravity)
-		: _position(transformPosition), _grav(gravity), _mass(mass) {
-
-		char* vert = R"(#version 420 core
-layout (location = 0) in vec3 aPos;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-	gl_Position = projection * view * model * vec4(aPos, 1.0);
-})";
-
-		char* frag = R"(#version 420 core
-
-out vec4 outColour;
-uniform vec4 ourColour;
-
-void main()
-{
-	outColour = ourColour;
-})";
-
-		_shader = Shader(true,vert,frag);
-	}
+		: _position(transformPosition), _grav(gravity), _mass(mass) 
+	{}
 
 
 	void RigidBody::update(const float dt)
@@ -61,29 +32,6 @@ void main()
 
 	}
 
-	void RigidBody::draw()
-	{
-		_shader.use();
-		_shader.setUniform("view", _view);//shader uniforms
-		_shader.setUniform("projection", _projection);
-		_shader.setUniform("ourColour",_shaderColour);
-
-		if (drawHitBox) {
-			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));//wireframe mode
-			CAPP_GL_CALL(glDisable(GL_CULL_FACE));
-			for (auto& hitBox : _hitBoxes) {
-				glm::mat4 newModel = hitBox._rotationMatrix;
-				newModel[3].x = _tempModel[3].x+_position.x;
-				newModel[3].y = _tempModel[3].y+_position.y;
-				newModel[3].z = _tempModel[3].z+_position.z;
-				_shader.loadModelMatrix(newModel);
-				hitBox.draw();//drawing hitboxes
-				
-			}
-			CAPP_GL_CALL(glEnable(GL_CULL_FACE));
-			CAPP_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));//set back to normal draw mode
-		}
-	}
 
 	void RigidBody::addAccel(const glm::vec3& force)
 	{

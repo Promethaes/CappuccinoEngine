@@ -29,16 +29,6 @@ namespace Cappuccino {
 		*/
 		void update(float dt);
 		/*
-		Purp: This function will draw all hitboxes connected to the rigidbody
-		Pre: None
-		Post: None
-		*/
-		void draw();
-		/*
-		setter
-		*/
-		void setViewProjMat(glm::mat4 &view, glm::mat4 &projection) { _view = view; _projection = projection; };
-		/*
 		setter
 		*/
 		void setAccel(const glm::vec3& force);
@@ -126,15 +116,8 @@ namespace Cappuccino {
 		float _velCap = 200;
 		bool _grav = true;
 
-		/*
-		HitBox drawing variables
-		*/
+
 		std::vector<HitBox> _hitBoxes;
-		static bool drawHitBox;//should the hitboxes be drawn
-		static glm::mat4 _view;
-		static glm::mat4 _projection;
-		static Shader _shader;
-		glm::vec4 _shaderColour = glm::vec4(1.0f,0.0f,0.0f,1.0f);
 		
 
 		/*

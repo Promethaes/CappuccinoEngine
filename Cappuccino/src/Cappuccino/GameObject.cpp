@@ -188,8 +188,6 @@ void GameObject::draw()
 				x->unbind(9);
 		}
 	}
-
-	_rigidBody.draw();
 }
 void GameObject::collision(const float dt) {
 	if (_rigidBody._moveable) {
