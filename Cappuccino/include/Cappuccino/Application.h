@@ -56,6 +56,8 @@ namespace Cappuccino {
 		glm::vec4 _clearColour;
 		static Shader* _gBufferShader;
 		static Shader* _lightingPassShader;
+		static Shader* _blurPassShader;
+		static Shader* _ppShader;
 	private:
 
 		void cleanup();

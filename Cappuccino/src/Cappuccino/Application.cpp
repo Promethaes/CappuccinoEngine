@@ -20,6 +20,8 @@ namespace Cappuccino {
 	GLFWwindow* Application::window = nullptr;
 	Shader* Application::_gBufferShader = nullptr;
 	Shader* Application::_lightingPassShader = nullptr;
+	Shader* Application::_blurPassShader = nullptr;
+	Shader* Application::_ppShader = nullptr;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
@@ -157,11 +159,12 @@ namespace Cappuccino {
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 
+
 		//https://learnopengl.com/Advanced-Lighting/Deferred-Shading
 		unsigned gBuffer = 0;
 		glGenFramebuffers(1, &gBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-		unsigned gPos, gNormal, gAlbedo, gMetalRoughnessAO,gEmissive,gDepthStencil;
+		unsigned gPos, gNormal, gAlbedo, gMetalRoughnessAO, gEmissive, gDepthStencil;
 
 		//position
 		glGenTextures(1, &gPos);
@@ -215,8 +218,74 @@ namespace Cappuccino {
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		
-		
+		///END OF G BUFFER
+
+		///HDR BUFFER
+		//https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/7.bloom/bloom.cpp
+		unsigned hdrFrameBuffer = 0;
+		glGenFramebuffers(1, &hdrFrameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
+		unsigned hdrColourBuffer, hdrBrightBuffer, hdrDepthStencil;
+		glEnable(GL_DEPTH_TEST);
+
+		//colour buffer
+		glGenTextures(1, &hdrColourBuffer);
+		glBindTexture(GL_TEXTURE_2D, hdrColourBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hdrColourBuffer, 0);
+
+		//bright buffer
+		glGenTextures(1, &hdrBrightBuffer);
+		glBindTexture(GL_TEXTURE_2D, hdrBrightBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, hdrBrightBuffer, 0);
+
+		unsigned hdrAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+		glDrawBuffers(2, hdrAttachments);
+
+		//glGenRenderbuffers(1, &hdrDepthStencil);
+		//glBindRenderbuffer(GL_RENDERBUFFER, hdrDepthStencil);
+		//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
+		//glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, hdrDepthStencil);
+
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		///HDR BUFFER
+
+		///BLUR BUFFERS
+		unsigned pingpong[2];
+		unsigned pingpongColourBuffers[2];
+		glGenFramebuffers(2, pingpong);
+		glGenTextures(2, pingpongColourBuffers);
+		for (unsigned int i = 0; i < 2; i++)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, pingpong[i]);
+			glBindTexture(GL_TEXTURE_2D, pingpongColourBuffers[i]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColourBuffers[i], 0);
+
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
+
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		///BLUR BUFFERS
 
 		/*
 		Render Loop
@@ -287,16 +356,17 @@ namespace Cappuccino {
 				}
 			}
 			else {
-				
+
 				//geometry pass
 				glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 				for (auto y : GameObjects)
-					if (y->isActive() && y->isVisible()) 
+					if (y->isActive() && y->isVisible())
 						y->gBufferDraw(_gBufferShader);
 
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				//lighting pass into hdr buffer
+				glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
 
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -317,15 +387,38 @@ namespace Cappuccino {
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
 				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, gPos);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, gNormal);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				glActiveTexture(GL_TEXTURE2);
-				glBindTexture(GL_TEXTURE_2D, gAlbedo);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				glActiveTexture(GL_TEXTURE3);
-				glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				glActiveTexture(GL_TEXTURE4);
-				glBindTexture(GL_TEXTURE_2D, gEmissive);
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				//https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/7.bloom/bloom.cpp
+				//blur pass
+				static bool firstRenderPass = true;
+				bool horizontal = true, first = true;
+				unsigned int amount = 10;
+				_blurPassShader->use();
+				if (firstRenderPass)
+					_blurPassShader->setUniform("image", 0);
+				glActiveTexture(GL_TEXTURE0);
+
+				for (unsigned int i = 0; i < amount; i++)
+				{
+					glBindFramebuffer(GL_FRAMEBUFFER, pingpong[horizontal]);
+					_blurPassShader->setUniform("horizontal", horizontal);
+					glBindTexture(GL_TEXTURE_2D, first ? hdrBrightBuffer : pingpongColourBuffers[!horizontal]);
+					glBindVertexArray(quadVAO);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+					horizontal = !horizontal;
+					if (first)
+						first = false;
+				}
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -333,11 +426,28 @@ namespace Cappuccino {
 				glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+				//post processing
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				_ppShader->use();
+				if (firstRenderPass) {
+					_ppShader->setUniform("screenTexture", 0);
+					_ppShader->setUniform("bloomTexture", 1);
+				}
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, hdrColourBuffer);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, pingpongColourBuffers[!horizontal]);
+
+				glBindVertexArray(quadVAO);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
 				for (auto x : UserInterface::_allUI)
 					x->draw();
 				for (auto c : Cubemap::allCubemaps) {
 					c->draw();
 				}
+				firstRenderPass = false;
 			}
 
 
