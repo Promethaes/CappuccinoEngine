@@ -181,7 +181,6 @@ namespace Cappuccino {
 			this->tangs.push_back(tangs[i].z);
 		}
 
-
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);
 
@@ -196,6 +195,7 @@ namespace Cappuccino {
 		glEnableVertexAttribArray(4);
 		glEnableVertexAttribArray(5);
 		glEnableVertexAttribArray(6);
+
 
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		//vertex
@@ -268,7 +268,7 @@ namespace Cappuccino {
 		glBindVertexArray(0);
 		loaded = true;
 	}
-	void Mesh::animationFunction(Mesh& other)
+	void Mesh::animationFunction(Mesh& other, bool shouldPlay)
 	{
 
 		glBindVertexArray(_VAO);
@@ -281,17 +281,21 @@ namespace Cappuccino {
 		glEnableVertexAttribArray(6);
 
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-		//vertex
+		
+
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(verts.size() * sizeof(float)));
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size()) * sizeof(float)));
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size() + norms.size()) * sizeof(float)));
 
+		
 		glBindBuffer(GL_ARRAY_BUFFER, other._VBO);
 
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size()) * sizeof(float)));
 		glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)((texts.size() + verts.size() + norms.size()) * sizeof(float)));
+		
+
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

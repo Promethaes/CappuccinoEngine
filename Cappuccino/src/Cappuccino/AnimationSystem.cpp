@@ -19,13 +19,12 @@ namespace Cappuccino {
 			return;
 		}
 		_animationShader->use();
-		_animationShader->setUniform("shouldPlay",_shouldPlay);
 
 		if (!_shouldPlay)
 			return;
 
 		if (t == 0.0f) 
-			_keyFrames[0]->animationFunction(*_keyFrames[index]);
+			_keyFrames[0]->animationFunction(*_keyFrames[index],_shouldPlay);
 		
 			
 		t += dt * _speed;
