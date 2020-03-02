@@ -190,6 +190,15 @@ void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 				x->bind(10);
 		}
 
+		if (id == std::string("UI")) {
+			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
+		}
+		else {
+			gBufferShader->setUniform("useViewMat", 1);
+			gBufferShader->loadProjectionMatrix(1600.0f, 1000.0f);
+		}
+
 		_transform._transformMat = gBufferShader->loadModelMatrix(_transform._transformMat);
 
 		_meshes[i]->draw();
