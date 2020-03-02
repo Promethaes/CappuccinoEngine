@@ -115,6 +115,61 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
 		return NULL;//we have a problem
 }
 
+GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray, const std::vector<std::string>& ids, bool blackList)
+{
+	std::vector <GameObject*> touched;//all gameobjects that the ray hit
+	std::vector <glm::vec3> locations;//where the ray hit on that object
+	std::vector <float> distances;//the distance of that point from the origin of the ray
+	int objectHitNumber = -1;//if nothing is selected
+	for (auto x : gameObjects)
+		if (x->isActive() && x != this) {
+			if (blackList) {
+				bool nope = false;
+				for (auto y : ids)
+					if (x->id == y) {
+						nope = true;
+						break;
+					}
+				if(!nope)
+					if (x->intersecting(ray)) {//if the object is hit by the ray
+						touched.push_back(x);//add it to the list of hit objects
+						locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
+					}
+			}
+			else
+			{
+				for(auto y : ids)
+					if (x->id == y) {
+						if (x->intersecting(ray)) {//if the object is hit by the ray
+							touched.push_back(x);//add it to the list of hit objects
+							locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
+						}
+						break;
+					}
+			}
+			
+		}
+			
+
+	for (auto x : locations)
+		distances.push_back(glm::length(x));//get the distance from the ray origin to the collision point
+
+	float min = 0.0f;
+
+	for (unsigned i = 0; i < distances.size(); i++) {//for all the lengths
+		if (distances[i] < min || min == 0.0f) {//if the object is closer or the base value is still there
+			min = distances[i];//we have a new minumim
+			objectHitNumber = i;//the object at this position will be the closest hit object
+		}
+	}
+
+	if (objectHitNumber != -1) {//if not base case
+		return touched[objectHitNumber];//return that object
+	}
+	else
+		return NULL;//we have a problem
+}
+
 void GameObject::baseUpdate(float dt) {
 	childUpdate(dt);
 	collision(dt);
