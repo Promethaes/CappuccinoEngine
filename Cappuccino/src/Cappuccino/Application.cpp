@@ -123,7 +123,7 @@ namespace Cappuccino {
 #endif
 
 		glEnable(GL_DEPTH_TEST);
-		//glEnable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		//glEnable(GL_BLEND);
 		//glEnable(GL_SCISSOR_TEST);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -400,6 +400,10 @@ namespace Cappuccino {
 				glBindVertexArray(quadVAO);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
+				glEnable(GL_BLEND);
+				glEnable(GL_SCISSOR_TEST);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 				for (auto x : UserInterface::_allUI)
 					x->draw();
 				for (auto c : Cubemap::allCubemaps) {
@@ -407,7 +411,8 @@ namespace Cappuccino {
 				}
 				firstRenderPass = false;
 			
-
+				glDisable(GL_BLEND);
+				glDisable(GL_SCISSOR_TEST);
 
 #if _DEBUG
 			drawImGui(deltaTime);
