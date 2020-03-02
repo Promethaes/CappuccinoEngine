@@ -13,7 +13,8 @@ namespace Cappuccino {
 		PBRNormal,
 		PBRMetallic,
 		PBRRoughness,
-		PBRAmbientOcc
+		PBRAmbientOcc,
+		PBREmission
 	};
 
 

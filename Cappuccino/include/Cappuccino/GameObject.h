@@ -32,7 +32,6 @@ namespace Cappuccino {
 
 		static Texture* defaultEmission;
 		static Texture* defaultNormal;
-		static Texture* defaultHeight;
 
 		std::string id;
 
@@ -89,6 +88,9 @@ namespace Cappuccino {
 		bool isVisible() const { return _isVisible; }
 
 		void draw();
+
+		//draw function used for the gBuffer
+		void gBufferDraw(Shader* gBufferShader);
 
 		//returns which viewport the object should be drawn in
 		unsigned getViewportNum() { return _viewportNum; }

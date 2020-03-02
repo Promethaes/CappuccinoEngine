@@ -1,5 +1,6 @@
 #pragma once
 #include "Cappuccino/Mesh.h"
+#include "Cappuccino/ShaderProgram.h"
 #include <vector>
 enum class AnimationType {
 	Idle = 0,
@@ -22,28 +23,27 @@ namespace Cappuccino {
 
 		void setLoop(bool yn) { _loop = yn; }
 		void play(float dt);
-		Mesh& getOriginalMesh();
 
 		AnimationType getAnimationType() { return _type; }
 
 		void setSpeed(float speed) { _speed = speed; }
+		bool _shouldPlay = false;
+		
+		static std::vector<Animation*> _allAnimations;
+		Shader* _animationShader;
 	private:
-		bool _shouldPlay = true;
 		bool _loop = false;
 		AnimationType _type;
 		int index = 1;
 		float t = 0.0f;
 		float _speed = 1.0f;
 		std::vector<Mesh*> _keyFrames;
-		std::vector<float> _currentVerts;
-		std::vector<float> _currentTangs;
-		std::vector<float> _currentNorms;
-
-		Mesh _originalMesh;
 	};
 	class Animator {
 	public:
 		Animator();
+
+		void update(float dt);
 
 		/*
 		Purp: add or change an animation to the list AT THE INDEX ACCORDING TO THE ANIMATION TYPE
@@ -56,7 +56,14 @@ namespace Cappuccino {
 		*/
 		void addAnimation(Animation* animation);
 
-		void playAnimation(AnimationType type, float dt);
+		//sets a flag to tell the engine to start playing the animation
+		void playAnimation(AnimationType type);
+
+		//checks if the animation is playing
+		bool isPlaying(AnimationType type);
+
+		//set the animation shader of an animation at index type
+		void setAnimationShader(AnimationType type,Shader* shader);
 
 		/*
 		Purp: deletes an animation at the type given
@@ -69,6 +76,7 @@ namespace Cappuccino {
 		//set the animation speed at the index
 		void setSpeed(AnimationType type, float speed);
 
+		static float _dt;
 	private:
 		bool _playingAnimation = false;
 		std::vector<Animation*> _animations;

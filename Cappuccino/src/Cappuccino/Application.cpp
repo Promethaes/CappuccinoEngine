@@ -18,6 +18,11 @@ namespace Cappuccino {
 
 	bool Application::_instantiated = false;
 	GLFWwindow* Application::window = nullptr;
+	Shader* Application::_gBufferShader = nullptr;
+	Shader* Application::_lightingPassShader = nullptr;
+	Shader* Application::_blurPassShader = nullptr;
+	Shader* Application::_ppShader = nullptr;
+	LUT* Application::_activeLUT = nullptr;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
@@ -117,11 +122,11 @@ namespace Cappuccino {
 		SoundSystem::playSound2D(soundRef, groupRef);
 #endif
 
-		CAPP_GL_CALL(glEnable(GL_DEPTH_TEST));
-		CAPP_GL_CALL(glEnable(GL_CULL_FACE));
-		CAPP_GL_CALL(glEnable(GL_BLEND));
-		CAPP_GL_CALL(glEnable(GL_SCISSOR_TEST));
-		CAPP_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_CULL_FACE);
+		//glEnable(GL_BLEND);
+		//glEnable(GL_SCISSOR_TEST);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		GLfloat lastFrame = 0;
@@ -154,6 +159,135 @@ namespace Cappuccino {
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
+
+
+		//https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+		unsigned gBuffer = 0;
+		glGenFramebuffers(1, &gBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+		unsigned gPos, gNormal, gAlbedo, gMetalRoughnessAO, gEmissive, gDepthStencil;
+
+		//position
+		glGenTextures(1, &gPos);
+		glBindTexture(GL_TEXTURE_2D, gPos);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPos, 0);
+
+		//normals
+		glGenTextures(1, &gNormal);
+		glBindTexture(GL_TEXTURE_2D, gNormal);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+
+		//albedo
+		glGenTextures(1, &gAlbedo);
+		glBindTexture(GL_TEXTURE_2D, gAlbedo);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedo, 0);
+
+		//metallic, roughness, ambient occlusion
+		glGenTextures(1, &gMetalRoughnessAO);
+		glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gMetalRoughnessAO, 0);
+
+		//emissive
+		glGenTextures(1, &gEmissive);
+		glBindTexture(GL_TEXTURE_2D, gEmissive);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, gEmissive, 0);
+
+		unsigned attachments[5] = { GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4 };
+		glDrawBuffers(5, attachments);
+
+		glGenRenderbuffers(1, &gDepthStencil);
+		glBindRenderbuffer(GL_RENDERBUFFER, gDepthStencil);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gDepthStencil);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		///END OF G BUFFER
+
+		///HDR BUFFER
+		//https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/7.bloom/bloom.cpp
+		unsigned hdrFrameBuffer = 0;
+		glGenFramebuffers(1, &hdrFrameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
+		unsigned hdrColourBuffer, hdrBrightBuffer, hdrDepthStencil;
+		glEnable(GL_DEPTH_TEST);
+
+		//colour buffer
+		glGenTextures(1, &hdrColourBuffer);
+		glBindTexture(GL_TEXTURE_2D, hdrColourBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hdrColourBuffer, 0);
+
+		//bright buffer
+		glGenTextures(1, &hdrBrightBuffer);
+		glBindTexture(GL_TEXTURE_2D, hdrBrightBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, hdrBrightBuffer, 0);
+
+		unsigned hdrAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+		glDrawBuffers(2, hdrAttachments);
+
+		//glGenRenderbuffers(1, &hdrDepthStencil);
+		//glBindRenderbuffer(GL_RENDERBUFFER, hdrDepthStencil);
+		//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
+		//glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, hdrDepthStencil);
+
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		///HDR BUFFER
+
+		///BLUR BUFFERS
+		unsigned pingpong[2];
+		unsigned pingpongColourBuffers[2];
+		glGenFramebuffers(2, pingpong);
+		glGenTextures(2, pingpongColourBuffers);
+		for (unsigned int i = 0; i < 2; i++)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, pingpong[i]);
+			glBindTexture(GL_TEXTURE_2D, pingpongColourBuffers[i]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColourBuffers[i], 0);
+
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
+
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		///BLUR BUFFERS
+
 		/*
 		Render Loop
 		*/
@@ -176,62 +310,103 @@ namespace Cappuccino {
 			//for some reason even if i try to do the gl calls manually, nothing renders
 			_viewports[0].use();
 
-			//if there are user defined framebuffers
-			if (!Framebuffer::_framebuffers.empty()) {
-				if (Framebuffer::_overrideCallback != nullptr)
-					Framebuffer::_overrideCallback();
-				else {
-					for (auto k : Framebuffer::_framebuffers) {
+			
 
-						k->bind();
-						glClearColor(_clearColour.x, _clearColour.y, _clearColour.z, _clearColour.w);
-						k->_callback != nullptr ? k->_callback() : 0;
+				//geometry pass
+				glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-						for (auto y : GameObjects) {
-							if (y->isActive() && y->isVisible()) {
-								y->draw();
-							}
-						}
-						for (auto c : Cubemap::allCubemaps) {
-							c->draw();
-						}
-						k->unbind();
-					}
-
-					glClear(GL_COLOR_BUFFER_BIT);
-					Framebuffer::_fbShader->use();
-					for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-						for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-							glActiveTexture(GL_TEXTURE0 + j + i);
-							glBindTexture(GL_TEXTURE_2D, Framebuffer::_framebuffers[i]->getColourBuffers()[j]);
-						}
-					}
-
-					Framebuffer::_fbShader->setUniform("screenTexture", 0);
-					Framebuffer::_fbShader->setUniform("bloom", 1);
-					glBindVertexArray(quadVAO);
-					glDrawArrays(GL_TRIANGLES, 0, 6);
-
-					for (unsigned i = 0; i < Framebuffer::_framebuffers.size(); i++) {
-						for (unsigned j = 0; j < Framebuffer::_framebuffers[i]->getColourBuffers().size(); j++) {
-							glActiveTexture(GL_TEXTURE0 + j + i);
-							glBindTexture(GL_TEXTURE_2D, 0);
-						}
-					}
-					for (auto x : UserInterface::_allUI)
-						x->draw();
-				}
-			}
-			else {
 				for (auto y : GameObjects)
 					if (y->isActive() && y->isVisible())
-						y->draw();
+						y->gBufferDraw(_gBufferShader);
+
+				//lighting pass into hdr buffer
+				glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
+
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				_lightingPassShader->use();
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, gPos);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, gNormal);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, gAlbedo);
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
+				glActiveTexture(GL_TEXTURE4);
+				glBindTexture(GL_TEXTURE_2D, gEmissive);
+
+				glBindVertexArray(quadVAO);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE4);
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				//https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/7.bloom/bloom.cpp
+				//blur pass
+				static bool firstRenderPass = true;
+				bool horizontal = true, first = true;
+				unsigned int amount = 10;
+				_blurPassShader->use();
+				if (firstRenderPass)
+					_blurPassShader->setUniform("image", 0);
+				glActiveTexture(GL_TEXTURE0);
+
+				for (unsigned int i = 0; i < amount; i++)
+				{
+					glBindFramebuffer(GL_FRAMEBUFFER, pingpong[horizontal]);
+					_blurPassShader->setUniform("horizontal", horizontal);
+					glBindTexture(GL_TEXTURE_2D, first ? hdrBrightBuffer : pingpongColourBuffers[!horizontal]);
+					glBindVertexArray(quadVAO);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+					horizontal = !horizontal;
+					if (first)
+						first = false;
+				}
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+				glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+				//post processing
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				_ppShader->use();
+				if (firstRenderPass) {
+					_ppShader->setUniform("screenTexture", 0);
+					_ppShader->setUniform("bloomTexture", 1);
+					_ppShader->setUniform("lookup.LUT", 2);
+				}
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, hdrColourBuffer);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, pingpongColourBuffers[!horizontal]);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_3D, _activeLUT->_textureID);
+
+				glBindVertexArray(quadVAO);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
 				for (auto x : UserInterface::_allUI)
 					x->draw();
 				for (auto c : Cubemap::allCubemaps) {
 					c->draw();
 				}
-			}
+				firstRenderPass = false;
+			
 
 
 #if _DEBUG

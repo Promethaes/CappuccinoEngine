@@ -16,6 +16,15 @@ namespace Cappuccino {
 		*/
 		Mesh(const std::vector<float>& VERTS, const std::vector<float>& TEXTS, const std::vector<float>& NORMS, const std::vector<float>& TANGS);
 
+		Mesh(Mesh& other);
+
+		//MUST HAVE SAME NUMBER OF VERTS AND ALL !!!
+		void animationFunction(Mesh& other,bool shouldPlay);
+		void resetVertAttribPointers();
+
+		//assigns all the members from other to this
+		void assignOperation(Mesh& other);
+
 		/*
 		Purpose: The mesh will be loaded off of the filepath provided in the contructor
 		Req.: None
