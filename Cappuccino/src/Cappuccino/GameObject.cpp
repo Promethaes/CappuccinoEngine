@@ -243,7 +243,6 @@ void GameObject::draw()
 		}
 	}
 
-	_rigidBody.draw();
 }
 void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 {
