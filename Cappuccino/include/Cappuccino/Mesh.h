@@ -20,6 +20,7 @@ namespace Cappuccino {
 
 		//MUST HAVE SAME NUMBER OF VERTS AND ALL !!!
 		void animationFunction(Mesh& other,bool shouldPlay);
+		void resetVertAttribPointers();
 
 		//assigns all the members from other to this
 		void assignOperation(Mesh& other);

@@ -20,8 +20,9 @@ namespace Cappuccino {
 		}
 		_animationShader->use();
 
-		if (!_shouldPlay)
+		if (!_shouldPlay) 
 			return;
+		
 
 		if (t == 0.0f) 
 			_keyFrames[0]->animationFunction(*_keyFrames[index],_shouldPlay);
@@ -39,6 +40,8 @@ namespace Cappuccino {
 				if (!_loop)
 					_shouldPlay = false;
 				index = 1;
+				_keyFrames[0]->resetVertAttribPointers();
+
 			}
 		}
 	}
