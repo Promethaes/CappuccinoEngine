@@ -113,7 +113,7 @@ namespace Cappuccino {
 		glm::vec3 _accel{ 0,0,0 };
 		glm::vec3 _vel{ 0,0,0 };
 		float _accelCap = 200;
-		float _velCap = 200;
+		glm::vec3 _velCap{ 100, 100, 100 };
 		bool _grav = true;
 
 

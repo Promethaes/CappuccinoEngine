@@ -24,8 +24,18 @@ namespace Cappuccino {
 		if (_grav)
 			addAccel(glm::vec3(0.0f, Physics::gravity * dt, 0.0f));	
 
-		if(_velCap<glm::length(_vel))
-			_vel = glm::normalize(_vel)*_velCap;
+		if (_vel.x >= 0)
+			_vel.x = fminf(_velCap.x, _vel.x);
+		else
+			_vel.x = fmaxf(-_velCap.x, _vel.x);
+		if (_vel.y >= 0)
+			_vel.y = fminf(_velCap.y, _vel.y);
+		else
+			_vel.y = fmaxf(-_velCap.y, _vel.y);
+		if (_vel.z >= 0)
+			_vel.z = fminf(_velCap.z, _vel.z);
+		else
+			_vel.z = fmaxf(-_velCap.z, _vel.z);
 
 		if (_accelCap < glm::length(_accel))
 			_accel = glm::normalize(_accel) * _accelCap;
