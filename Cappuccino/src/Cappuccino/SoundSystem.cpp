@@ -247,6 +247,21 @@ namespace Cappuccino {
 	{
 		StudioSound::stopEvent(_events[index], instaStop);
 	}
+	FMOD::Studio::EventInstance* SoundBank::getEvent(unsigned index)
+	{
+		return StudioSound::_events[_events[index]];
+	}
+	bool SoundBank::isEventPlaying(unsigned index)
+	{
+		FMOD_STUDIO_PLAYBACK_STATE f;
+		getEvent(index)->getPlaybackState(&f);
+		if (f == FMOD_STUDIO_PLAYBACK_PLAYING)
+			return true;
+		else if (f == FMOD_STUDIO_PLAYBACK_STOPPED)
+			return false;
+		else
+			return true;
+	}
 	Sound3D::Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup)
 	{
 		_sound = SoundSystem::load3DSound(PATH);

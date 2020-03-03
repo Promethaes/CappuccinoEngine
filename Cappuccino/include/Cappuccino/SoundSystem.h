@@ -162,6 +162,10 @@ namespace Cappuccino {
 		//stops event at index
 		void stopEvent(unsigned index, bool instaStop = false);
 
+		FMOD::Studio::EventInstance* getEvent(unsigned index);
+
+		bool isEventPlaying(unsigned index);
+
 	private:
 		unsigned _bank = 0;
 		std::vector<unsigned> _events;
