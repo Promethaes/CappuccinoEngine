@@ -282,6 +282,10 @@ void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 			gBufferShader->setUniform("useViewMat", 0);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
 		}
+		else if (id == std::string("billboard")) {
+			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->loadOrthoProjectionMatrix(4, 3);
+		}
 		else {
 			gBufferShader->setUniform("useViewMat", 1);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1000.0f);
