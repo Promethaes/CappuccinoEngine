@@ -280,14 +280,22 @@ void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 
 		if (id == std::string("UI")) {
 			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 0);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
 		}
 		else if (id == std::string("billboard")) {
 			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 0);
 			gBufferShader->loadOrthoProjectionMatrix(4, 3);
+		}
+		else if (id == std::string("gun")) {
+			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 1);
+			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
 		}
 		else {
 			gBufferShader->setUniform("useViewMat", 1);
+			gBufferShader->setUniform("isGun", 0);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1000.0f);
 		}
 

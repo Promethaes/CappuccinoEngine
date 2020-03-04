@@ -90,9 +90,9 @@ void Cubemap::draw() const {
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_FALSE);
 
-	bind(0);
+	bind(25);
 	_shader.use();
-	_shader.setUniform("skybox", 0);
+	_shader.setUniform("skybox", 25);
 
 	_cubeMesh->draw();
 
