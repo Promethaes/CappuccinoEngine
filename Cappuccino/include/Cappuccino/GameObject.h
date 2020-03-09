@@ -86,6 +86,8 @@ namespace Cappuccino {
 		bool isActive() const { return _isActive; }
 		void setVisible(const bool yn) { _isVisible = yn; }
 		bool isVisible() const { return _isVisible; }
+		void setPaused(bool yn) { _isPaused = yn; }
+		bool isPaused() const { return _isPaused; }
 
 		void draw();
 
@@ -120,6 +122,7 @@ namespace Cappuccino {
 		bool _loadedMesh = false;
 		bool _isActive = false;
 		bool _isVisible = true;
+		bool _isPaused = false;
 
 
 
