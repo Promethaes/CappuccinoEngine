@@ -70,15 +70,7 @@ project "CappuccinoEngine"
 		"Externals/freetype"
 	}
 	
-	links {
-		"Externals",
-		
-		"imagehlp",
-		"opengl32",
-		"fmod_vc",
-		"fmodstudio_vc.lib",
-		"freetype"
-	}
+	
 	
 	filter "system:windows"
 		systemversion "latest"
@@ -92,8 +84,26 @@ project "CappuccinoEngine"
 		defines { "DEBUG" }
 		runtime "Debug"
 		symbols "on"
+		links {
+			"Externals",
+			
+			"imagehlp",
+			"opengl32",
+			"fmodL_vc",
+			"fmodstudioL_vc.lib",
+			"freetype"
+		}
 
 	filter "configurations:Release"
 		defines { "NDEBUG" }
 		runtime "Release"
 		optimize "on"
+		links {
+			"Externals",
+			
+			"imagehlp",
+			"opengl32",
+			"fmod_vc",
+			"fmodstudio_vc.lib",
+			"freetype"
+		}

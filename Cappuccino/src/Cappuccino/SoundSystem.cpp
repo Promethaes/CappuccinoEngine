@@ -11,7 +11,7 @@ namespace Cappuccino {
 	FMOD_RESULT SoundSystem::_result = FMOD_OK;
 	std::string SoundSystem::_soundPath = "";
 
-	void SoundSystem::init(const std::string& defaultFilePath)
+	void SoundSystem::init(const std::string& defaultFilePath, unsigned numChannels)
 	{
 		//i followed some documentation https://www.fmod.com/resources/documentation-api?version=2.0&page=white-papers-getting-started.html
 		if (!_initialized) {
@@ -20,18 +20,14 @@ namespace Cappuccino {
 			_result = FMOD::System_Create(&_system);
 			checkFmodErrors(_result, "System creation");
 
-			_result = _system->init(512, FMOD_INIT_NORMAL, 0);
+			_result = _system->init(numChannels, FMOD_INIT_NORMAL, 0);
 			checkFmodErrors(_result, "System initialization");
 			_initialized = true;
 
-			//channel 0 is sfx
-			FMOD::Channel* channel = NULL;
-			FMOD::Channel* channel2 = NULL;
-			FMOD::Channel* channel3 = NULL;
-
-			_channels.push_back(channel);
-			_channels.push_back(channel2);
-			_channels.push_back(channel3);
+			for (unsigned i = 0; i < numChannels; i++) {
+				FMOD::Channel* channel = nullptr;
+				_channels.push_back(channel);
+			}
 		}
 	}
 
@@ -78,15 +74,56 @@ namespace Cappuccino {
 		return _channelGroups.size() - 1;
 	}
 
-	void SoundSystem::playSound2D(unsigned soundsIndex, unsigned groupsIndex, ChannelType type)
+	unsigned SoundSystem::playSound2D(unsigned soundsIndex, unsigned groupsIndex)
 	{
-		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex], false, &_channels[(int)type]);
+		//find a free channel for FMOD to use
+		unsigned index = 0;
+		//flag to check if all channels are nullptr
+		bool allNullptr = true;
+
+		//loop through all channels
+		for (unsigned i = 0; i < _channels.size(); i++) {
+			if (_channels[i] != nullptr) {
+				allNullptr = false;
+				bool playing = false;
+
+				//check if the channel is playing a sound, if it isnt then thats our index
+				_channels[i]->isPlaying(&playing);
+				if (!playing)
+					index = i;
+			}
+		}
+		if (allNullptr)
+			index = 0;
+
+		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex], false, &_channels[index]);
 		checkFmodErrors(_result, "Play sound 2D");
+		return index;
 	}
 
-	void SoundSystem::playSound3D(unsigned soundsIndex, unsigned groupsIndex, ChannelType type)
+	void SoundSystem::playSound3D(unsigned soundsIndex, unsigned groupsIndex)
 	{
-		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex],false, &_channels[(int)type]);
+		//find a free channel for FMOD to use
+		unsigned index = 0;
+		//flag to check if all channels are nullptr
+		bool allNullptr = true;
+
+		//loop through all channels
+		for (unsigned i = 0; i < _channels.size(); i++) {
+			if (_channels[i] != nullptr) {
+				allNullptr = false;
+				bool playing = false;
+
+				//check if the channel is playing a sound, if it isnt then thats our index
+				_channels[i]->isPlaying(&playing);
+				if (!playing)
+					index = i;
+			}
+		}
+		if (allNullptr)
+			index = 0;
+
+		_result = _system->playSound(_sounds[soundsIndex], _channelGroups[groupsIndex], false, &_channels[index]);
 		checkFmodErrors(_result, "Play sound 3D");
 	}
 
@@ -113,9 +150,8 @@ namespace Cappuccino {
 			SYS_EXIT(-1);
 		}
 	}
-	Sound::Sound(const std::string& PATH, const std::optional<std::string>& createGroup, SoundSystem::ChannelType type)
+	Sound::Sound(const std::string& PATH, const std::optional<std::string>& createGroup)
 	{
-		_type = type;
 		_sound = SoundSystem::load2DSound(PATH);
 		if (createGroup.has_value())
 			_group = SoundSystem::createChannelGroup(createGroup.value());
@@ -126,7 +162,7 @@ namespace Cappuccino {
 	}
 	void Sound::play()
 	{
-		SoundSystem::playSound2D(_sound, _group, _type);
+		_channel = SoundSystem::playSound2D(_sound, _group);
 	}
 
 	//studio sound
@@ -181,7 +217,8 @@ namespace Cappuccino {
 	}
 	void StudioSound::playEvent(unsigned handle)
 	{
-		_events[handle]->start();
+		FMOD_RESULT r =_events[handle]->start();
+		checkFmodErrors(r, "playing event " + std::to_string(handle));
 	}
 	void StudioSound::stopEvent(unsigned handle, bool stopInstant)
 	{
@@ -211,22 +248,35 @@ namespace Cappuccino {
 	{
 		StudioSound::stopEvent(_events[index], instaStop);
 	}
-	Sound3D::Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup, SoundSystem::ChannelType type)
-		:_type(type)
+	FMOD::Studio::EventInstance* SoundBank::getEvent(unsigned index)
 	{
-		_type = type;
+		return StudioSound::_events[_events[index]];
+	}
+	bool SoundBank::isEventPlaying(unsigned index)
+	{
+		FMOD_STUDIO_PLAYBACK_STATE f;
+		getEvent(index)->getPlaybackState(&f);
+		if (f == FMOD_STUDIO_PLAYBACK_PLAYING)
+			return true;
+		else if (f == FMOD_STUDIO_PLAYBACK_STOPPED)
+			return false;
+		else
+			return true;
+	}
+	Sound3D::Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup)
+	{
 		_sound = SoundSystem::load3DSound(PATH);
 		if (createGroup.has_value())
 			_group = SoundSystem::createChannelGroup(createGroup.value());
 	}
 	void Sound3D::play()
 	{
-		SoundSystem::playSound3D(_sound, _group, SoundSystem::ChannelType::SoundEffect);
+		SoundSystem::playSound3D(_sound, _group);
 	}
 	void Sound3D::SetChannelPosition(glm::vec3& pos)
 	{
 		FMOD_VECTOR p = glmToFmod(pos);
-		SoundSystem::_channels[(int)_type]->set3DAttributes(&p, NULL);
+		//SoundSystem::_channels[(int)_type]->set3DAttributes(&p, NULL);
 	}
 	FMOD_VECTOR& glmToFmod(glm::vec3& v)
 	{

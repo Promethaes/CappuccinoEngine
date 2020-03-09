@@ -23,6 +23,7 @@ namespace Cappuccino {
 	Shader* Application::_blurPassShader = nullptr;
 	Shader* Application::_ppShader = nullptr;
 	LUT* Application::_activeLUT = nullptr;
+	bool Application::_useDeferred = true;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
@@ -50,6 +51,7 @@ namespace Cappuccino {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _contextVersionMinor);
 		//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_SAMPLES, 16);
 
 		window = glfwCreateWindow(_width, _height, _title.c_str(), NULL, NULL);
 
@@ -210,11 +212,13 @@ namespace Cappuccino {
 		unsigned attachments[5] = { GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4 };
 		glDrawBuffers(5, attachments);
 
-		glGenRenderbuffers(1, &gDepthStencil);
-		glBindRenderbuffer(GL_RENDERBUFFER, gDepthStencil);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gDepthStencil);
+		glGenTextures(1, &gDepthStencil);
+		glBindTexture(GL_TEXTURE_2D, gDepthStencil);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, _width, _height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, gDepthStencil, 0);
+
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			printf("ERROR: FRAMEBUFFER NOT COMPLETE\n");
@@ -232,9 +236,9 @@ namespace Cappuccino {
 		//colour buffer
 		glGenTextures(1, &hdrColourBuffer);
 		glBindTexture(GL_TEXTURE_2D, hdrColourBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hdrColourBuffer, 0);
@@ -242,9 +246,9 @@ namespace Cappuccino {
 		//bright buffer
 		glGenTextures(1, &hdrBrightBuffer);
 		glBindTexture(GL_TEXTURE_2D, hdrBrightBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, _width, _height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, hdrBrightBuffer, 0);
@@ -310,7 +314,17 @@ namespace Cappuccino {
 			//for some reason even if i try to do the gl calls manually, nothing renders
 			_viewports[0].use();
 
-			
+			if (!_useDeferred) {
+				for (auto y : GameObjects)
+					if (y->isActive() && y->isVisible())
+						y->draw();
+				for (auto x : UserInterface::_allUI)
+					x->draw();
+				for (auto c : Cubemap::allCubemaps) {
+					c->draw();
+				}
+			}
+			else {
 
 				//geometry pass
 				glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -404,15 +418,29 @@ namespace Cappuccino {
 				glEnable(GL_SCISSOR_TEST);
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, 0);
+
 				for (auto x : UserInterface::_allUI)
 					x->draw();
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, gDepthStencil);
 				for (auto c : Cubemap::allCubemaps) {
 					c->draw();
 				}
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, 0);
+
 				firstRenderPass = false;
-			
+
 				glDisable(GL_BLEND);
 				glDisable(GL_SCISSOR_TEST);
+			}
 
 #if _DEBUG
 			drawImGui(deltaTime);

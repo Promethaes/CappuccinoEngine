@@ -7,7 +7,7 @@ std::vector<GameObject*> GameObject::gameObjects = {};
 
 Texture* GameObject::defaultEmission = nullptr;
 Texture* GameObject::defaultNormal = nullptr;
-
+//
 GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass, const unsigned viewportNum) :
 	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1), _shader(_shader) {
 	_viewportNum = viewportNum;
@@ -280,10 +280,22 @@ void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 
 		if (id == std::string("UI")) {
 			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 0);
+			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
+		}
+		else if (id == std::string("billboard")) {
+			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 0);
+			gBufferShader->loadOrthoProjectionMatrix(4, 3);
+		}
+		else if (id == std::string("gun")) {
+			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 1);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
 		}
 		else {
 			gBufferShader->setUniform("useViewMat", 1);
+			gBufferShader->setUniform("isGun", 0);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1000.0f);
 		}
 
