@@ -141,11 +141,11 @@ namespace Cappuccino {
 
 		static std::vector<FMOD::Studio::Bank*> _banks;
 		static std::vector<FMOD::Studio::EventInstance*> _events;
+		static FMOD::Studio::System* _system;
 	private:
 		static bool _initialized;
 		static FMOD_RESULT _result;
 		static std::string _soundPath;
-		static FMOD::Studio::System* _system;
 	};
 
 	//uses Fmod studio API, uses a bank

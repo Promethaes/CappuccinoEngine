@@ -217,7 +217,8 @@ namespace Cappuccino {
 	}
 	void StudioSound::playEvent(unsigned handle)
 	{
-		_events[handle]->start();
+		FMOD_RESULT r =_events[handle]->start();
+		checkFmodErrors(r, "playing event " + std::to_string(handle));
 	}
 	void StudioSound::stopEvent(unsigned handle, bool stopInstant)
 	{

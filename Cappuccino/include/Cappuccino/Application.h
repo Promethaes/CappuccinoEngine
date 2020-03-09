@@ -60,6 +60,8 @@ namespace Cappuccino {
 		static Shader* _blurPassShader;
 		static Shader* _ppShader;
 		static LUT* _activeLUT;
+
+		static bool _useDeferred;
 	private:
 
 		void cleanup();
