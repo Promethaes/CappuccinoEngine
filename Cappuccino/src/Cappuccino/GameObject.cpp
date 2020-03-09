@@ -165,6 +165,9 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray, const std:
 }
 
 void GameObject::baseUpdate(float dt) {
+	if (_isPaused)
+		return;
+	
 	childUpdate(dt);
 	collision(dt);
 	_rigidBody.update(dt);
