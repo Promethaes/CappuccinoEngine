@@ -132,4 +132,4 @@ namespace Cappuccino {
 		*/
 		void loadMesh();
 	};
-}
+};
