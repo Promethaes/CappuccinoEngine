@@ -7,11 +7,11 @@ std::vector<GameObject*> GameObject::gameObjects = {};
 
 Texture* GameObject::defaultEmission = nullptr;
 Texture* GameObject::defaultNormal = nullptr;
-
+//
 GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass, const unsigned viewportNum) :
 	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1), _shader(_shader) {
 	_viewportNum = viewportNum;
-	
+
 	this->_textures = textures;
 	this->_meshes = _meshs;
 
@@ -37,7 +37,7 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 		_textures.push_back(defaultEmission);
 	if (!hasNormal)
 		_textures.push_back(defaultNormal);
-	
+
 
 	loadTextures();
 	loadMesh();
@@ -89,8 +89,8 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
 					locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
 				}
 			}
-			
-	for (auto x : locations) 
+
+	for (auto x : locations)
 		distances.push_back(glm::length(x));//get the distance from the ray origin to the collision point
 
 	float min = 0.0f;
@@ -101,7 +101,7 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
 			objectHitNumber = i;//the object at this position will be the closest hit object
 		}
 	}
-	
+
 	if (objectHitNumber != -1) {//if not base case
 		return touched[objectHitNumber];//return that object
 	}
@@ -124,7 +124,7 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray, const std:
 						nope = true;
 						break;
 					}
-				if(!nope)
+				if (!nope)
 					if (x->intersecting(ray)) {//if the object is hit by the ray
 						touched.push_back(x);//add it to the list of hit objects
 						locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
@@ -132,7 +132,7 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray, const std:
 			}
 			else
 			{
-				for(auto y : ids)
+				for (auto y : ids)
 					if (x->id == y) {
 						if (x->intersecting(ray)) {//if the object is hit by the ray
 							touched.push_back(x);//add it to the list of hit objects
@@ -141,9 +141,9 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray, const std:
 						break;
 					}
 			}
-			
+
 		}
-			
+
 
 	for (auto x : locations)
 		distances.push_back(glm::length(x));//get the distance from the ray origin to the collision point
@@ -165,6 +165,9 @@ GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray, const std:
 }
 
 void GameObject::baseUpdate(float dt) {
+	if (_isPaused)
+		return;
+
 	childUpdate(dt);
 	collision(dt);
 	_rigidBody.update(dt);
@@ -181,7 +184,7 @@ void GameObject::draw()
 	//set active shader
 	glUseProgram(_shader.getID());
 
-	for (unsigned i = 0; i < _meshes.size();i++) {
+	for (unsigned i = 0; i < _meshes.size(); i++) {
 
 		//bind the textures to their proper slots
 		for (auto x : _textures) {
@@ -213,9 +216,9 @@ void GameObject::draw()
 		}
 
 		_transform._transformMat = _shader.loadModelMatrix(_transform._transformMat);
-		
+
 		_meshes[i]->draw();
-		
+
 		//unloads the textures
 		for (auto x : _textures) {
 			if (x->type == TextureType::DiffuseMap)
@@ -280,17 +283,34 @@ void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 
 		if (id == std::string("UI")) {
 			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 0);
+			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
+		}
+		else if (id == std::string("billboard")) {
+			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 0);
+			gBufferShader->loadOrthoProjectionMatrix(4, 3);
+		}
+		else if (id == std::string("gun")) {
+			gBufferShader->setUniform("useViewMat", 0);
+			gBufferShader->setUniform("isGun", 1);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1200.0f);
 		}
 		else {
 			gBufferShader->setUniform("useViewMat", 1);
+			gBufferShader->setUniform("isGun", 0);
 			gBufferShader->loadProjectionMatrix(1600.0f, 1000.0f);
 		}
+
+		if (_animator._currentT > -1.0f)
+			gBufferShader->setUniform("dt", _animator._currentT);
+		else
+			gBufferShader->setUniform("dt",0.0f);
 
 		_transform._transformMat = gBufferShader->loadModelMatrix(_transform._transformMat);
 
 		_meshes[i]->draw();
-	
+
 		for (auto x : _textures) {
 			if (x->type == TextureType::DiffuseMap)
 				x->unbind(0);
@@ -342,7 +362,7 @@ void GameObject::collision(const float dt) {
 					}
 				}
 				else if (_rigidBody._projectile) {
-					if (!x->_rigidBody._projectile&&!x->_rigidBody._creature) {
+					if (!x->_rigidBody._projectile && !x->_rigidBody._creature) {
 						if (checkCollision(x)) {
 							_rigidBody._hitWall = true;
 						}
@@ -373,7 +393,7 @@ void GameObject::loadMesh() {
 					continue;
 				return;
 			}
-			
+
 			return;
 		}
 		_loadedMesh = true;

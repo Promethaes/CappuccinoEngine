@@ -20,17 +20,11 @@ namespace Cappuccino {
 	class SoundSystem {
 	public:
 
-		enum class ChannelType {
-			SoundEffect = 0,
-			SoundEffect2,
-			Music
-		};
-
 		/*
 		Purp: initialize the sound system
 		Req: default path for sound files eg. Assets/Sounds/
 		*/
-		static void init(const std::string& defaultFilePath);
+		static void init(const std::string& defaultFilePath, unsigned numChannels = 512);
 
 		/*
 		Purp: load a 2D sound into memory
@@ -58,10 +52,10 @@ namespace Cappuccino {
 		Purp: play a 2D sound at the provided indicies
 		Req: index to the proper sounds and group
 		*/
-		static void playSound2D(unsigned soundsIndex, unsigned groupsIndex, ChannelType type);
+		static unsigned playSound2D(unsigned soundsIndex, unsigned groupsIndex);
 
 		//play a 3D sound at index
-		static void playSound3D(unsigned soundsIndex, unsigned groupsIndex, ChannelType type);
+		static void playSound3D(unsigned soundsIndex, unsigned groupsIndex);
 		
 		static void setDefaultPath(const std::string& defaultFilePath) { _soundPath = defaultFilePath; }
 
@@ -94,7 +88,7 @@ namespace Cappuccino {
 	class Sound {
 	public:
 		Sound() = default;
-		Sound(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt, SoundSystem::ChannelType type = SoundSystem::ChannelType::SoundEffect);
+		Sound(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt);
 		Sound(unsigned soundHandle, unsigned groupHandle);
 
 		//default play function, uses default sound manager play
@@ -106,14 +100,14 @@ namespace Cappuccino {
 		unsigned getSoundHandle() const { return _sound; }
 		unsigned getGroupHandle() const { return _group; }
 	private:
-		unsigned _sound = 0, _group = 0;
-		SoundSystem::ChannelType _type;
+		unsigned _sound = 0, _group = 0,_channel = 0;
+		
 	};
 
 	class Sound3D {
 	public:
 		Sound3D() = default;
-		Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt, SoundSystem::ChannelType type = SoundSystem::ChannelType::SoundEffect);
+		Sound3D(const std::string& PATH, const std::optional<std::string>& createGroup = std::nullopt);
 
 		//default play function, uses default sound manager play
 		void play();
@@ -128,7 +122,7 @@ namespace Cappuccino {
 	private:
 		glm::vec3 _position;
 		unsigned _sound = 0, _group = 0;
-		SoundSystem::ChannelType _type;
+	
 	};
 
 	//High level FMOD,inspiration from gamesound goop
@@ -147,11 +141,11 @@ namespace Cappuccino {
 
 		static std::vector<FMOD::Studio::Bank*> _banks;
 		static std::vector<FMOD::Studio::EventInstance*> _events;
+		static FMOD::Studio::System* _system;
 	private:
 		static bool _initialized;
 		static FMOD_RESULT _result;
 		static std::string _soundPath;
-		static FMOD::Studio::System* _system;
 	};
 
 	//uses Fmod studio API, uses a bank
@@ -167,6 +161,10 @@ namespace Cappuccino {
 
 		//stops event at index
 		void stopEvent(unsigned index, bool instaStop = false);
+
+		FMOD::Studio::EventInstance* getEvent(unsigned index);
+
+		bool isEventPlaying(unsigned index);
 
 	private:
 		unsigned _bank = 0;
