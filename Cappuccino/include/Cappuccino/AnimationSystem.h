@@ -76,6 +76,9 @@ namespace Cappuccino {
 		//set the animation speed at the index
 		void setSpeed(AnimationType type, float speed);
 
+		//return whether or not an animation exists at the index
+		bool animationExists(AnimationType type);
+
 		static float _dt;
 		float _currentT = 0.0f;
 	private:
