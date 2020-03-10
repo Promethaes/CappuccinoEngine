@@ -12,16 +12,16 @@ namespace Cappuccino {
 		_keyFrames = keyFrames;
 		_allAnimations.push_back(this);
 	}
-	void Animation::play(float dt)
+	float Animation::play(float dt)
 	{
 		if (_animationShader == nullptr) {
 			printf("Animation shader not set! animations cannot be played!\n");
-			return;
+			return -1.0f;
 		}
 		_animationShader->use();
 
 		if (!_shouldPlay) 
-			return;
+			return -1.0f;
 		
 
 		if (t == 0.0f) 
@@ -29,7 +29,7 @@ namespace Cappuccino {
 		
 			
 		t += dt * _speed;
-		_animationShader->setUniform("dt",t);
+		//_animationShader->setUniform("dt",t);
 
 		if (t >= 1.0f) {
 			t = 0.0f;
@@ -44,6 +44,7 @@ namespace Cappuccino {
 
 			}
 		}
+		return t;
 	}
 	
 	float Animator::_dt = 0.0f;
@@ -56,8 +57,10 @@ namespace Cappuccino {
 	{
 		_dt = dt;
 		for (auto x : _animations) {
-			if (x != nullptr && x->_shouldPlay)
-				x->play(dt);
+			if (x != nullptr && x->_shouldPlay) {
+				_currentT = x->play(dt);
+				break;
+			}
 		}
 	}
 	void Animator::addAnimation(Animation* animation)

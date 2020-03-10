@@ -22,7 +22,7 @@ namespace Cappuccino {
 		Animation(const std::vector<Mesh*>& keyFrames, AnimationType type);
 
 		void setLoop(bool yn) { _loop = yn; }
-		void play(float dt);
+		float play(float dt);
 
 		AnimationType getAnimationType() { return _type; }
 
@@ -31,11 +31,11 @@ namespace Cappuccino {
 		
 		static std::vector<Animation*> _allAnimations;
 		Shader* _animationShader;
+		float t = 0.0f;
 	private:
 		bool _loop = false;
 		AnimationType _type;
 		int index = 1;
-		float t = 0.0f;
 		float _speed = 1.0f;
 		std::vector<Mesh*> _keyFrames;
 	};
@@ -77,6 +77,7 @@ namespace Cappuccino {
 		void setSpeed(AnimationType type, float speed);
 
 		static float _dt;
+		float _currentT = 0.0f;
 	private:
 		bool _playingAnimation = false;
 		std::vector<Animation*> _animations;
