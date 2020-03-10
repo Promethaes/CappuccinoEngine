@@ -87,18 +87,19 @@ const Shader& Cubemap::getShader() const { return _shader; }
 
 void Cubemap::draw() const {
 	glDisable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_FALSE);
 
 	_shader.use();
-	_shader.setUniform("dBuffer", 0);
-	bind(1);
-	_shader.setUniform("skybox", 1);
+	bind(0);
+	_shader.setUniform("skybox", 0);
 
 	_cubeMesh->draw();
 
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
+	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 }
 

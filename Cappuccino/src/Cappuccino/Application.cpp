@@ -256,11 +256,11 @@ namespace Cappuccino {
 		unsigned hdrAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 		glDrawBuffers(2, hdrAttachments);
 
-		//glGenRenderbuffers(1, &hdrDepthStencil);
-		//glBindRenderbuffer(GL_RENDERBUFFER, hdrDepthStencil);
-		//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
-		//glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, hdrDepthStencil);
+		glGenRenderbuffers(1, &hdrDepthStencil);
+		glBindRenderbuffer(GL_RENDERBUFFER, hdrDepthStencil);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, hdrDepthStencil);
 
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -326,46 +326,83 @@ namespace Cappuccino {
 			}
 			else {
 
+				// Clear main buffer
+				glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+				// Settings for pre rendering
+				glEnable(GL_DEPTH_TEST);
+				glEnable(GL_CULL_FACE);
+				glDisable(GL_BLEND);
+
+				// TODO: SHADOW MAPPING HERE
+
+				
+
 				//geometry pass
 				glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glViewport(0, 0, _width, _height);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 				for (auto y : GameObjects)
 					if (y->isActive() && y->isVisible())
 						y->gBufferDraw(_gBufferShader);
 
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+				glDisable(GL_DEPTH_TEST);
+				glDisable(GL_CULL_FACE);
+
 				//lighting pass into hdr buffer
 				glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
+				{
+					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+					_lightingPassShader->use();
 
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, gPos);
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, gNormal);
+					glActiveTexture(GL_TEXTURE2);
+					glBindTexture(GL_TEXTURE_2D, gAlbedo);
+					glActiveTexture(GL_TEXTURE3);
+					glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
+					glActiveTexture(GL_TEXTURE4);
+					glBindTexture(GL_TEXTURE_2D, gEmissive);
 
-				_lightingPassShader->use();
+					glBindVertexArray(quadVAO);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
 
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, gPos);
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, gNormal);
-				glActiveTexture(GL_TEXTURE2);
-				glBindTexture(GL_TEXTURE_2D, gAlbedo);
-				glActiveTexture(GL_TEXTURE3);
-				glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
-				glActiveTexture(GL_TEXTURE4);
-				glBindTexture(GL_TEXTURE_2D, gEmissive);
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glActiveTexture(GL_TEXTURE2);
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glActiveTexture(GL_TEXTURE3);
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glActiveTexture(GL_TEXTURE4);
+					glBindTexture(GL_TEXTURE_2D, 0);
+				}
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-				glBindVertexArray(quadVAO);
-				glDrawArrays(GL_TRIANGLES, 0, 6);
+				// Copy depth info into accumulation buffer
+				{
+					glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+					glBindFramebuffer(GL_DRAW_FRAMEBUFFER, hdrFrameBuffer);
 
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE2);
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE3);
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE4);
-				glBindTexture(GL_TEXTURE_2D, 0);
+					glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
+					glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				}
+
+				// Draw skybox
+				glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
+				for(auto c : Cubemap::allCubemaps) {
+					c->draw();
+				}
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				
 				//https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/7.bloom/bloom.cpp
 				//blur pass
 				static bool firstRenderPass = true;
@@ -392,7 +429,7 @@ namespace Cappuccino {
 				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-				glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+				
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 				//post processing
@@ -427,14 +464,6 @@ namespace Cappuccino {
 
 				for (auto x : UserInterface::_allUI)
 					x->draw();
-
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, gDepthStencil);
-				for (auto c : Cubemap::allCubemaps) {
-					c->draw();
-				}
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, 0);
 
 				firstRenderPass = false;
 
