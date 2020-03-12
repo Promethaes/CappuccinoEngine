@@ -21,8 +21,8 @@ echo CappuccinoPath set to "%folder%"
 echo.
 echo Setting up Cappuccino Engine...
 echo.
-call %folder%\Premake\premake5.exe --file="%folder%\premake5.lua" vs2019
-call %~dp0..\"Cappuccino Engine.sln"
+call "%folder%\Premake\premake5.exe" --file="%folder%\premake5.lua" vs2019
+call "%~dp0..\Cappuccino Engine.sln"
 
 echo.
 echo Setup complete.
