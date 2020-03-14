@@ -19,7 +19,7 @@ UserInterface::UserInterface()
 
 void UserInterface::update(const float dt)
 {
-	for(int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
+	for (int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
 		_uiComponents[i]->updateComponent(dt);
 	}
 
@@ -27,7 +27,7 @@ void UserInterface::update(const float dt)
 
 void UserInterface::draw()
 {
-	for(int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
+	for (int i = static_cast<int>(_uiComponents.size() - 1); i >= 0; --i) {
 		_uiComponents[i]->drawComponent();
 	}
 }
@@ -48,7 +48,7 @@ void UIText::drawComponent()
 UIBar::UIBar(const glm::vec2& defaultPosition, const glm::vec4& defaultColour, const glm::vec3& barDimensions, OriginPoint point)
 {
 	_barShader = *ShaderLibrary::loadShader("DefaultBarUI", "screenSpaceModel.vert", "screenSpace.frag");
-	
+
 	_colour = defaultColour;
 	_position = defaultPosition;
 	_transform.translate(glm::vec3(_position.x, _position.y, 0));
@@ -79,11 +79,68 @@ void UIBar::drawComponent()
 	_barShader.use();
 
 	_barShader.setUniform("colour", _colour);
-	_barShader.loadOrthoProjectionMatrix(1600.0f / 20, 1200.0f / 20);
+	_barShader.loadOrthoProjectionMatrix(1600.0f/20, 1200.0f/20);
 
 
 	_barShader.loadModelMatrix(_transform._transformMat);
 
 	_barMesh->draw();
 
+}
+
+Cappuccino::UIScreenQuad::UIScreenQuad(const std::vector<Cappuccino::Texture*>& textures)
+{
+	_quadShader = *ShaderLibrary::loadShader("DefaultUIQuad", "UIQuad.vert", "UIQuad.frag");
+	_quadTextures = textures;
+
+	_quadShader.use();
+	_quadShader.setUniform("quadTexture1", 0);
+	_quadShader.setUniform("quadTexture2", 1);
+	_quadShader.setUniform("quadTexture3", 2);
+	_quadShader.setUniform("quadTexture4", 3);
+
+	float quadVertices[] = {
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+}
+
+void Cappuccino::UIScreenQuad::drawComponent()
+{
+	if (!isVisible())
+		return;
+	glDisable(GL_DEPTH_TEST);
+	_quadShader.use();
+	
+	for (unsigned i = 0; i < _quadTextures.size(); i++) 
+		_quadTextures[i]->bind(i);
+	
+
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	_quadTextures.back()->unbind(0);
+	_quadTextures.back()->unbind(1);
+	_quadTextures.back()->unbind(2);
+	_quadTextures.back()->unbind(3);
+	
+	glEnable(GL_DEPTH_TEST);
 }

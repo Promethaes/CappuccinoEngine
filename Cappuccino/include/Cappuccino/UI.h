@@ -1,6 +1,7 @@
 #pragma once
 #include "Cappuccino/FontManager.h"
 #include "Cappuccino/Transform.h"
+#include "Cappuccino/Texture.h"
 #include <vector>
 
 namespace Cappuccino {
@@ -84,5 +85,20 @@ namespace Cappuccino {
 		Shader _barShader;
 		bool _scaleFromRight;
 		Mesh* _barMesh;
+	};
+
+	class UIScreenQuad : public UIComponent {
+	public:
+
+		UIScreenQuad(const std::vector<Cappuccino::Texture*>& textures);
+
+		//void updateComponent(float dt) override;
+		void drawComponent() override;
+
+	private:
+		Shader _quadShader;
+		unsigned quadVAO, quadVBO;
+		std::vector<Cappuccino::Texture*> _quadTextures;
+
 	};
 }
