@@ -15,7 +15,7 @@ namespace Cappuccino {
 
 	class GameObject {
 	public:
-		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs, const std::optional<float>& mass = std::nullopt,unsigned viewportNum = 0);
+		GameObject(const Shader& SHADER, const std::vector<Texture*>& textures, const std::vector<Mesh*>& meshs, const std::optional<float>& mass = std::nullopt, unsigned viewportNum = 0);
 		virtual ~GameObject();
 		/*
 		Purp: wrapper class to call child update
@@ -48,7 +48,7 @@ namespace Cappuccino {
 		Pre: another GameObject
 		Post: a boolean true if they will collide
 		*/
-		bool willCollide(GameObject* other,const glm::vec3& direction, float dt);
+		bool willCollide(GameObject* other, const glm::vec3& direction, float dt);
 
 		/*
 		Purp: To check collision between a GameObject and hitbox
@@ -61,7 +61,7 @@ namespace Cappuccino {
 		Pre: a hitbox
 		Post: a boolean true if they will collide
 		*/
-		bool willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos,float dt);
+		bool willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, float dt);
 		/*
 		Purp: Check if a ray is intersecting with cube hitboxes
 		Req: A ray
@@ -70,7 +70,7 @@ namespace Cappuccino {
 		bool intersecting(const Ray& ray);
 		/*
 		Purp: to see what gameobject the ray hits first
-		Pre: a ray 
+		Pre: a ray
 		Post: what GameObject it hits first
 		*/
 		GameObject* getFirstIntersect(const Ray& ray);
@@ -80,7 +80,7 @@ namespace Cappuccino {
 		Pre: a ray, a vector of ids to ignore or only look for, a bool(true for blacklist, false for whitelist)
 		Post: what GameObject it hits first
 		*/
-		GameObject* getFirstIntersect(const Ray& ray,const std::vector<std::string>& ids,bool blackList);
+		GameObject* getFirstIntersect(const Ray& ray, const std::vector<std::string>& ids, bool blackList);
 
 		void setActive(const bool yn) { _isActive = yn; }
 		bool isActive() const { return _isActive; }
@@ -88,7 +88,8 @@ namespace Cappuccino {
 		bool isVisible() const { return _isVisible; }
 		void setPaused(bool yn) { _isPaused = yn; }
 		bool isPaused() const { return _isPaused; }
-
+		void setClose(bool yn) { _shouldClose = yn; }
+		bool getClose() const { return _shouldClose; }
 		void draw();
 
 		//draw function used for the gBuffer
@@ -123,6 +124,7 @@ namespace Cappuccino {
 		bool _isActive = false;
 		bool _isVisible = true;
 		bool _isPaused = false;
+		bool _shouldClose = false;
 
 
 

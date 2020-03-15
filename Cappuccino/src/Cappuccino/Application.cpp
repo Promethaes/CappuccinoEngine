@@ -315,9 +315,13 @@ namespace Cappuccino {
 			_viewports[0].use();
 
 			if (!_useDeferred) {
-				for (auto y : GameObjects)
+				for (auto y : GameObjects) {
 					if (y->isActive() && y->isVisible())
 						y->draw();
+					// this feels like a terrible way to do it
+					if (y->getClose())
+						glfwSetWindowShouldClose(window, true);
+				}
 				for (auto x : UserInterface::_allUI)
 					x->draw();
 				for (auto c : Cubemap::allCubemaps) {
@@ -337,17 +341,20 @@ namespace Cappuccino {
 
 				// TODO: SHADOW MAPPING HERE
 
-				
+
 
 				//geometry pass
 				glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 				glViewport(0, 0, _width, _height);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-				for (auto y : GameObjects)
+				for (auto y : GameObjects) {
 					if (y->isActive() && y->isVisible())
 						y->gBufferDraw(_gBufferShader);
-
+					// this feels like a terrible way to do it
+					if (y->getClose())
+						glfwSetWindowShouldClose(window, true);
+				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 				glDisable(GL_DEPTH_TEST);
@@ -398,11 +405,11 @@ namespace Cappuccino {
 
 				// Draw skybox
 				glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
-				for(auto c : Cubemap::allCubemaps) {
+				for (auto c : Cubemap::allCubemaps) {
 					c->draw();
 				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-				
+
 				//https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/7.bloom/bloom.cpp
 				//blur pass
 				static bool firstRenderPass = true;
@@ -429,7 +436,7 @@ namespace Cappuccino {
 				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-				
+
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 				//post processing

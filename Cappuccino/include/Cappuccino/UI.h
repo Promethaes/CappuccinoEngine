@@ -75,6 +75,7 @@ namespace Cappuccino {
 		void setShader(const Shader& newShader) { _barShader = newShader; }
 		void setScaleFromRight(bool yn) { _scaleFromRight = yn; }
 		void setPosition(const glm::vec2& newPosition) { _position = newPosition; }
+		void setColour(const glm::vec4& newColour) { _colour = newColour; }
 		Transform _transform;
 
 		glm::vec3& getBarDimensions() { return _barDimensions; }
