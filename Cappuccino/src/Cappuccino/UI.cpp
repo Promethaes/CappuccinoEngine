@@ -79,7 +79,7 @@ void UIBar::drawComponent()
 	_barShader.use();
 
 	_barShader.setUniform("colour", _colour);
-	_barShader.loadOrthoProjectionMatrix(1600.0f/20, 1200.0f/20);
+	_barShader.loadOrthoProjectionMatrix(1600.0f,1000.0f);
 
 
 	_barShader.loadModelMatrix(_transform._transformMat);
