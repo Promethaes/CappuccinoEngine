@@ -20,6 +20,8 @@
 
 #include <string>
 
+#include "PointLight.h"
+
 namespace Cappuccino {
 
 	class Viewport {
@@ -34,6 +36,9 @@ namespace Cappuccino {
 	};
 
 	class Application {
+
+		using LightVector = std::vector<PointLight>;
+		
 	public:
 
 		Application();
@@ -55,12 +60,15 @@ namespace Cappuccino {
 		static GLFWwindow* window;
 
 		glm::vec4 _clearColour;
+		static Shader* _shadowMappingShader;
 		static Shader* _gBufferShader;
 		static Shader* _lightingPassShader;
 		static Shader* _blurPassShader;
 		static Shader* _ppShader;
 		static LUT* _activeLUT;
 
+		static LightVector allLights;
+		
 		static bool _useDeferred;
 	private:
 

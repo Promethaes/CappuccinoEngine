@@ -7,7 +7,7 @@ std::vector<GameObject*> GameObject::gameObjects = {};
 
 Texture* GameObject::defaultEmission = nullptr;
 Texture* GameObject::defaultNormal = nullptr;
-//
+
 GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textures, const std::vector<Mesh*>& _meshs, const std::optional<float>& mass, const unsigned viewportNum) :
 	_rigidBody(glm::vec3(_transform._translateMat[3].x, _transform._translateMat[3].y, _transform._translateMat[3].z), mass.has_value() ? mass.value() : 1), _shader(_shader) {
 	_viewportNum = viewportNum;
@@ -26,7 +26,8 @@ GameObject::GameObject(const Shader& _shader, const std::vector<Texture*>& textu
 	static bool initDefaultMaps = false;
 
 	if (!initDefaultMaps) {
-		defaultEmission = new Texture("DefaultEmission", "defaultEmission.png", TextureType::PBREmission);
+		defaultEmission = new Texture("DefaultEmission", "defaultEmission.png", TextureType::PBREmission);
+
 		defaultNormal = new Texture("DefaultNormal", "defaultNorm.png", TextureType::PBRNormal);
 
 		//after all maps are init one time, never do it again
@@ -65,103 +66,116 @@ GameObject::~GameObject() {
 }
 
 
-bool GameObject::checkCollision(GameObject* other) { return _rigidBody.checkCollision(other->_rigidBody); }
+bool GameObject::checkCollision(GameObject* other) { return _rigidBody.checkCollision(other->_rigidBody); }
+
 bool GameObject::willCollide(GameObject* other, const glm::vec3& direction, const float dt) { return _rigidBody.willCollide(other->_rigidBody, direction, dt); }
-bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) { return _rigidBody.checkCollision(other, pos); }
-bool GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, const float dt) { return _rigidBody.willCollide(other, pos, direction, dt); }
-
-bool Cappuccino::GameObject::intersecting(const Ray& ray)
-{
-	return _rigidBody.intersecting(ray);
-}
-
-GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray)
-{
-	std::vector <GameObject*> touched;//all gameobjects that the ray hit
-	std::vector <glm::vec3> locations;//where the ray hit on that object
-	std::vector <float> distances;//the distance of that point from the origin of the ray
-	int objectHitNumber = -1;//if nothing is selected
-	for (auto x : gameObjects)
-		if (x->isActive() && x != this)
-			if (x->id != "Bullet") {
-				if (x->intersecting(ray)) {//if the object is hit by the ray
-					touched.push_back(x);//add it to the list of hit objects
-					locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
-				}
-			}
-
-	for (auto x : locations)
-		distances.push_back(glm::length(x));//get the distance from the ray origin to the collision point
-
-	float min = 0.0f;
-
-	for (unsigned i = 0; i < distances.size(); i++) {//for all the lengths
-		if (distances[i] < min || min == 0.0f) {//if the object is closer or the base value is still there
-			min = distances[i];//we have a new minumim
-			objectHitNumber = i;//the object at this position will be the closest hit object
-		}
-	}
-
-	if (objectHitNumber != -1) {//if not base case
-		return touched[objectHitNumber];//return that object
-	}
-	else
-		return NULL;//we have a problem
-}
-
-GameObject* Cappuccino::GameObject::getFirstIntersect(const Ray& ray, const std::vector<std::string>& ids, bool blackList)
-{
-	std::vector <GameObject*> touched;//all gameobjects that the ray hit
-	std::vector <glm::vec3> locations;//where the ray hit on that object
-	std::vector <float> distances;//the distance of that point from the origin of the ray
-	int objectHitNumber = -1;//if nothing is selected
-	for (auto x : gameObjects)
-		if (x->isActive() && x != this) {
-			if (blackList) {
-				bool nope = false;
-				for (auto y : ids)
-					if (x->id == y) {
-						nope = true;
-						break;
-					}
-				if (!nope)
-					if (x->intersecting(ray)) {//if the object is hit by the ray
-						touched.push_back(x);//add it to the list of hit objects
-						locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
-					}
-			}
-			else
-			{
-				for (auto y : ids)
-					if (x->id == y) {
-						if (x->intersecting(ray)) {//if the object is hit by the ray
-							touched.push_back(x);//add it to the list of hit objects
-							locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
-						}
-						break;
-					}
-			}
-
-		}
-
-
-	for (auto x : locations)
-		distances.push_back(glm::length(x));//get the distance from the ray origin to the collision point
-
-	float min = 0.0f;
-
-	for (unsigned i = 0; i < distances.size(); i++) {//for all the lengths
-		if (distances[i] < min || min == 0.0f) {//if the object is closer or the base value is still there
-			min = distances[i];//we have a new minumim
-			objectHitNumber = i;//the object at this position will be the closest hit object
-		}
-	}
-
-	if (objectHitNumber != -1) {//if not base case
-		return touched[objectHitNumber];//return that object
-	}
-	else
-		return NULL;//we have a problem
+bool GameObject::checkCollision(const HitBox& other, const glm::vec3& pos) { return _rigidBody.checkCollision(other, pos); }
+
+bool GameObject::willCollide(const HitBox& other, const glm::vec3& direction, const glm::vec3& pos, const float dt) { return _rigidBody.willCollide(other, pos, direction, dt); }
+
+
+
+bool GameObject::intersecting(const Ray& ray) { return _rigidBody.intersecting(ray); }
+
+GameObject* GameObject::getFirstIntersect(const Ray& ray) {
+	std::vector <GameObject*> touched;//all game objects that the ray hit
+	std::vector <glm::vec3> locations;//where the ray hit on that object
+	std::vector <float> distances;//the distance of that point from the origin of the ray
+
+	//if nothing is selected
+	int objectHitNumber = -1;
+
+	for (auto x : gameObjects) {
+		if (x->isActive() && x != this) {
+			if (x->id != "Bullet") {
+				if (x->intersecting(ray)) {//if the object is hit by the ray
+					touched.push_back(x);//add it to the list of hit objects
+					locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
+				}
+			}
+		}
+	}
+
+	distances.reserve(locations.size());
+	for (auto x : locations) {
+		distances.push_back(length(x));//get the distance from the ray origin to the collision point
+	}
+	
+	float min = 0.0f;
+	for (unsigned i = 0; i < distances.size(); i++) {//for all the lengths
+		if (distances[i] < min || min == 0.0f) {//if the object is closer or the base value is still there
+			min = distances[i];//we have a new minimum
+			objectHitNumber = i;//the object at this position will be the closest hit object
+		}
+	}
+
+	if (objectHitNumber != -1) {//if not base case
+		return touched[objectHitNumber];//return that object
+	}
+
+	//we have a problem
+	return nullptr;
+}
+
+
+
+GameObject* GameObject::getFirstIntersect(const Ray& ray, const std::vector<std::string>& ids, const bool blackList) {
+	std::vector <GameObject*> touched;		//all game objects that the ray hit
+	std::vector <glm::vec3> locations;		//where the ray hit on that object
+	std::vector <float> distances;			//the distance of that point from the origin of the ray
+
+	//if nothing is selected
+	int objectHitNumber = -1;
+
+	for (auto x : gameObjects) {
+		if (x->isActive() && x != this) {
+			if (blackList) {
+				bool nope = false;
+				for (const auto& y : ids)
+					if (x->id == y) {
+						nope = true;
+						break;
+					}
+
+				if (!nope) {
+					if (x->intersecting(ray)) {//if the object is hit by the ray
+						touched.push_back(x);//add it to the list of hit objects
+						locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
+					}
+				}
+			}
+			else {
+				for (const auto& y : ids) {
+					if (x->id == y) {
+						if (x->intersecting(ray)) {//if the object is hit by the ray
+							touched.push_back(x);//add it to the list of hit objects
+							locations.push_back(x->_rigidBody.getFirstInteresect(ray));	//and add where it was hit
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	distances.reserve(locations.size());
+	for (auto x : locations)
+		distances.push_back(length(x));//get the distance from the ray origin to the collision point
+
+	float min = 0.0f;
+	for (unsigned i = 0; i < distances.size(); i++) {//for all the lengths
+		if (distances[i] < min || min == 0.0f) {//if the object is closer or the base value is still there
+			min = distances[i];//we have a new minimum
+			objectHitNumber = i;//the object at this position will be the closest hit object
+		}
+	}
+
+	if (objectHitNumber != -1) {//if not base case
+		return touched[objectHitNumber];//return that object
+	}
+
+	//we have a problem
+	return nullptr;
 }
 
 void GameObject::baseUpdate(float dt) {
@@ -246,12 +260,13 @@ void GameObject::draw()
 		}
 	}
 
-}
-void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
-{
-	gBufferShader->use();
-	for (unsigned i = 0; i < _meshes.size(); i++) {
+}
 
+void GameObject::gBufferDraw(Shader* gBufferShader)
+{
+	gBufferShader->use();
+
+	for (unsigned i = 0; i < _meshes.size(); i++) {
 		//bind the textures to their proper slots
 		for (auto x : _textures) {
 			if (x->getTextureIndex() != i)
@@ -307,10 +322,10 @@ void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 		else
 			gBufferShader->setUniform("dt",0.0f);
 
-		_transform._transformMat = gBufferShader->loadModelMatrix(_transform._transformMat);
-
-		_meshes[i]->draw();
-
+		_transform._transformMat = gBufferShader->loadModelMatrix(_transform._transformMat);
+
+		_meshes[i]->draw();
+
 		for (auto x : _textures) {
 			if (x->type == TextureType::DiffuseMap)
 				x->unbind(0);
@@ -334,16 +349,26 @@ void Cappuccino::GameObject::gBufferDraw(Shader* gBufferShader)
 				x->unbind(9);
 			else if (x->type == TextureType::PBREmission)
 				x->unbind(10);
-		}
-	}
+		}
+	}
 }
+
+void GameObject::shadowDraw(Shader* shadowShader) {
+	shadowShader->use();
+	shadowShader->loadModelMatrix(_transform._transformMat);
+
+	for(auto mesh : _meshes) {
+		mesh->draw();
+	}
+}
+
 void GameObject::collision(const float dt) {
 	if (_rigidBody._moveable) {
 		//if this object can move
 		for (auto x : gameObjects) {//check the other game objects
 			if (x->isActive() && x != this) {//if the object is active and not this
 				if (x->_rigidBody._canTouch && _rigidBody._canTouch) { //if the object can be touched
-					if (_rigidBody.myType == "" || _rigidBody.myType != x->_rigidBody.myType) {
+					if (_rigidBody.myType.empty() || _rigidBody.myType != x->_rigidBody.myType) {
 						//if default type or not the same type as other object
 						for (unsigned i = 0; i < 3; i++) {//all three dimensions
 							glm::vec3 temp(0, 0, 0);
