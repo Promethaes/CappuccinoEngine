@@ -18,11 +18,13 @@ namespace Cappuccino {
 
 	bool Application::_instantiated = false;
 	GLFWwindow* Application::window = nullptr;
+	Shader* Application::_shadowMappingShader = nullptr;
 	Shader* Application::_gBufferShader = nullptr;
 	Shader* Application::_lightingPassShader = nullptr;
 	Shader* Application::_blurPassShader = nullptr;
 	Shader* Application::_ppShader = nullptr;
 	LUT* Application::_activeLUT = nullptr;
+	Application::LightVector Application::allLights;
 	bool Application::_useDeferred = true;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
@@ -160,8 +162,7 @@ namespace Cappuccino {
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-
+		
 
 		//https://learnopengl.com/Advanced-Lighting/Deferred-Shading
 		unsigned gBuffer = 0;
@@ -334,13 +335,50 @@ namespace Cappuccino {
 				glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-				// Settings for pre rendering
+				// Pre-render settings
 				glEnable(GL_DEPTH_TEST);
 				glEnable(GL_CULL_FACE);
 				glDisable(GL_BLEND);
 
-				// TODO: SHADOW MAPPING HERE
+				// Shadow mapping
+				for(auto pLight : allLights) {
+					if(!pLight._isActive) {
+						continue;
+					}
+					
+					auto proj = pLight.projectionMat;
+					auto pos = pLight._pos;
+					
+					std::vector<glm::mat4> shadowMatrices = {
+						proj * glm::lookAt(pos, pos + glm::vec3( 1.0f,  0.0f,  0.0f), { 0.0f, -1.0f,  0.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3(-1.0f,  0.0f,  0.0f), { 0.0f, -1.0f,  0.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f,  1.0f,  0.0f), { 0.0f,  0.0f,  1.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f, -1.0f,  0.0f), { 0.0f,  0.0f, -1.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f,  0.0f,  1.0f), { 0.0f, -1.0f,  0.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f,  0.0f, -1.0f), { 0.0f, -1.0f,  0.0f })
+					};
 
+					glBindFramebuffer(GL_FRAMEBUFFER, pLight.shadowBuffer);
+					glViewport(0, 0, pLight.resolution, pLight.resolution);
+					glClear(GL_DEPTH_BUFFER_BIT);
+					{
+						_shadowMappingShader->use();
+						_shadowMappingShader->setUniform("lightPosition", pos);
+						_shadowMappingShader->setUniform("farPlane", 400.0f);
+						for(unsigned i = 0; i < 6; ++i) {
+							_shadowMappingShader->setUniform("shadowMatrices[" + std::to_string(i) + "]", shadowMatrices[i]);
+						}
+
+						for(auto y : GameObjects) {
+							if(y->isActive() && y->isVisible()) {
+								y->shadowDraw(_shadowMappingShader);
+							}
+						}
+					}
+					glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				}
+
+				
 
 
 				//geometry pass
@@ -356,50 +394,48 @@ namespace Cappuccino {
 						glfwSetWindowShouldClose(window, true);
 				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glUseProgram(0);
 
 				glDisable(GL_DEPTH_TEST);
 				glDisable(GL_CULL_FACE);
 
-				//lighting pass into hdr buffer
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_ONE, GL_ONE);
+
+				// lighting pass into HDR buffer
 				glBindFramebuffer(GL_FRAMEBUFFER, hdrFrameBuffer);
 				{
-					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 					_lightingPassShader->use();
-
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, gPos);
-					glActiveTexture(GL_TEXTURE1);
-					glBindTexture(GL_TEXTURE_2D, gNormal);
-					glActiveTexture(GL_TEXTURE2);
-					glBindTexture(GL_TEXTURE_2D, gAlbedo);
-					glActiveTexture(GL_TEXTURE3);
-					glBindTexture(GL_TEXTURE_2D, gMetalRoughnessAO);
-					glActiveTexture(GL_TEXTURE4);
-					glBindTexture(GL_TEXTURE_2D, gEmissive);
-
-					glBindVertexArray(quadVAO);
-					glDrawArrays(GL_TRIANGLES, 0, 6);
-
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, 0);
-					glActiveTexture(GL_TEXTURE1);
-					glBindTexture(GL_TEXTURE_2D, 0);
-					glActiveTexture(GL_TEXTURE2);
-					glBindTexture(GL_TEXTURE_2D, 0);
-					glActiveTexture(GL_TEXTURE3);
-					glBindTexture(GL_TEXTURE_2D, 0);
-					glActiveTexture(GL_TEXTURE4);
-					glBindTexture(GL_TEXTURE_2D, 0);
+					glBindTextureUnit(0, gPos);
+					glBindTextureUnit(1, gNormal);
+					glBindTextureUnit(2, gAlbedo);
+					glBindTextureUnit(3, gMetalRoughnessAO);
+					glBindTextureUnit(4, gEmissive);
+					
+					for(const auto& light : allLights) {
+						_lightingPassShader->setUniform("light.position", light._pos);
+						_lightingPassShader->setUniform("light.colour", light._col);
+						_lightingPassShader->setUniform("light.depthMap", 5);
+						glBindTextureUnit(5, light.depthMap);
+						
+						glBindVertexArray(quadVAO);
+						glDrawArrays(GL_TRIANGLES, 0, 6);
+					}
+					
+					for(unsigned i = 0; i < 6; ++i) {
+						glBindTextureUnit(i, 0);
+					}
 				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glDisable(GL_BLEND);
 
 				// Copy depth info into accumulation buffer
 				{
 					glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
 					glBindFramebuffer(GL_DRAW_FRAMEBUFFER, hdrFrameBuffer);
-
 					glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
 					glBindFramebuffer(GL_FRAMEBUFFER, 0);
 				}
 
@@ -433,11 +469,11 @@ namespace Cappuccino {
 				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+				//glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+				//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				//
+				//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 				//post processing
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
