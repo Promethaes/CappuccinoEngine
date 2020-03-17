@@ -72,11 +72,8 @@ void Cubemap::setCubemapTextures(const std::vector<std::string>& filepaths) {
 			glTextureStorage2D(_cubemap, 1, GL_RGB8, _size, _size);
 		}
 		
-		glTextureSubImage3D(_cubemap, 0, 0, 0,
-		                    static_cast<unsigned>(i),
-		                    _size, _size, 1,
-		                    channels == 1 ? GL_RED : channels == 3 ? GL_RGB : GL_RGBA,
-		                    GL_UNSIGNED_BYTE, data);
+		glTextureSubImage3D(_cubemap, 0, 0, 0, static_cast<unsigned>(i), _size, _size, 1,
+			channels == 1 ? GL_RED : channels == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 		stbi_image_free(data);
 	}
@@ -96,6 +93,7 @@ void Cubemap::draw() const {
 	_shader.setUniform("skybox", 0);
 
 	_cubeMesh->draw();
+	unbind(0);
 
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);

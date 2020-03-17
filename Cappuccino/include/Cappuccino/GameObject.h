@@ -69,14 +69,14 @@ namespace Cappuccino {
 		*/
 		bool intersecting(const Ray& ray);
 		/*
-		Purp: to see what gameobject the ray hits first
+		Purp: to see what game object the ray hits first
 		Pre: a ray 
 		Post: what GameObject it hits first
 		*/
 		GameObject* getFirstIntersect(const Ray& ray);
 
 		/*
-		Purp: to see what gameobject the ray hits first
+		Purp: to see what game object the ray hits first
 		Pre: a ray, a vector of ids to ignore or only look for, a bool(true for blacklist, false for whitelist)
 		Post: what GameObject it hits first
 		*/
@@ -93,6 +93,8 @@ namespace Cappuccino {
 
 		//draw function used for the gBuffer
 		void gBufferDraw(Shader* gBufferShader);
+		//draw function used for shadow mapping
+		void shadowDraw(Shader* shadowShader);
 
 		//returns which viewport the object should be drawn in
 		unsigned getViewportNum() { return _viewportNum; }
@@ -107,7 +109,7 @@ namespace Cappuccino {
 
 	private:
 		/*
-		Purp: to check collision with all gameobjects
+		Purp: to check collision with all game objects
 		Pre: None
 		Post: None
 		*/
