@@ -343,11 +343,11 @@ glm::vec3 Cappuccino::HitBox::getIntersectPoint(const Ray& ray, glm::vec3& posit
 
 	}
 
-	if (point == glm::vec3(0.0f)) {
-		std::cout << "THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
-	}
-	if (!didCollide)
-		std::cout << "Fuck\n";
+	//if (point == glm::vec3(0.0f)) {
+	//	std::cout << "THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
+	//}
+	//if (!didCollide)
+	//	std::cout << "Fuck\n";
 	return point;
 }
 

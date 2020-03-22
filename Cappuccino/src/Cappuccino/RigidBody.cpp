@@ -119,11 +119,11 @@ namespace Cappuccino {
 		}
 		else
 		{
-			std::cout <<"RigidBody::GetFirstIntersect::Evyn, this shouldn't happen, There are no hitboxes on a collided object"<<std::endl;
+			//std::cout <<"RigidBody::GetFirstIntersect::Evyn, this shouldn't happen, There are no hitboxes on a collided object"<<std::endl;
 		}
 		
-		if (nearestIntersectPoint == glm::vec3(0.0f))
-			std::cout << "RigidBody::GetFirstIntersect::THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
+		//if (nearestIntersectPoint == glm::vec3(0.0f))
+		//	std::cout << "RigidBody::GetFirstIntersect::THIS SHOULD NOT HAPPEN! Tell EVYN ray Intersect hit an edge case!\n";
 		return nearestIntersectPoint;
 	}
 
