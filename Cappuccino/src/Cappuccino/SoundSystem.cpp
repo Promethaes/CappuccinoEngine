@@ -278,9 +278,12 @@ namespace Cappuccino {
 		FMOD_VECTOR p = glmToFmod(pos);
 		//SoundSystem::_channels[(int)_type]->set3DAttributes(&p, NULL);
 	}
-	FMOD_VECTOR& glmToFmod(glm::vec3& v)
+	FMOD_VECTOR glmToFmod(glm::vec3& v)
 	{
-		FMOD_VECTOR nV{ v.x,v.y,v.z };
+		FMOD_VECTOR nV{ 0 };
+		nV.x = v.x * -1.0f;
+		nV.y = v.y;
+		nV.z = v.z;
 		return nV;
 	}
 }

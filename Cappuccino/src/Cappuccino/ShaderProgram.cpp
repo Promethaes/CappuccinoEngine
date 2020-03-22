@@ -60,7 +60,8 @@ void Shader::createShader() {
 	}
 }
 
-void Shader::use() const { (glUseProgram(_programID)); }
+void Shader::use() const {
+	glUseProgram(_programID); }
 
 void Shader::setDefaultPath(const string& directory) {
 	string dir = directory;
@@ -93,8 +94,7 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 	std::string shaderString;
 
 	if (!loadFileAsString(_shaderDirectory + shaderPath, shaderString)) {
-		CAPP_PRINT_ERROR("Failed to read shader from file!");
-		CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
+		CAPP_ASSERT(shaderString.empty(), "Failed to read shader from file!\n%s", std::string(_shaderDirectory + shaderPath).c_str());
 		shaderString = "";
 	}
 
@@ -125,10 +125,7 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 	if (!success) {
 		GLchar infoLog[512];
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-
-		CAPP_PRINT_ERROR("Failed to compile shader!");
-		CAPP_PRINT_ERROR("%s", std::string(_shaderDirectory + shaderPath).c_str());
-		CAPP_PRINT_ERROR("%s", infoLog);
+		CAPP_ASSERT(success, "Failed to compile shader!\n%s\n\n%s", std::string(_shaderDirectory + shaderPath).c_str(), infoLog);
 	}
 }
 
@@ -158,18 +155,16 @@ void Shader::compileShader(const char* input, const ShaderType& type, GLuint& sh
 	glShaderSource(shader, 1, &shaderFinal, NULL);
 	glCompileShader(shader);
 
-	(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		GLchar infoLog[512];
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-
-		CAPP_PRINT_ERROR("Failed to compile C-string shader!");
-		CAPP_PRINT_ERROR("%s", infoLog);
+		CAPP_ASSERT(success, "Failed to compile C-string shader!\n%s", infoLog);
 	}
 }
 
 void Shader::createProgram(const unsigned vertex, const unsigned fragment, const std::optional<unsigned>& geometry) {
-	(_programID = glCreateProgram());
+	_programID = glCreateProgram();
 
 	if (vertex) {
 		glAttachShader(_programID, vertex);
@@ -200,12 +195,11 @@ void Shader::createProgram(const unsigned vertex, const unsigned fragment, const
 
 	glLinkProgram(_programID);
 
-	(glGetProgramiv(_programID, GL_LINK_STATUS, &success));
+	glGetProgramiv(_programID, GL_LINK_STATUS, &success);
 	if (!success) {
 		GLchar infoLog[512];
 		glGetProgramInfoLog(_programID, 512, NULL, infoLog);
-		CAPP_PRINT_ERROR("Failed to create the shader program!");
-		CAPP_PRINT_ERROR("%s", infoLog);
+		CAPP_ASSERT(success, "Failed to create the shader program!\n%s", infoLog);
 	}
 
 	if (vertex) {
