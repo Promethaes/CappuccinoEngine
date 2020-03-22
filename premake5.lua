@@ -65,8 +65,8 @@ project "CappuccinoEngine"
 	}
 	
 	libdirs {
-		"Externals/fmod/Debug",
-		"Externals/fmod/Release",
+		"Externals/fmod/NONRELEASE",
+		"Externals/fmod/NONDEBUG",
 		"Externals/freetype"
 	}
 	
