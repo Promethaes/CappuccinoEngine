@@ -65,8 +65,8 @@ project "CappuccinoEngine"
 	}
 	
 	libdirs {
-		"Externals/fmod",
-		"Externals/fmod/studio/lib",
+		"Externals/fmod/Debug",
+		"Externals/fmod/Release",
 		"Externals/freetype"
 	}
 	
@@ -105,5 +105,6 @@ project "CappuccinoEngine"
 			"opengl32",
 			"fmod_vc",
 			"fmodstudio_vc.lib",
+			"fsbank_vc.lib",
 			"freetype"
 		}

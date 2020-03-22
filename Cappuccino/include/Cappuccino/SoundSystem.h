@@ -15,7 +15,7 @@
 
 namespace Cappuccino {
 
-	FMOD_VECTOR& glmToFmod(glm::vec3& v);
+	FMOD_VECTOR glmToFmod(glm::vec3& v);
 
 	class SoundSystem {
 	public:
