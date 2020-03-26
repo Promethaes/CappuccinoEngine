@@ -427,9 +427,9 @@ namespace Cappuccino {
 						glDrawArrays(GL_TRIANGLES, 0, 6);
 					}
 
-					for (unsigned i = 0; i < 6; ++i) {
+					for (unsigned i = 0; i < 6; ++i)
 						glBindTextureUnit(i, 0);
-					}
+					
 				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 				glDisable(GL_BLEND);
