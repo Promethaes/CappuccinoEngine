@@ -13,6 +13,9 @@ namespace Cappuccino {
 	*/
 	class UIComponent {
 	public:
+
+		virtual ~UIComponent() = default;
+		
 		/*
 		Purp: base class function with no definition, some components may not need an update function
 		*/
@@ -91,7 +94,7 @@ namespace Cappuccino {
 	class UIScreenQuad : public UIComponent {
 	public:
 
-		UIScreenQuad(const std::vector<Cappuccino::Texture*>& textures);
+		UIScreenQuad(const std::vector<Texture*>& textures);
 
 		//void updateComponent(float dt) override;
 		void drawComponent() override;
@@ -99,7 +102,7 @@ namespace Cappuccino {
 	private:
 		Shader _quadShader;
 		unsigned quadVAO, quadVBO;
-		std::vector<Cappuccino::Texture*> _quadTextures;
+		std::vector<Texture*> _quadTextures;
 
 	};
 }

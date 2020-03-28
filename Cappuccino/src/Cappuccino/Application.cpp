@@ -83,6 +83,7 @@ namespace Cappuccino {
 #if _DEBUG
 
 		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
+		CAPP_GL_CALL(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS));
 		CAPP_GL_CALL(glDebugMessageCallback(glDebugMessageCallbackFunc, NULL));
 		CAPP_GL_CALL(glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, 0, GL_FALSE));
 
