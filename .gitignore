@@ -30,7 +30,7 @@ bld/
 #wwwroot/
 
 # Visual Studio 2017 auto generated files
-Generated\ Files/
+Generated/ Files/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -328,6 +328,12 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 
+# Custom ignore conditions
+*/[Bb]uild/**
 
-*/[Bb]uild/
-!*/[Ll]ibs/**/*
+*.bsc
+*.lnk
+*.sln
+*.sln.DotSettings
+*.vcxproj
+*.vcxproj.filters

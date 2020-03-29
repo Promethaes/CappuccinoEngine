@@ -5,37 +5,52 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 namespace Cappuccino {
-	
 	/*
-	Desc: Allows you to actually view the game
+	Desc: Allows you to actually view the game, abstracts the camera into a class for easy duplication and editing
 	*/
 	class Camera {
 	public:
 		Camera() = default;
 
-		//shows where the player is looking at
+		/*
+		Purp: returns the view matrix
+		*/
 		glm::mat4 whereAreWeLooking() const;
-		
-		//moves camera witht mouse movement
-		void doMouseMovement(float xoffset,float yoffset);
-		
-		//camera movemnt using arrow keys(should be wasd)
-		void move(GLFWwindow* window,float movementSpeed);
+
+		void lookAt(const glm::vec3& lookVec);
+
+		/*
+		Purp: does mouse movement calculations, changes the view matrix
+		Req: the offset you want for the mouse coordinates
+		*/
+		void doMouseMovement(float xoffset, float yoffset);
+
+		/*
+		Purp: allows the camera to move around the 3D world
+		*/
+		void move(GLFWwindow* window, float movementSpeed);
 
 		//getters
-		glm::vec3& getPosition() { return cameraPos; }
-		glm::vec3& getFront() { return cameraFront; }
+		glm::vec3& getPosition() { return _cameraPos; }
+		glm::vec3& getFront() { return _cameraFront; }
+		glm::vec3& getRight() { return _cameraRight; }
+		glm::vec3& getUp() { return _cameraUp; }
+		glm::vec3& getRelativeUp() { return _cameraRelativeUp; }
+
+		void setPosition(const glm::vec3& pos) { _cameraPos = pos; }
 	private:
+		//updates the camera
 		void update();
 
-		float mouseSensitivity = 0.1f;
-		bool firstMouse = true;
-		float yaw = -90.0f;
-		float pitch = 0.0f;
+		float _mouseSensitivity = 0.1f;
+		bool  _firstMouse = true;
+		float _yaw = -90.0f;
+		float _pitch = 0.0f;
 
-		glm::vec3 cameraRight = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::vec3 _cameraRight = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 _cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+		glm::vec3 _cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 _cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::vec3 _cameraRelativeUp = _cameraUp;
 	};
 }
