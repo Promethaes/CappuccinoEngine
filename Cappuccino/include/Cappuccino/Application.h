@@ -66,6 +66,7 @@ namespace Cappuccino {
 		static Shader* _blurPassShader;
 		static Shader* _ppShader;
 		static LUT* _activeLUT;
+		static int _numBlurPasses;
 
 		static LightVector allLights;
 		

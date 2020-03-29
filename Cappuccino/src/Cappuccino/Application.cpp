@@ -26,6 +26,7 @@ namespace Cappuccino {
 	LUT* Application::_activeLUT = nullptr;
 	Application::LightVector Application::allLights;
 	bool Application::_useDeferred = true;
+	int Application::_numBlurPasses = 10;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
@@ -453,13 +454,12 @@ namespace Cappuccino {
 				//blur pass
 				static bool firstRenderPass = true;
 				bool horizontal = true, first = true;
-				unsigned int amount = 10;
 				_blurPassShader->use();
 				if (firstRenderPass)
 					_blurPassShader->setUniform("image", 0);
 				glActiveTexture(GL_TEXTURE0);
 
-				for (unsigned int i = 0; i < amount; i++)
+				for (unsigned int i = 0; i < _numBlurPasses; i++)
 				{
 					glBindFramebuffer(GL_FRAMEBUFFER, pingpong[horizontal]);
 					_blurPassShader->setUniform("horizontal", horizontal);
