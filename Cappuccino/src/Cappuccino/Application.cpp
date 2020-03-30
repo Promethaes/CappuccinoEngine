@@ -429,8 +429,9 @@ namespace Cappuccino {
 						glDrawArrays(GL_TRIANGLES, 0, 6);
 					}
 
-					for (unsigned i = 0; i < 6; ++i)
+					for (unsigned i = 0; i < 6; ++i) {
 						glBindTextureUnit(i, 0);
+					}
 					
 				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -532,10 +533,10 @@ namespace Cappuccino {
 			std::this_thread::sleep_for(std::chrono::milliseconds(finalDelay));
 
 			lastFrame = currentFrame;
-			}
+		}
 
 		cleanup();
-		}
+	}
 
 	void Application::cleanup() {
 
@@ -614,66 +615,66 @@ namespace Cappuccino {
 		std::string message = "OpenGL(0x" + std::string(buffer) + "): ";
 
 		switch (type) {
-		case GL_DEBUG_TYPE_ERROR:
-			message += "ERROR";
-			break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-			message += "DEPRECATED BEHAVIOUR";
-			break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-			message += "UNDEFINED BEHAVIOUR";
-			break;
-		case GL_DEBUG_TYPE_PORTABILITY:
-			message += "PORTABILITY ISSUE";
-			break;
-		case GL_DEBUG_TYPE_PERFORMANCE:
-			message += "PERFORMANCE ISSUE";
-			break;
-		case GL_DEBUG_TYPE_MARKER:
-			message += "TYPE MARKER";
-			break;
-		case GL_DEBUG_TYPE_OTHER:
-			message += "OTHER";
-			break;
-		default: break;
+			case GL_DEBUG_TYPE_ERROR:
+				message += "ERROR";
+				break;
+			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+				message += "DEPRECATED BEHAVIOUR";
+				break;
+			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+				message += "UNDEFINED BEHAVIOUR";
+				break;
+			case GL_DEBUG_TYPE_PORTABILITY:
+				message += "PORTABILITY ISSUE";
+				break;
+			case GL_DEBUG_TYPE_PERFORMANCE:
+				message += "PERFORMANCE ISSUE";
+				break;
+			case GL_DEBUG_TYPE_MARKER:
+				message += "TYPE MARKER";
+				break;
+			case GL_DEBUG_TYPE_OTHER:
+				message += "OTHER";
+				break;
+			default: break;
 		}
 
 		message += "\nSOURCE: ";
 		switch (source) {
-		case GL_DEBUG_SOURCE_API:
-			message += "API";
-			break;
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-			message += "Window system";
-			break;
-		case GL_DEBUG_SOURCE_SHADER_COMPILER:
-			message += "Shader compiler";
-			break;
-		case GL_DEBUG_SOURCE_THIRD_PARTY:
-			message += "Third party";
-			break;
-		case GL_DEBUG_SOURCE_APPLICATION:
-			message += "Application";
-			break;
-		case GL_DEBUG_SOURCE_OTHER:
-			message += "Other";
-		default: break;
+			case GL_DEBUG_SOURCE_API:
+				message += "API";
+				break;
+			case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+				message += "Window system";
+				break;
+			case GL_DEBUG_SOURCE_SHADER_COMPILER:
+				message += "Shader compiler";
+				break;
+			case GL_DEBUG_SOURCE_THIRD_PARTY:
+				message += "Third party";
+				break;
+			case GL_DEBUG_SOURCE_APPLICATION:
+				message += "Application";
+				break;
+			case GL_DEBUG_SOURCE_OTHER:
+				message += "Other";
+			default: break;
 		}
 
 		message += " \nSEVERITY: ";
 		switch (severity) {
-		case GL_DEBUG_SEVERITY_HIGH:
-			message += "HIGH";
-			break;
-		case GL_DEBUG_SEVERITY_MEDIUM:
-			message += "Medium";
-			break;
-		case GL_DEBUG_SEVERITY_LOW:
-			message += "Low";
-			break;
-		case GL_DEBUG_SEVERITY_NOTIFICATION:
-			message += "Notification";
-		default: break;
+			case GL_DEBUG_SEVERITY_HIGH:
+				message += "HIGH";
+				break;
+			case GL_DEBUG_SEVERITY_MEDIUM:
+				message += "Medium";
+				break;
+			case GL_DEBUG_SEVERITY_LOW:
+				message += "Low";
+				break;
+			case GL_DEBUG_SEVERITY_NOTIFICATION:
+				message += "Notification";
+			default: break;
 		}
 
 		message += "\n" + std::string(msg) + "\n";
