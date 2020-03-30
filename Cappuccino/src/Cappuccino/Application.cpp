@@ -26,6 +26,7 @@ namespace Cappuccino {
 	LUT* Application::_activeLUT = nullptr;
 	Application::LightVector Application::allLights;
 	bool Application::_useDeferred = true;
+	int Application::_numBlurPasses = 10;
 
 	Application::Application() : Application(100, 100, "Failed to load properly!", {}, 4u, 6u) {}
 
@@ -162,7 +163,7 @@ namespace Cappuccino {
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-		
+
 
 		//https://learnopengl.com/Advanced-Lighting/Deferred-Shading
 		unsigned gBuffer = 0;
@@ -341,21 +342,21 @@ namespace Cappuccino {
 				glDisable(GL_BLEND);
 
 				// Shadow mapping
-				for(auto pLight : allLights) {
-					if(!pLight._isActive) {
+				for (auto pLight : allLights) {
+					if (!pLight._isActive) {
 						continue;
 					}
-					
+
 					auto proj = pLight.projectionMat;
 					auto pos = pLight._pos;
-					
+
 					std::vector<glm::mat4> shadowMatrices = {
-						proj * glm::lookAt(pos, pos + glm::vec3( 1.0f,  0.0f,  0.0f), { 0.0f, -1.0f,  0.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3(1.0f,  0.0f,  0.0f), { 0.0f, -1.0f,  0.0f }),
 						proj * glm::lookAt(pos, pos + glm::vec3(-1.0f,  0.0f,  0.0f), { 0.0f, -1.0f,  0.0f }),
-						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f,  1.0f,  0.0f), { 0.0f,  0.0f,  1.0f }),
-						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f, -1.0f,  0.0f), { 0.0f,  0.0f, -1.0f }),
-						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f,  0.0f,  1.0f), { 0.0f, -1.0f,  0.0f }),
-						proj * glm::lookAt(pos, pos + glm::vec3( 0.0f,  0.0f, -1.0f), { 0.0f, -1.0f,  0.0f })
+						proj * glm::lookAt(pos, pos + glm::vec3(0.0f,  1.0f,  0.0f), { 0.0f,  0.0f,  1.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3(0.0f, -1.0f,  0.0f), { 0.0f,  0.0f, -1.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3(0.0f,  0.0f,  1.0f), { 0.0f, -1.0f,  0.0f }),
+						proj * glm::lookAt(pos, pos + glm::vec3(0.0f,  0.0f, -1.0f), { 0.0f, -1.0f,  0.0f })
 					};
 
 					glBindFramebuffer(GL_FRAMEBUFFER, pLight.shadowBuffer);
@@ -365,12 +366,12 @@ namespace Cappuccino {
 						_shadowMappingShader->use();
 						_shadowMappingShader->setUniform("lightPosition", pos);
 						_shadowMappingShader->setUniform("farPlane", 400.0f);
-						for(unsigned i = 0; i < 6; ++i) {
+						for (unsigned i = 0; i < 6; ++i) {
 							_shadowMappingShader->setUniform("shadowMatrices[" + std::to_string(i) + "]", shadowMatrices[i]);
 						}
 
-						for(auto y : GameObjects) {
-							if(y->isActive() && y->isVisible()) {
+						for (auto y : GameObjects) {
+							if (y->isActive() && y->isVisible()) {
 								y->shadowDraw(_shadowMappingShader);
 							}
 						}
@@ -378,7 +379,7 @@ namespace Cappuccino {
 					glBindFramebuffer(GL_FRAMEBUFFER, 0);
 				}
 
-				
+
 
 
 				//geometry pass
@@ -413,20 +414,23 @@ namespace Cappuccino {
 					glBindTextureUnit(2, gAlbedo);
 					glBindTextureUnit(3, gMetalRoughnessAO);
 					glBindTextureUnit(4, gEmissive);
-					
-					for(const auto& light : allLights) {
+
+					for (const auto& light : allLights) {
+						if (!light._isActive)
+							continue;
+
 						_lightingPassShader->setUniform("light.position", light._pos);
 						_lightingPassShader->setUniform("light.colour", light._col);
 						_lightingPassShader->setUniform("light.depthMap", 5);
 						glBindTextureUnit(5, light.depthMap);
-						
+
 						glBindVertexArray(quadVAO);
 						glDrawArrays(GL_TRIANGLES, 0, 6);
 					}
-					
-					for(unsigned i = 0; i < 6; ++i) {
+
+					for (unsigned i = 0; i < 6; ++i)
 						glBindTextureUnit(i, 0);
-					}
+					
 				}
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 				glDisable(GL_BLEND);
@@ -450,13 +454,12 @@ namespace Cappuccino {
 				//blur pass
 				static bool firstRenderPass = true;
 				bool horizontal = true, first = true;
-				unsigned int amount = 10;
 				_blurPassShader->use();
 				if (firstRenderPass)
 					_blurPassShader->setUniform("image", 0);
 				glActiveTexture(GL_TEXTURE0);
 
-				for (unsigned int i = 0; i < amount; i++)
+				for (unsigned int i = 0; i < _numBlurPasses; i++)
 				{
 					glBindFramebuffer(GL_FRAMEBUFFER, pingpong[horizontal]);
 					_blurPassShader->setUniform("horizontal", horizontal);
@@ -528,10 +531,10 @@ namespace Cappuccino {
 			std::this_thread::sleep_for(std::chrono::milliseconds(finalDelay));
 
 			lastFrame = currentFrame;
-		}
+			}
 
 		cleanup();
-	}
+		}
 
 	void Application::cleanup() {
 
@@ -556,7 +559,7 @@ namespace Cappuccino {
 #if _DEBUG
 		if (isEvent(Events::Escape)) {
 			glfwSetWindowShouldClose(window, true);
-		}
+}
 #endif
 
 		if (Sedna::XInputManager::controllerConnected(0) || Sedna::XInputManager::controllerConnected(1) ||
