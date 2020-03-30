@@ -10,6 +10,7 @@ namespace Cappuccino {
 	class Scene {
 	public:
 		Scene(bool firstScene);
+		virtual ~Scene() = default;
 		/*
 		Purp: This function will update the active scene
 		Reg.: dt: a float of the time between updates, defaultCamera: a pointer to the camera used

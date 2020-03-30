@@ -32,7 +32,7 @@ namespace Cappuccino {
 		input.open(_lutDirectory + _path);
 
 		if (!input.good()) {
-			std::cout << "Problem loading file: " << _path << "\n";
+			CAPP_PRINT_ERROR("Problem loading file: %s", _path.c_str());
 			return false;
 		}
 		//import data
@@ -65,8 +65,6 @@ namespace Cappuccino {
 				std::sscanf(inputString, "%f %f %f", &lutData.x, &lutData.y, &lutData.z);
 				lookupData.push_back(lutData);
 			}
-			else
-				continue;
 		}
 
 		_lutName = titleData;

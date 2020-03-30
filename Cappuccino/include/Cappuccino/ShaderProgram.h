@@ -5,6 +5,7 @@
 
 #include <optional>
 #include <string>
+#include <unordered_map>
 
 namespace Cappuccino {
 	class Camera;
@@ -60,7 +61,7 @@ namespace Cappuccino {
 		 *     value: the value to set the uniform variable to
 		 * Returns: void
 		 */
-		void setUniform(const std::string& name, bool value) const;
+		void setUniform(const std::string& name, GLboolean value) const;
 		void setUniform(const std::string& name, GLint value) const;
 		void setUniform(const std::string& name, GLfloat value) const;
 		void setUniform(const std::string& name, const glm::vec2& value) const;
@@ -103,6 +104,8 @@ namespace Cappuccino {
 
 		GLuint _programID;
 		static std::string _shaderDirectory;
+
+		mutable std::unordered_map<std::string, int> _uniformLocations;
 
 		std::string _name;
 		std::string _vertexShaderPath;

@@ -88,7 +88,8 @@ void UIBar::drawComponent()
 
 }
 
-Cappuccino::UIScreenQuad::UIScreenQuad(const std::vector<Cappuccino::Texture*>& textures)
+UIScreenQuad::UIScreenQuad(const std::vector<Texture*>& textures, const float alpha) :
+	_alpha(alpha)
 {
 	_quadShader = *ShaderLibrary::loadShader("DefaultUIQuad", "UIQuad.vert", "UIQuad.frag");
 	_quadTextures = textures;
@@ -96,18 +97,16 @@ Cappuccino::UIScreenQuad::UIScreenQuad(const std::vector<Cappuccino::Texture*>& 
 	_quadShader.use();
 	_quadShader.setUniform("quadTexture1", 0);
 	_quadShader.setUniform("quadTexture2", 1);
-	_quadShader.setUniform("quadTexture3", 2);
-	_quadShader.setUniform("quadTexture4", 3);
 
 	float quadVertices[] = {
-		// positions   // texCoords
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
+		// positions		// texCoords
+		-1.0f,  1.0f,		0.0f, 1.0f,
+		-1.0f, -1.0f,		0.0f, 0.0f,
+		 1.0f, -1.0f,		1.0f, 0.0f,
 
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
-		 1.0f,  1.0f,  1.0f, 1.0f
+		-1.0f,  1.0f,		0.0f, 1.0f,
+		 1.0f, -1.0f,		1.0f, 0.0f,
+		 1.0f,  1.0f,		1.0f, 1.0f
 	};
 
 	glGenVertexArrays(1, &quadVAO);
@@ -122,12 +121,13 @@ Cappuccino::UIScreenQuad::UIScreenQuad(const std::vector<Cappuccino::Texture*>& 
 
 }
 
-void Cappuccino::UIScreenQuad::drawComponent()
+void UIScreenQuad::drawComponent()
 {
 	if (!isVisible())
 		return;
 	glDisable(GL_DEPTH_TEST);
 	_quadShader.use();
+	_quadShader.setUniform("alpha", _alpha);
 	
 	for (unsigned i = 0; i < _quadTextures.size(); i++) 
 		_quadTextures[i]->bind(i);
@@ -139,8 +139,6 @@ void Cappuccino::UIScreenQuad::drawComponent()
 
 	_quadTextures.back()->unbind(0);
 	_quadTextures.back()->unbind(1);
-	_quadTextures.back()->unbind(2);
-	_quadTextures.back()->unbind(3);
 	
 	glEnable(GL_DEPTH_TEST);
 }

@@ -94,12 +94,16 @@ namespace Cappuccino {
 	class UIScreenQuad : public UIComponent {
 	public:
 
-		UIScreenQuad(const std::vector<Texture*>& textures);
+		UIScreenQuad(const std::vector<Texture*>& textures, float alpha = 1.0f);
 
 		//void updateComponent(float dt) override;
 		void drawComponent() override;
+		void setAlpha(const float alpha) { _alpha = alpha; }
 
 	private:
+
+		float _alpha = 1.0f;
+		
 		Shader _quadShader;
 		unsigned quadVAO, quadVBO;
 		std::vector<Texture*> _quadTextures;

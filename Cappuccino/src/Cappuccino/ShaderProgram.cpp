@@ -252,14 +252,21 @@ void Shader::loadOrthoProjectionMatrix(float width, float height)
 
 
 int Shader::getUniformLocation(const std::string& uniformName) const {
+	const auto it = _uniformLocations.find(uniformName);
+	if(it != _uniformLocations.end()) {
+		return it->second;
+	}
+	
 	const int location = glGetUniformLocation(_programID, uniformName.c_str());
 	if(location == -1) {
 		CAPP_PRINT_ERROR("Could not find uniform \"%s\" in shader \"%s\" (ID: %u)", uniformName.c_str(), _name.c_str(), _programID);
 	}
+
+	_uniformLocations[uniformName] = location;
 	return location;
 }
 
-void Shader::setUniform(const std::string& name, const bool value) const                                                      { glUniform1i(getUniformLocation(name), static_cast<GLint>(value)); }
+void Shader::setUniform(const std::string& name, const GLboolean value) const                                                 { glUniform1i(getUniformLocation(name), static_cast<GLint>(value)); }
 void Shader::setUniform(const std::string& name, const GLint value) const                                                     { glUniform1i(getUniformLocation(name), value); }
 void Shader::setUniform(const std::string& name, const GLfloat value) const                                                   { glUniform1f(getUniformLocation(name), value); }
 

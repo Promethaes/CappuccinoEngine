@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include "glm/common.hpp"
 
 namespace Cappuccino {
 
