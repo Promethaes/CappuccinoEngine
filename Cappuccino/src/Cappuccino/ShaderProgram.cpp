@@ -118,13 +118,13 @@ void Shader::compileShader(const char* shaderPath, const ShaderType& type, GLuin
 	auto shaderFinal = shaderString.c_str();
 
 	shader = glCreateShader(shaderType);
-	glShaderSource(shader, 1, &shaderFinal, NULL);
+	glShaderSource(shader, 1, &shaderFinal, nullptr);
 	glCompileShader(shader);
 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		GLchar infoLog[512];
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		glGetShaderInfoLog(shader, 512, nullptr, infoLog);
 		CAPP_ASSERT(success, "Failed to compile shader!\n%s\n\n%s", std::string(_shaderDirectory + shaderPath).c_str(), infoLog);
 	}
 }
@@ -152,13 +152,13 @@ void Shader::compileShader(const char* input, const ShaderType& type, GLuint& sh
 	auto shaderFinal = input;
 
 	shader = glCreateShader(shaderType);
-	glShaderSource(shader, 1, &shaderFinal, NULL);
+	glShaderSource(shader, 1, &shaderFinal, nullptr);
 	glCompileShader(shader);
 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		GLchar infoLog[512];
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		glGetShaderInfoLog(shader, 512, nullptr, infoLog);
 		CAPP_ASSERT(success, "Failed to compile C-string shader!\n%s", infoLog);
 	}
 }
@@ -198,7 +198,7 @@ void Shader::createProgram(const unsigned vertex, const unsigned fragment, const
 	glGetProgramiv(_programID, GL_LINK_STATUS, &success);
 	if (!success) {
 		GLchar infoLog[512];
-		glGetProgramInfoLog(_programID, 512, NULL, infoLog);
+		glGetProgramInfoLog(_programID, 512, nullptr, infoLog);
 		CAPP_ASSERT(success, "Failed to create the shader program!\n%s", infoLog);
 	}
 
@@ -239,12 +239,12 @@ void Shader::loadViewMatrix(Camera& defaultCamera) {
 	setUniform("view", view);
 }
 
-void Shader::loadProjectionMatrix(float width, float height) {
+void Shader::loadProjectionMatrix(const float width, const float height) {
 	const glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 1000.0f);
 	setUniform("projection", projection);
 }
 
-void Shader::loadOrthoProjectionMatrix(float width, float height)
+void Shader::loadOrthoProjectionMatrix(const float width, const float height)
 {
 	const glm::mat4 projection = glm::ortho(-width, width, -height, height, -0.1f, 100.0f);
 	setUniform("projection", projection);
@@ -259,7 +259,7 @@ int Shader::getUniformLocation(const std::string& uniformName) const {
 	
 	const int location = glGetUniformLocation(_programID, uniformName.c_str());
 	if(location == -1) {
-		CAPP_PRINT_ERROR("Could not find uniform \"%s\" in shader \"%s\" (ID: %u)", uniformName.c_str(), _name.c_str(), _programID);
+		CAPP_PRINT_ERROR(R"(Could not find uniform "%s" in shader "%s" (ID: %u))", uniformName.c_str(), _name.c_str(), _programID);
 	}
 
 	_uniformLocations[uniformName] = location;

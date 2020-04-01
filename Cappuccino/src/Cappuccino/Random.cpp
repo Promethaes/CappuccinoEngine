@@ -5,7 +5,11 @@
 
 using namespace std::chrono;
 
-int Cappuccino::randomInt(int low, int high) {
+bool Cappuccino::randomBool() {
+	return static_cast<bool>(randomInt(0, 1));
+}
+
+int Cappuccino::randomInt(const int low, const int high) {
 	const high_resolution_clock::time_point timeNow = high_resolution_clock::now();
 	const high_resolution_clock::duration seed = timeNow.time_since_epoch();
 	
@@ -15,7 +19,7 @@ int Cappuccino::randomInt(int low, int high) {
 	return distribution(generator);
 }
 
-float Cappuccino::randomFloat(float low, float high) {
+float Cappuccino::randomFloat(const float low, const float high) {
 	const high_resolution_clock::time_point timeNow = high_resolution_clock::now();
 	const high_resolution_clock::duration seed = timeNow.time_since_epoch();
 
@@ -25,7 +29,7 @@ float Cappuccino::randomFloat(float low, float high) {
 	return distribution(generator);
 }
 
-double Cappuccino::randomDouble(double low, double high) {
+double Cappuccino::randomDouble(const double low, const double high) {
 	const high_resolution_clock::time_point timeNow = high_resolution_clock::now();
 	const high_resolution_clock::duration seed = timeNow.time_since_epoch();
 
