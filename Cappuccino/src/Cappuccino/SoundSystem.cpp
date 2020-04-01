@@ -147,7 +147,9 @@ namespace Cappuccino {
 		if (result != FMOD_OK)
 		{
 			CAPP_PRINT_ERROR("FMOD error! (%d) %s at %s\n", result, FMOD_ErrorString(result), whereError.c_str());
+#ifdef __DEBUG
 			__debugbreak();
+#endif
 		}
 	}
 	Sound::Sound(const std::string& PATH, const std::optional<std::string>& createGroup)
