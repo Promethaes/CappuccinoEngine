@@ -5,12 +5,39 @@
 
 
 Cappuccino::PointLight::PointLight(const glm::vec3& position, const glm::vec3& colour, const bool shadowCaster) :
-	_pos(position), _col(colour), isShadowCaster(shadowCaster)
+	_pos(position), _col(colour)
 {
 	if(shadowCaster) {
+		setShadowCaster(true);
+	}
+}
+
+Cappuccino::PointLight::~PointLight() {
+	glDeleteTextures(1, &depthMap);
+	glDeleteFramebuffers(1, &shadowBuffer);
+}
+
+void Cappuccino::PointLight::setShadowCaster(const bool caster) {
+	_isShadowCaster.value = caster;
+	
+	if(!caster) {
+		if(shadowBuffer) {
+			glDeleteFramebuffers(1, &shadowBuffer);
+			shadowBuffer = 0;
+		}
+		
+		if(depthMap) {
+			glDeleteTextures(1, &depthMap);
+			depthMap = 0;
+		}
+		
+		projectionMat = glm::mat4(1.0f);
+		viewMat = glm::mat4(1.0f);
+	}
+	else {
 		projectionMat = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 400.0f);
 
-		const auto transform = glm::translate(glm::mat4(1.0f), position);
+		const auto transform = glm::translate(glm::mat4(1.0f), _pos);
 		viewMat = glm::inverse(transform);
 
 		glCreateFramebuffers(1, &shadowBuffer);

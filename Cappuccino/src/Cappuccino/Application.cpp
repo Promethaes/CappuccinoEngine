@@ -343,8 +343,8 @@ namespace Cappuccino {
 				glDisable(GL_BLEND);
 
 				// Shadow mapping
-				for (auto pLight : allLights) {
-					if (!pLight._isActive || !pLight.isShadowCaster) {
+				for (const auto& pLight : allLights) {
+					if (!pLight._isActive || !pLight._isShadowCaster) {
 						continue;
 					}
 
@@ -423,7 +423,7 @@ namespace Cappuccino {
 						_lightingPassShader->setUniform("light.position", light._pos);
 						_lightingPassShader->setUniform("light.colour", light._col);
 
-						if(light.isShadowCaster) {
+						if(light._isShadowCaster) {
 							_lightingPassShader->setUniform("light.isShadowCaster", true);
 							_lightingPassShader->setUniform("light.depthMap", 5);
 							glBindTextureUnit(5, light.depthMap);
