@@ -344,7 +344,7 @@ namespace Cappuccino {
 
 				// Shadow mapping
 				for (auto pLight : allLights) {
-					if (!pLight._isActive) {
+					if (!pLight._isActive || !pLight.isShadowCaster) {
 						continue;
 					}
 
@@ -391,7 +391,7 @@ namespace Cappuccino {
 				for (auto y : GameObjects) {
 					if (y->isActive() && y->isVisible())
 						y->gBufferDraw(_gBufferShader);
-					// this feels like a terrible way to do it
+					// this feels like a terrible way to do it (i.e. code smell bad)
 					if (y->getClose())
 						glfwSetWindowShouldClose(window, true);
 				}
@@ -422,8 +422,15 @@ namespace Cappuccino {
 
 						_lightingPassShader->setUniform("light.position", light._pos);
 						_lightingPassShader->setUniform("light.colour", light._col);
-						_lightingPassShader->setUniform("light.depthMap", 5);
-						glBindTextureUnit(5, light.depthMap);
+
+						if(light.isShadowCaster) {
+							_lightingPassShader->setUniform("light.isShadowCaster", true);
+							_lightingPassShader->setUniform("light.depthMap", 5);
+							glBindTextureUnit(5, light.depthMap);
+						}
+						else {
+							_lightingPassShader->setUniform("light.isShadowCaster", false);
+						}
 
 						glBindVertexArray(quadVAO);
 						glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -528,7 +535,7 @@ namespace Cappuccino {
 			CAPP_GL_CALL(glfwSwapBuffers(window));
 
 			float delay = turnRate * 1000.0f;
-			long long finalDelay = (long long)(currentFrame + delay - glfwGetTime());
+			auto finalDelay = (long long)(currentFrame + delay - glfwGetTime());
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(finalDelay));
 

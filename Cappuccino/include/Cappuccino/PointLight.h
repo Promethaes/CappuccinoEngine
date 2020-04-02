@@ -9,11 +9,12 @@ namespace Cappuccino {
 	*/
 	class PointLight {
 	public:
-		PointLight(const glm::vec3& position, const glm::vec3& colour);
+		PointLight(const glm::vec3& position, const glm::vec3& colour, bool shadowCaster = true);
 
 		glm::vec3 _pos;
 		glm::vec3 _col;
 		bool _isActive = true;
+		bool isShadowCaster = true;
 
 		unsigned shadowBuffer = 0, depthMap = 0;
 		unsigned resolution = 1024;
