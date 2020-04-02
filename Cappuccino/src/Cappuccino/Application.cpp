@@ -461,7 +461,7 @@ namespace Cappuccino {
 					_blurPassShader->setUniform("image", 0);
 				glActiveTexture(GL_TEXTURE0);
 
-				for (unsigned int i = 0; i < _numBlurPasses; i++)
+				for (int i = 0; i < _numBlurPasses; i++)
 				{
 					glBindFramebuffer(GL_FRAMEBUFFER, pingpong[horizontal]);
 					_blurPassShader->setUniform("horizontal", horizontal);
@@ -587,8 +587,6 @@ namespace Cappuccino {
 		ImGui::NewFrame();
 		ImGui::Begin("Imgui window");
 
-		// TODO: RENDER IMGUI HERE
-
 		// End the ImGui frame
 		ImGui::End();
 		ImGuiIO& io = ImGui::GetIO();
@@ -688,10 +686,10 @@ namespace Cappuccino {
 		}
 
 	}
-	Viewport::Viewport(const glm::vec4& borderColour, const glm::vec4& bounds, void(*specialDrawInstructionsCallback)(), GLenum drawMode)
-		:_borderColour(borderColour), _bounds(bounds), _drawMode(drawMode), _callback(specialDrawInstructionsCallback)
-	{
-	}
+	Viewport::Viewport(const glm::vec4& borderColour, const glm::vec4& bounds, void(*specialDrawInstructionsCallback)(), const GLenum drawMode) :
+		_callback(specialDrawInstructionsCallback), _borderColour(borderColour), _bounds(bounds), _drawMode(drawMode)
+	{}
+	
 	void Viewport::use()
 	{
 		CAPP_GL_CALL(glViewport(_bounds.x, _bounds.y, _bounds.z, _bounds.w));
