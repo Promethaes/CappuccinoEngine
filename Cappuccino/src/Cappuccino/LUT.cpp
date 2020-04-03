@@ -1,12 +1,13 @@
+#include "Cappuccino/LUT.h"
+
+#include "Cappuccino/CappMacros.h"
+#include "Cappuccino/ResourceManager.h"
+
+#include <algorithm>
+#include <fstream>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <sstream>
-#include <iostream>
-#include <algorithm>
-#include <fstream>
-#include "Cappuccino/LUT.h"
-#include "Cappuccino/CappMacros.h"
-#include "Cappuccino/ResourceManager.h"
 
 namespace Cappuccino {
 
@@ -16,20 +17,15 @@ namespace Cappuccino {
 	{
 		this->_path = path;
 	}
+	
 	bool LUT::loadLUT()
 	{
-		if (loaded)
+		if (loaded) {
 			return true;
-		char inputString[128];
+		}
 
-		std::string titleData;
-		std::vector<int> sizeData;
-		std::vector<glm::vec3> domainMinData;
-		std::vector<glm::vec3> domainMaxData;
-		std::vector<glm::vec3> lookupData;
 		//loading file
-		std::ifstream input{};
-		input.open(_lutDirectory + _path);
+		std::ifstream input(_lutDirectory + _path);
 
 		if (!input.good()) {
 			CAPP_PRINT_ERROR("Problem loading file: %s", _path.c_str());
@@ -37,49 +33,54 @@ namespace Cappuccino {
 		}
 		//import data
 		while (!input.eof()) {
-			input.getline(inputString, 128);
+			std::string inputString;
+			getline(input, inputString);
 
-			//LUT title
-			if (inputString[0] == 'T') {
-				std::string tempTitle;
-				std::sscanf(inputString, "TITLE \"%s\"", tempTitle);
-				titleData = tempTitle;
+			if(inputString.empty() || inputString[0] == '#') {
+				continue;
 			}
-			else if (inputString[4] == '3' && inputString[5] == 'D') {
-				int tempSize = 0;
-				std::sscanf(inputString, "LUT_3D_SIZE %i", &tempSize);
-				sizeData.push_back(tempSize);
+
+			if(inputString.compare(0, 5, "TITLE") == 0) {
+				//LUT title
+				std::string token;
+				std::istringstream sin(inputString);
+
+				sin >> token >> _lutName;
+				continue;
 			}
-			else if (inputString[7] == 'M' && inputString[8] == 'I' && inputString[9] == 'N') {
+			
+			if (inputString.compare(0, 11, "LUT_3D_SIZE") == 0) {
+				std::string token;
+				std::istringstream sin(inputString);
+
+				sin >> token >> _lutSize;
+				_rgbValues.reserve(static_cast<unsigned>(pow(_lutSize, 3)));
+				continue;
+			}
+
+			if (inputString.compare(0, 10, "DOMAIN_MIN") == 0) {
 				glm::vec3 minTemp;
-				std::sscanf(inputString, "DOMAIN_MIN %f %f %f", &minTemp.x, &minTemp.y, &minTemp.z);
-				domainMinData.push_back(minTemp);
+				std::sscanf(inputString.c_str(), "DOMAIN_MIN %f %f %f", &minTemp.x, &minTemp.y, &minTemp.z);
+				_domainMin.push_back(minTemp);
+				continue;
 			}
-			else if (inputString[7] == 'M' && inputString[8] == 'A' && inputString[9] == 'X') {
+
+			if(inputString.compare(0, 10, "DOMAIN_MAX") == 0) {
 				glm::vec3 maxTemp;
-				std::sscanf(inputString, "DOMAIN_MAX %f %f %f", &maxTemp.x, &maxTemp.y, &maxTemp.z);
-				domainMaxData.push_back(maxTemp);
+				std::sscanf(inputString.c_str(), "DOMAIN_MAX %f %f %f", &maxTemp.x, &maxTemp.y, &maxTemp.z);
+				_domainMax.push_back(maxTemp);
+				continue;
 			}
-			else if (inputString[0] == '0' || inputString[0] == '1') {
-				glm::vec3 lutData(0);
-				std::sscanf(inputString, "%f %f %f", &lutData.x, &lutData.y, &lutData.z);
-				lookupData.push_back(lutData);
-			}
+
+			glm::vec3 line;
+			const bool lutReadStatus = std::sscanf(inputString.c_str(), "%f %f %f", &line.r, &line.g, &line.b);
+			CAPP_ASSERT(lutReadStatus, "Failed to read LUT colour values!\n\tFilepath: %s", _path.c_str());
+			_rgbValues.push_back(line);
 		}
-
-		_lutName = titleData;
-		_lutSize = sizeData[0];
-		_domainMin.push_back(domainMinData[0]);
-		_domainMax.push_back(domainMaxData[0]);
-
-		for (unsigned int i = 0; i < lookupData.size(); i++)
-			_rgbValues.push_back(lookupData[i]);
 
 		input.close();
 
-		//load texture
-
-
+		// Load LUT
 		glGenTextures(1, &_textureID);
 		glBindTexture(GL_TEXTURE_3D, _textureID);
 
@@ -89,10 +90,9 @@ namespace Cappuccino {
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
-		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, _lutSize, _lutSize, _lutSize, 0, GL_RGB, GL_FLOAT, _rgbValues.data());
+		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB8, _lutSize, _lutSize, _lutSize, 0, GL_RGB, GL_FLOAT, _rgbValues.data());
+
 		glBindTexture(GL_TEXTURE_3D, 0);
-
-
 		return loaded = true;
 	}
 

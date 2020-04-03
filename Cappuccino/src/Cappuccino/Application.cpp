@@ -495,6 +495,7 @@ namespace Cappuccino {
 					_ppShader->setUniform("screenTexture", 0);
 					_ppShader->setUniform("bloomTexture", 1);
 					_ppShader->setUniform("lookup.LUT", 2);
+					_ppShader->setUniform("lookup.dimensions", glm::vec3(_activeLUT->_lutSize));
 				}
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, hdrColourBuffer);
